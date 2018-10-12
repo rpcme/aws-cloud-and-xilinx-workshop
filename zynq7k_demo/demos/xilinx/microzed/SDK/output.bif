@@ -1,0 +1,6 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/fsbl/Debug/fsbl.elf
+	/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/aws_hello/Debug/aws_hello.elf
+}

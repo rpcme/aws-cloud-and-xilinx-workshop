@@ -1,0 +1,83 @@
+13:20:05 INFO  : Registering command handlers for SDK TCF services
+13:20:06 INFO  : Launching XSCT server: xsct -n -interactive /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/temp_xsdb_launch_script.tcl
+13:20:08 INFO  : XSCT server has started successfully.
+13:20:10 INFO  : Successfully done setting XSCT server connection channel  
+13:20:10 INFO  : Successfully done setting SDK workspace  
+13:22:40 INFO  : Registering command handlers for SDK TCF services
+13:22:41 INFO  : Launching XSCT server: xsct -n -interactive /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/temp_xsdb_launch_script.tcl
+13:22:43 INFO  : XSCT server has started successfully.
+13:22:43 INFO  : Successfully done setting XSCT server connection channel  
+13:22:45 INFO  : Successfully done setting SDK workspace  
+15:38:33 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin
+15:38:33 INFO  : Creating new bif file /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/output.bif
+15:38:34 INFO  : Bootgen command execution is done.
+16:05:49 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+16:05:50 INFO  : Bootgen command execution is done.
+16:31:26 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+16:31:27 INFO  : Bootgen command execution is done.
+16:51:45 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+16:51:46 INFO  : Bootgen command execution is done.
+17:10:25 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:10:26 INFO  : Bootgen command execution is done.
+17:36:22 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:36:24 INFO  : Bootgen command execution is done.
+17:47:24 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:47:26 INFO  : Bootgen command execution is done.
+17:56:05 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:56:07 INFO  : Bootgen command execution is done.
+18:23:41 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:23:43 INFO  : Bootgen command execution is done.
+18:28:51 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:28:53 INFO  : Bootgen command execution is done.
+18:32:30 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:32:32 INFO  : Bootgen command execution is done.
+18:37:46 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:37:48 INFO  : Bootgen command execution is done.
+19:09:04 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+19:09:06 INFO  : Bootgen command execution is done.
+18:13:16 INFO  : Registering command handlers for SDK TCF services
+18:13:17 INFO  : Launching XSCT server: xsct -n -interactive /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/temp_xsdb_launch_script.tcl
+18:13:19 INFO  : XSCT server has started successfully.
+18:13:21 INFO  : Successfully done setting XSCT server connection channel  
+18:13:21 INFO  : Successfully done setting SDK workspace  
+18:15:40 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:15:42 INFO  : Bootgen command execution is done.
+18:19:16 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:19:18 INFO  : Bootgen command execution is done.
+18:30:01 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:30:03 INFO  : Bootgen command execution is done.
+18:39:22 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:39:24 INFO  : Bootgen command execution is done.
+18:50:53 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:50:54 INFO  : Bootgen command execution is done.
+18:59:36 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:59:37 INFO  : Bootgen command execution is done.
+19:16:58 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+19:16:59 INFO  : Bootgen command execution is done.
+11:44:22 INFO  : Registering command handlers for SDK TCF services
+11:44:23 INFO  : Launching XSCT server: xsct -n -interactive /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/temp_xsdb_launch_script.tcl
+11:44:25 INFO  : XSCT server has started successfully.
+11:44:26 INFO  : Successfully done setting XSCT server connection channel  
+11:44:26 INFO  : Successfully done setting SDK workspace  
+14:40:22 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+14:40:24 INFO  : Bootgen command execution is done.
+15:25:51 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+15:25:52 INFO  : Bootgen command execution is done.
+15:57:00 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+15:57:02 INFO  : Bootgen command execution is done.
+17:19:55 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:19:57 INFO  : Bootgen command execution is done.
+17:35:18 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:35:19 INFO  : Bootgen command execution is done.
+17:42:56 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:42:57 INFO  : Bootgen command execution is done.
+17:57:57 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+17:57:59 INFO  : Bootgen command execution is done.
+18:28:55 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:28:56 INFO  : Bootgen command execution is done.
+18:48:13 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+18:48:14 INFO  : Bootgen command execution is done.
+19:15:19 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+19:15:21 INFO  : Bootgen command execution is done.
+19:22:42 INFO  : Invoking Bootgen: bootgen -image output.bif -arch zynq -o /proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/demos/xilinx/microzed/SDK/BOOT.bin -w on
+19:22:43 INFO  : Bootgen command execution is done.

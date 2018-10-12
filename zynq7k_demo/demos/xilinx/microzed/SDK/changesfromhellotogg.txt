@@ -1,0 +1,4 @@
+gg in app
+gg in lib
+jsmn in lib/thirdparty
+included above .h in settings
