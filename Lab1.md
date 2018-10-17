@@ -23,7 +23,7 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 ### Configuring and Deploying your Devices
 Install the CP210x USB-to-UART driver used by both the MicroZed and Ultra96 boards.  If the driver is not automatically detected by your OS drivers can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
 #### Avnet MicroZed IIoT Kit
-![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/images/MicroZed_IIoT_HW_Overview.png "Kit Overview")
+![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/MicroZed_IIoT_HW_Overview.png?raw=true "Kit Overview")
 1. Attach the ST Micro X-NUCLEO Shield to the Arduno Carrier Card.  This connects the sensor set to the FPGA programmable logic.
 2. Plug in the Maxim 31855 PMOD thermocouple to Arduinio Carrier Card J3 connector labeld "PL_PMOD.  Match pin numbers (pin 1 to pin 1) between the boards - plugging into the top row of J3.  This connects the sensor to the FPGA programmable logic.
 3. Plug the MicroZed System on Module (SoM) onto the Arduno Carrier Card.
