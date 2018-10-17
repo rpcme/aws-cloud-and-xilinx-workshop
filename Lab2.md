@@ -8,9 +8,9 @@ The MicroZed device is running a:FreeRTOS.  You will copy the credentials you do
 4. Plug the SD Card back into the MicroZed board and re-power the system.
 5. In AWS IoT Console navigate to the "Test" tool listed in the left column.
 6. Select "Publish to a topic" sub-menu and enter "freertos/demos/echo" and click the "Publich to topic". See picture below.
-[alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/AFR_HelloWorld_Test.png?raw=true "a:FreeRTOS Publish Test")
+![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/AFR_HelloWorld_Test.png?raw=true "a:FreeRTOS Publish Test")
 7. You should now see a MQTT response from the MicroZed platform in the test window response.  See picture below for expected response.
-[alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
+![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
 ## Ultra96
 The Ultra96 is running Linux with the Greengrass SDK.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
 
