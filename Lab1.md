@@ -29,6 +29,9 @@ These labs require that you have Git and the AWS Command Line Interface (CLI) in
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account. You learned about how AWS IoT credentials are configured in and deployed to a development board environment. 
 
+# Learning More About These Concepts
+
+
 [Next Lab](./Lab2.md)
 
 [Index](./README.md)
