@@ -19,12 +19,29 @@ These labs require that you have Git and the AWS Command Line Interface (CLI) in
 
 
 ## Xilinx Hardware Setup
-
+Most of the physical hardware will be pre-configured for you prior to the start of the workshop.  This section outlines the steps to configuring the physical aspects such that you can quickly check your hardware.
 ### Configuring and Deploying your Devices
-
+Install the CP210x USB-to-UART driver used by both the MicroZed and Ultra96 boards.  If the driver is not automatically detected by your OS drivers can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+#### Avnet MicroZed IIoT Kit
+1. Attach the ST Micro X-NUCLEO Shield to the Arduno Carrier Card.  This connects the sensor set to the FPGA programmable logic.
+2. Plug in the Maxim 31855 PMOD thermocouple to Arduinio Carrier Card J3 connector labeld "PL_PMOD.  Match pin numbers (pin 1 to pin 1) between the boards - plugging into the top row of J3.  This connects the sensor to the FPGA programmable logic.
+3. Plug the MicroZed System on Module (SoM) onto the Arduno Carrier Card.  When completed with this step the system should look like the picture below.
+![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/MicroZed_IIoT_HW_Overview.png?raw=true "IIoT Kit Overview")
+4. Ensure that the microSD card is plugged in. It is located on the bottom side of the board below the USB UART.  Check that the boot mode jumpers (JP1-JP3) are configured for SD Card boot (JP1 - Pins 1 & 2, JP2 - Pins 2 & 3, JP3 - Pins 2 & 3). See picture below for the proper jumper settings.
+![alt text](https://github.com/rpcme/aws-cloud-and-xilinx-workshop/blob/master/images/MicroZed_SD_CardJumperSettings.png?raw=true "SD Card Boot Jumper Settings")
+5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
+6. Connect one microUSB cable to J7 of the Arduino Carrier Card and the USB hub.  This provides power to the boards.
+7. Connect one micorUSB cable to J2 of the MicroZed SoM and the USB hub.  This provides the debug UART interface. Set COM poart parameters to 115200,n,8,1.
+#### Avnet Ultra96
+1. Ensure that the microSD is plugged in.
+2. Plug in the 12V power supply to J5.
+3. Plug in the USB-to-Ethernet adapter to J8, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
+4. Connect one micorUSB cable to J1 of the Ultra96 and the USB hub.  This provides the debug UART interface. Set COM poart parameters to 115200,n,8,1.
+5. Press the power button SW3 on the Ultra96 board to power it up.
 
 ### Testing your Devices
-
+The MicroZed should power up automatically when you plug in the microUSB cable.  Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
+The Ultra96 should power up after pressing SW3.  You should see DS6 and DS9 (green LEDs) illuminated.  (Need to define what we do with user LEDs) 
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account. You learned about how AWS IoT credentials are configured in and deployed to a development board environment. 
