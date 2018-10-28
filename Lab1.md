@@ -25,7 +25,9 @@ Install the CP210x USB-to-UART driver used by both the MicroZed and Ultra96 boar
 5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
 6. Connect one microUSB cable to J7 of the Arduino Carrier Card and the USB hub.  This provides power to the boards.
 7. Connect one micorUSB cable to J2 of the MicroZed SoM and the USB hub.  This provides the debug UART interface. Set COM poart parameters to 115200,n,8,1.
+ 
 #### Avnet Ultra96
+
 1. Ensure that the microSD is plugged in.
 2. Plug in the 12V power supply to J5.
 3. Plug in the USB-to-Ethernet adapter to J8, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
@@ -92,7 +94,7 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-core.sh
+	./deploy-cloud-handlers.sh
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment id to check the status of the deployment. 

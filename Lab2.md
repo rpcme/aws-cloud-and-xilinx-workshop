@@ -3,7 +3,7 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 
 ## Configure and Deploy AWS IoT Credentials
 
-In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$WORKSHOP_HOME/edge/zynq7000``` and ```$WORKSHOP_HOME/edge/ultra96```.
+In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` and ```$WORKSHOP_HOME/edge/auth-gateway-ultra96```.
 
 1. Navigate to the directory containing the scripts for deploying cloud objects.
 
@@ -35,16 +35,19 @@ The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you dow
 
 	![alt text](images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
 
-## Ultra96
+## Configure and Deploy AWS Greengrass
 
-The Ultra96 is running Linux with the Greengrass SDK.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
+The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
 
+1. Copy the private key and certificate to AWS Greengrass.
+2. Modify the AWS Greengrass configuration file so the Thing ARN attribute matches the provisioned Thing ARN.  In this workshop, this means modifying the AWS account number.
+3. Copy the configuration to AWS Greengrass.
+4. Start AWS Greengrass.
 
-
-### Configure and Deploy AWS Greengrass
-
-AWS Greengrass is already physically installed on the Ultra96.  However, we must deploy both edge and AWS Cloud configuration to complete the initial deployment.
-
+	```bash
+	/greengrass/ggc/core/greengrassd start
+	```
+5. Perform the initial deployment of AWS Greengrass.  
 
 # Outcomes
 
