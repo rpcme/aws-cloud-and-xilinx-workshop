@@ -208,6 +208,8 @@ fi
 
 # Create the resource definition
 
+# this needs to be created before deployment or else the deployment will fail
+if test ! -d /home/xilinx/bitstream; then mkdir -p /home/xilinx/bitstream; fi
 
 cat <<EOF > ${d_agg_config}/resource-definition-init.json
 {
@@ -321,6 +323,7 @@ fi
 xilinx_bitstream_deployer_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deployer-handler:PROD
 xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inferenence-handler:PROD
 
+# Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
 {
   "Functions": [
@@ -359,7 +362,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           ]
         },
         "Executable": "python",
-        "MemorySize": 1024,
+        "MemorySize": 1048576,
         "Pinned": true,
         "Timeout": 500
       }
@@ -383,7 +386,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           ]
         },
         "Executable": "python",
-        "MemorySize": 1024,
+        "MemorySize": 1048576,
         "Pinned": false,
         "Timeout": 500
       }
