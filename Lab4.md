@@ -18,6 +18,7 @@ In this lab we will deploy an FPGA based edge machine learning (ML) video survei
 9. In the AWS Console select "Action" and "Deploy" to update the Ultra96 with the new Lambda function and associated FPGA update placed in S3.
 
 # Outcomes
+In this lab we used AWS Greengrass to deploy a new machine learning application to a running control system in the Ultra96 platform. 
 
 # Learning More About These Concepts
 
