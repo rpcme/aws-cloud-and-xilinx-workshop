@@ -16,6 +16,7 @@ In this lab we will deploy an FPGA based edge machine learning (ML) video survei
   * Select "reInvent_Xilinx_EdgeML_Example"
   * Configure Lambda function with lifetime, local resources, and timeout - Need to add details on what is required.
 9. In the AWS Console select "Action" and "Deploy" to update the Ultra96 with the new Lambda function and associated FPGA update placed in S3.
+10. After the AWS Console indicates that the Lambda function is successfully deployed connect to the Ultra96 debugger.  Point the camera at a person and you should see message XYZ when a person is detected including the number of persons in a given frame.  You should also see User LED 3 lit when a person is in view of the camera.  Point the camera at a location where this are no persons - you should see User LED 3 off.
 
 # Outcomes
 In this lab we used AWS Greengrass to deploy a new machine learning application to a running control system in the Ultra96 platform. 
