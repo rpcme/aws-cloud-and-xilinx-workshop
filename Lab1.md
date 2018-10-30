@@ -40,7 +40,7 @@ After the set-up the Ultra96 should look like the picture below.
 ### Testing your Devices
 
 The MicroZed should power up automatically when you plug in the microUSB cable.  Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
-The Ultra96 should power up after pressing SW3.  You should see DS6 and DS9 (green LEDs) illuminated.  (Need to define what we do with user LEDs) 
+The Ultra96 should power up after pressing SW3.  You should see DS6 and DS9 (green LEDs) illuminated. 
 
 
 ## AWS Cloud Setup
