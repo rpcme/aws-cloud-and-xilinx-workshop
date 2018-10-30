@@ -32,7 +32,10 @@ Install the CP210x USB-to-UART driver used by both the MicroZed and Ultra96 boar
 2. Plug in the 12V power supply to J5.
 3. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
 4. Connect one micorUSB cable to J1 of the Ultra96 and the USB hub.  This provides the debug UART interface. Set COM port parameters to 115200,n,8,1.
-5. Press the power button SW3 on the Ultra96 board to power it up.
+5. Press the power button SW3 on the Ultra96 board to power it up.  S3 is the pushbutton switch near the power connector.
+
+After the set-up the Ultra96 should look like the picture below.
+![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
 ### Testing your Devices
 
