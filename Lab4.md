@@ -4,7 +4,8 @@ In this lab we will deploy an FPGA based edge machine learning (ML) video survei
 1. Connect the eCon USB camera to the Ultra96 board J8.  See the picture below showing Ultra96 with the camera connected.
 ![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
 2. Copy the pre-packaged ML file set reInvent_Xilinx_EdgeML_Example.zip from Git at XYZ location.
-3. Create an S3 bucket within your IoT Console by selection the "Amzazon S3" service and clicking the "Create bucket" button.  Name the bucket "reInvent_Xilinx_EdgeML_Example".
+3. Create an S3 bucket within your IoT Console by selection the "Amzazon S3" service and clicking the "Create bucket" button.  Name the bucket "xilinxedgeml".  Other than the unique bucket name keep the remaining S3 options as their default.
+![alt text](images/S3_Bucket_Create.PNG?raw=true "Create S3 Bucket")
 4. Upload reInvent_Xilinx_EdgeML_Example.zip to the reInvent_Xilinx_EdgeML_Example S3 bucket you just created. 
 5. Copy the reInvent_Xilinx_EdgeML_Lambda.zip from XYZ location.  (How to bind the Lambda function to the users specific S3 bucket?)
 6. In AWS IoT Console go to the Lambda Service and click "Create function".
@@ -17,7 +18,9 @@ In this lab we will deploy an FPGA based edge machine learning (ML) video survei
   * Select "reInvent_Xilinx_EdgeML_Example"
   * Configure Lambda function with lifetime, local resources, and timeout - Need to add details on what is required.
 9. In the AWS Console select "Action" and "Deploy" to update the Ultra96 with the new Lambda function and associated FPGA update placed in S3.
-10. After the AWS Console indicates that the Lambda function is successfully deployed connect to the Ultra96 debugger.  Point the camera at a person and you should see message XYZ when a person is detected including the number of persons in a given frame.  You should also see User LED 3 lit when a person is in view of the camera.  Point the camera at a location where this are no persons - you should see User LED 3 off.
+10. After the AWS Console indicates that the Lambda function is successfully deployed connect to the Ultra96 debugger.  Point the camera at a person and you should see message XYZ when a person is detected including the number of persons in a given frame.  You should also see User LED 3 lit when a person is in view of the camera.  Point the camera at a location where this are no persons - you should see User LED 3 turn off.
+![alt text](images/Ultra96_LEDs_MarkedUp.jpg?raw=true "Ultra96 User LED Location")  ![alt text](images/Ultra96_LED_Configuration.PNG?raw=true "Ultra96 User LED Definitions")
+
 
 # Outcomes
 In this lab we used AWS Greengrass to deploy a new machine learning application to a running control system in the Ultra96 platform. 
