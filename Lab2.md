@@ -48,8 +48,8 @@ The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you do
 	/greengrass/ggc/core/greengrassd start
 	```
 5. Perform the initial deployment of AWS Greengrass.
-6. Copy the "hello world" Lambda function from XYZ.  It will be wrapped as a Zip file labeled hello_world_python_lambda.zip.
-7. Upload the function to the AWS Lambda in the AWS Console.  Ensure that the "Handler" is defiend as greengrassHelloWorld.function_handler.
+6. Copy the "hello world" Lambda function from Git at XYZ.  It will be wrapped as a zip file labeled hello_world_python_lambda.zip.
+7. Upload the function to the AWS Lambda in the AWS Console.  Ensure that the "Handler" is defined as greengrassHelloWorld.function_handler.
 8. In the Greengrass device menu of AWS Console select "Add Lambda" function.  Point to the "Hello World" function just created.
 9. Edit the Lambda function as:
 	Memory limit = 16MB
