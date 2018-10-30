@@ -1,7 +1,8 @@
 # Lab 4: Deploy Edge ML
 In this lab we will deploy an FPGA based edge machine learning (ML) video surveillance application to the remote asset unit controller (Ultra96).  Amazon IoT Console will serve as the system deployment dashboard and operation mechanism to incrementally add this function to the running system.
 
-1. Connect the eCon USB camera to the Ultra96 board J8.
+1. Connect the eCon USB camera to the Ultra96 board J8.  See the picture below showing Ultra96 with the camera connected.
+![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
 2. Copy the pre-packaged ML file set reInvent_Xilinx_EdgeML_Example.zip from Git at XYZ location.
 3. Create an S3 bucket within your IoT Console by selection the "Amzazon S3" service and clicking the "Create bucket" button.  Name the bucket "reInvent_Xilinx_EdgeML_Example".
 4. Upload reInvent_Xilinx_EdgeML_Example.zip to the reInvent_Xilinx_EdgeML_Example S3 bucket you just created. 
