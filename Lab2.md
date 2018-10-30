@@ -19,9 +19,9 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 When the script completes, the keys and certificates will be in the directories specified above.
 
 
-## MicroZed
+## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
 
-The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you download from the IoT console to the MicroZed SD Card with TBD file name(s) into TBD directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
+The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you download from the IoT console to the MicroZed SD Card with ```$WORKSHOP_HOME/edge/auth-node-zynq7k/gateway-ultra96.crt.pem``` and ```$WORKSHOP_HOME/edge/auth-node-zynq7k/gateway-ultra96.key.prv.pem``` files into **TBD** directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
 
 1. Power off the MiroZed board by unplugging the USB cables.
 2. Eject the SD Card.
@@ -35,7 +35,7 @@ The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you dow
 
 	![alt text](images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
 
-## Configure and Deploy AWS Greengrass
+## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
 The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
 
