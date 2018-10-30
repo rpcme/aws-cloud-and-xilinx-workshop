@@ -47,9 +47,25 @@ The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you do
 	```bash
 	/greengrass/ggc/core/greengrassd start
 	```
-5. Perform the initial deployment of AWS Greengrass.  
+5. Perform the initial deployment of AWS Greengrass.
+6. Copy the "hello world" Lambda function from XYZ.  It will be wrapped as a Zip file labeled hello_world_python_lambda.zip.
+7. Upload the function to the AWS Lambda in the AWS Console.  Ensure that the "Handler" is defiend as greengrassHelloWorld.function_handler.
+8. In the Greengrass device menu of AWS Console select "Add Lambda" function.  Point to the "Hello World" function just created.
+9. Edit the Lambda function as:
+	Memory limit = 16MB
+	Timeout = 25s
+	Lambda lifecycle = Make this function long-lived and keep it running indefinitely
+	Read access to /sys directory = Disable
+	Iput payload data type = JSON
+10. Add a subscription so that AWS will receive the hello world MQTT messages.  Click "Add Subscription" with the following information:
+	Source = Lambda Function -> Greengrass_HelloWorld
+	Target = IoT Cloud
+	Topic = hello/world
+11. Deploy the new Lambda and associated Subscription just created.  Selection "Action" in upper-right and click deploy.
+12. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world".  You shoudl now see messages from your board.
 
 # Outcomes
+In this lab we established basic "hello world" connectivity from an a:FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
 
 # Learning More About These Concepts
 
