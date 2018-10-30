@@ -56,6 +56,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 #define TX_OFFSET				ipconfigPACKET_FILLER_SIZE
 
+#define RX_BUFFER_ALIGNMENT	14
+
 /* Defined in NetworkInterface.c */
 extern TaskHandle_t xEMACTaskHandle;
 
@@ -363,7 +365,7 @@ int head = xemacpsif->rxHead;
 			break;
 		}
 
-		pxNewBuffer = pxGetNetworkBufferWithDescriptor( ipTOTAL_ETHERNET_FRAME_SIZE, ( TickType_t ) 0 );
+		pxNewBuffer = pxGetNetworkBufferWithDescriptor( ipTOTAL_ETHERNET_FRAME_SIZE + RX_BUFFER_ALIGNMENT, ( TickType_t ) 0 );
 		if( pxNewBuffer == NULL )
 		{
 			/* A packet has been received, but there is no replacement for this Network Buffer.
@@ -412,7 +414,7 @@ int head = xemacpsif->rxHead;
 		{
 			if( ucIsCachedMemory( pxNewBuffer->pucEthernetBuffer ) != 0 )
 			{
-				Xil_DCacheInvalidateRange( ( ( uint32_t )pxNewBuffer->pucEthernetBuffer ) - ipconfigPACKET_FILLER_SIZE, (unsigned)ipTOTAL_ETHERNET_FRAME_SIZE );
+				Xil_DCacheInvalidateRange( ( ( uint32_t )pxNewBuffer->pucEthernetBuffer ) - ipconfigPACKET_FILLER_SIZE, (unsigned)ipTOTAL_ETHERNET_FRAME_SIZE + RX_BUFFER_ALIGNMENT);
 			}
 			{
 				uint32_t addr = ( ( uint32_t )pxNewBuffer->pucEthernetBuffer ) & XEMACPS_RXBUF_ADD_MASK;
@@ -506,7 +508,7 @@ XStatus init_dma(xemacpsif_s *xemacpsif)
 		pxBuffer = pxDMA_rx_buffers[ iIndex ];
 		if( pxBuffer == NULL )
 		{
-			pxBuffer = pxGetNetworkBufferWithDescriptor( ipTOTAL_ETHERNET_FRAME_SIZE, ( TickType_t ) 0 );
+			pxBuffer = pxGetNetworkBufferWithDescriptor( ipTOTAL_ETHERNET_FRAME_SIZE + RX_BUFFER_ALIGNMENT, ( TickType_t ) 0 );
 			if( pxBuffer == NULL )
 			{
 				FreeRTOS_printf( ("Unable to allocate a network buffer in recv_handler\n" ) );
@@ -522,7 +524,7 @@ XStatus init_dma(xemacpsif_s *xemacpsif)
 		if( ucIsCachedMemory( pxBuffer->pucEthernetBuffer ) != 0 )
 		{
 			Xil_DCacheInvalidateRange( ( ( uint32_t )pxBuffer->pucEthernetBuffer ) - ipconfigPACKET_FILLER_SIZE,
-				(unsigned)ipTOTAL_ETHERNET_FRAME_SIZE );
+				(unsigned)ipTOTAL_ETHERNET_FRAME_SIZE + RX_BUFFER_ALIGNMENT);
 		}
 	}
 

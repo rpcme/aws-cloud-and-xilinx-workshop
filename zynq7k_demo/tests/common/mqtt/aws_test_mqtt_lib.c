@@ -980,8 +980,6 @@ TEST( Full_MQTT, AFQP_MQTT_Connect_NULLParams )
 
         /* Since the above call results in assert being fired,
          * this line must never get executed. */
-
-        xil_printf("AFQP_MQTT_Connect_NULLParams should not reach here \n\r");
         TEST_FAIL();
     }
 }

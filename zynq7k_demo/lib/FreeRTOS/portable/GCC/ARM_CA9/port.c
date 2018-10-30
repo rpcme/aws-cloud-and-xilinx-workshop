@@ -325,7 +325,6 @@ BaseType_t xPortStartScheduler( void )
 {
 uint32_t ulAPSR;
 
-	//xil_printf( ( "xPortStartScheduler start \n\r " ) );
 	#if( configASSERT_DEFINED == 1 )
 	{
 		volatile uint32_t ulOriginalPriority;
@@ -357,7 +356,6 @@ uint32_t ulAPSR;
 		/* Restore the clobbered interrupt priority register to its original
 		value. */
 		*pucFirstUserPriorityRegister = ulOriginalPriority;
-		//xil_printf( ( "xPortStartScheduler end of priority settings \n\r " ) );
 	}
 	#endif /* conifgASSERT_DEFINED */
 
@@ -366,7 +364,6 @@ uint32_t ulAPSR;
 	Privileged mode for the scheduler to start. */
 	__asm volatile ( "MRS %0, APSR" : "=r" ( ulAPSR ) :: "memory" );
 	ulAPSR &= portAPSR_MODE_BITS_MASK;
-	//xil_printf( ( "xPortStartScheduler ulAPSR\n\r") );
 	configASSERT( ulAPSR != portAPSR_USER_MODE );
 
 	if( ulAPSR != portAPSR_USER_MODE )
@@ -387,7 +384,6 @@ uint32_t ulAPSR;
 			/* Start the timer that generates the tick ISR. */
 			configSETUP_TICK_INTERRUPT();
 
-			//xil_printf( ( "xPortStartScheduler starting first task \n\r") );
 			/* Start the first task executing. */
 			vPortRestoreTaskContext();
 		}
@@ -399,7 +395,6 @@ uint32_t ulAPSR;
 	warning about it being defined but not referenced in the case that the user
 	defines their own exit address. */
 	( void ) prvTaskExitError;
-	xil_printf( ( "xPortStartScheduler should not reach here \n\r") );
 	return 0;
 }
 /*-----------------------------------------------------------*/

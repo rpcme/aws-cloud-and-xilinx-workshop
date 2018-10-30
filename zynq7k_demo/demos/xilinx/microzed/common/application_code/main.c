@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2018 Xilinx, Inc.
  * Amazon FreeRTOS V1.2.7
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
@@ -35,9 +36,8 @@
 #include "timers.h"
 #include "queue.h"
 #include "semphr.h"
-#include "FreeRTOS_IP.h" /* FIX ME: Delete if you are not using the FreeRTOS-Plus-TCP library. */
+#include "FreeRTOS_IP.h"
 #include "FreeRTOS_Sockets.h"
-#include "FreeRTOS_TCP_server.h"
 #include "FreeRTOS_DHCP.h"
 
 /* Demo includes */
@@ -168,14 +168,12 @@ int main( void )
                             tskIDLE_PRIORITY,
                             mainLOGGING_MESSAGE_QUEUE_LENGTH );
 
-    /* FIX ME: If you are using Ethernet network connections and the FreeRTOS+TCP stack,
-     * uncomment the initialization function, FreeRTOS_IPInit(), below. */
+    /* FreeRTOS TCP IP initialization function */
     FreeRTOS_IPInit( ucIPAddress,
                      ucNetMask,
                      ucGatewayAddress,
                      ucDNSServerAddress,
                      ucMACAddress );
-    //configPRINT_STRING("FreeRTOS_IPInit complete \n\r");
     /* Start the scheduler.  Initialization that requires the OS to be running,
      * including the Wi-Fi initialization, is performed in the RTOS daemon task
      * startup hook. */
@@ -195,7 +193,6 @@ const uint32_t ulMultiplier = 0x015a4e35UL, ulIncrement = 1UL;
 
 	ulNextRand = ( ulMultiplier * ulNextRand ) + ulIncrement;
 	return( ( int ) ( ulNextRand >> 16UL ) & 0x7fffUL );
-//	return( ( int ) (rand()));
 }
 
 /*-----------------------------------------------------------*/
@@ -210,10 +207,10 @@ static void prvMiscInitialization( void )
 {
 	time_t xTimeNow;
 	int Status;
-    /* FIX ME: Perform any hardware initializations, that don't require the RTOS to be
+    /* Perform any hardware initializations, that don't require the RTOS to be
      * running, here.
      */
-	configPRINT_STRING("Test Message \n\r");
+	//configPRINT_STRING("Test Message \n\r");
 
 		/* Seed the random number generator. */
 		time( &xTimeNow );
@@ -221,44 +218,20 @@ static void prvMiscInitialization( void )
 		prvSRand( ( uint32_t ) xTimeNow );
 		xil_printf("Random numbers: %08X %08X %08X %08X\n\r", ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32());
 		vPortInstallFreeRTOSVectorTable();
-		//vParTestInitialise( ); /* GPIO stuff not required */
-		Xil_DCacheEnable();
 		platform_init_fs();
-
-		//configPRINT_STRING("prvMiscInitialization done \n\r");
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationDaemonTaskStartupHook( void )
 {
-    /* FIX ME: Perform any hardware initialization, that require the RTOS to be
-     * running, here. */
+    /* Perform any hardware initialization, that require the RTOS to be
+     * running, here. NOTHING to be done here for now */
 
-
-    /* FIX ME: If your MCU is using Wi-Fi, delete surrounding compiler directives to
-     * enable the unit tests and after MQTT, Bufferpool, and Secure Sockets libraries
-     * have been imported into the project. If you are not using Wi-Fi, see the
-     * vApplicationIPNetworkEventHook function. */
-    #if 0
-        if( SYSTEM_Init() == pdPASS )
-        {
-            /* Connect to the Wi-Fi before running the tests. */
-            prvWifiConnect();
-
-            /* Start the demo tasks. */
-            DEMO_RUNNER_RunDemos();
-        }
-    #endif
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 {
-    /* FIX ME: If your application is using Ethernet network connections and the
-     * FreeRTOS+TCP stack, delete the surrounding compiler directives to enable the
-     * unit tests and after MQTT, Bufferpool, and Secure Sockets libraries have been
-     * imported into the project. If you are not using Ethernet see the
-     * vApplicationDaemonTaskStartupHook function. */
     static BaseType_t xTasksAlreadyCreated = pdFALSE;
 
     /* If the network has just come up...*/
@@ -267,7 +240,7 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     	configPRINT_STRING("Network connection successful.\n\r");
         if( ( xTasksAlreadyCreated == pdFALSE ) && ( SYSTEM_Init() == pdPASS ) )
         {
-        	vDevModeKeyProvisioning( );
+        	//vDevModeKeyProvisioning( );
             DEMO_RUNNER_RunDemos();
             xTasksAlreadyCreated = pdTRUE;
         }
@@ -277,75 +250,7 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 
 void prvWifiConnect( void )
 {
-    /* FIX ME: Delete surrounding compiler directives when the Wi-Fi library is ported. */
-    #if 0
-        WIFINetworkParams_t xNetworkParams;
-        WIFIReturnCode_t xWifiStatus;
-        uint8_t ucTempIp[4] = { 0 };
-
-        xWifiStatus = WIFI_On();
-
-        if( xWifiStatus == eWiFiSuccess )
-        {
-
-            configPRINTF( ( "Wi-Fi module initialized. Connecting to AP...\r\n" ) );
-        }
-        else
-        {
-            configPRINTF( ( "Wi-Fi module failed to initialize.\r\n" ) );
-
-            /* Delay to allow the lower priority logging task to print the above status.
-             * The while loop below will block the above printing. */
-            TaskDelay( mainLOGGING_WIFI_STATUS_DELAY );
-
-            while( 1 )
-            {
-            }
-        }
-
-        /* Setup parameters. */
-        xNetworkParams.pcSSID = clientcredentialWIFI_SSID;
-        xNetworkParams.ucSSIDLength = sizeof( clientcredentialWIFI_SSID );
-        xNetworkParams.pcPassword = clientcredentialWIFI_PASSWORD;
-        xNetworkParams.ucPasswordLength = sizeof( clientcredentialWIFI_PASSWORD );
-        xNetworkParams.xSecurity = clientcredentialWIFI_SECURITY;
-        xNetworkParams.cChannel = 0;
-
-        xWifiStatus = WIFI_ConnectAP( &( xNetworkParams ) );
-
-        if( xWifiStatus == eWiFiSuccess )
-        {
-            configPRINTF( ( "Wi-Fi Connected to AP. Creating tasks which use network...\r\n" ) );
-
-            xWifiStatus = WIFI_GetIP( ucTempIp );
-            if ( eWiFiSuccess == xWifiStatus )
-            {
-                configPRINTF( ( "IP Address acquired %d.%d.%d.%d\r\n",
-                                ucTempIp[ 0 ], ucTempIp[ 1 ], ucTempIp[ 2 ], ucTempIp[ 3 ] ) );
-            }
-        }
-        else
-        {
-            /* Connection failed, configure SoftAP. */
-            configPRINTF( ( "Wi-Fi failed to connect to AP %s.\r\n", xNetworkParams.pcSSID ) );
-
-            xNetworkParams.pcSSID = wificonfigACCESS_POINT_SSID_PREFIX;
-            xNetworkParams.pcPassword = wificonfigACCESS_POINT_PASSKEY;
-            xNetworkParams.xSecurity = wificonfigACCESS_POINT_SECURITY;
-            xNetworkParams.cChannel = wificonfigACCESS_POINT_CHANNEL;
-
-            configPRINTF( ( "Connect to SoftAP %s using password %s. \r\n",
-                            xNetworkParams.pcSSID, xNetworkParams.pcPassword ) );
-
-            while( WIFI_ConfigureAP( &xNetworkParams ) != eWiFiSuccess )
-            {
-                configPRINTF( ( "Connect to SoftAP %s using password %s and configure Wi-Fi. \r\n",
-                                xNetworkParams.pcSSID, xNetworkParams.pcPassword ) );
-            }
-
-            configPRINTF( ( "Wi-Fi configuration successful. \r\n" ) );
-        }
-    #endif /* if 0 */
+	/* NOT supported */
 }
 /*-----------------------------------------------------------*/
 
@@ -443,7 +348,8 @@ void vApplicationMallocFailedHook()
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
                                     char * pcTaskName )
 {
-	configPRINT_STRING("In vApplicationStackOverflowHook \n\r");
+	configPRINT_STRING(("In vApplicationStackOverflowHook\n\r"));
+	configPRINT_STRING(("Taskname %s \n\r", pcTaskName));
     portDISABLE_INTERRUPTS();
 
     /* Loop forever */
@@ -460,7 +366,6 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,
  */
 void vApplicationIdleHook( void )
 {
-    /* FIX ME. If necessary, update to application idle periodic actions. */
 
     static TickType_t xLastPrint = 0;
     TickType_t xTimeNow;
@@ -506,7 +411,6 @@ time_t xReturn;
 #if ( ipconfigUSE_LLMNR != 0 ) || ( ipconfigUSE_NBNS != 0 )
     BaseType_t xApplicationDNSQueryHook( const char * pcName )
     {
-        /* FIX ME. If necessary, update to applicable DNS name lookup actions. */
 
     	configPRINT_STRING("xApplicationDNSQueryHook \n\r");
         BaseType_t xReturn;
@@ -552,7 +456,7 @@ static const char *pcSuccess = "Ping reply received - ";
 static const char *pcInvalidChecksum = "Ping reply received with invalid checksum - ";
 static const char *pcInvalidData = "Ping reply received with invalid data - ";
 
-	configPRINT_STRING("vApplicationPingReplyHook \n\r");
+	xil_printf("vApplicationPingReplyHook \n\r");
 	switch( eStatus )
 	{
 		case eSuccess	:
@@ -586,7 +490,6 @@ static const char *pcInvalidData = "Ping reply received with invalid data - ";
 void vAssertCalled(const char * pcFile,
 	uint32_t ulLine)
 {
-    /* FIX ME. If necessary, update to applicable assertion routine actions. */
 
 	const uint32_t ulLongSleep = 1000UL;
 	volatile uint32_t ulBlockVariable = 0UL;
@@ -596,7 +499,6 @@ void vAssertCalled(const char * pcFile,
 	(void)pcFileName;
 	(void)ulLineNumber;
 
-	//configPRINT_STRING("vAssertCalled \n\r");
 	printf("vAssertCalled %s, %ld\n", pcFile, (long)ulLine);
 	fflush(stdout);
 
@@ -619,7 +521,6 @@ void vAssertCalled(const char * pcFile,
 #if ( ipconfigUSE_LLMNR != 0 ) || ( ipconfigUSE_NBNS != 0 ) || ( ipconfigDHCP_REGISTER_HOSTNAME == 1 )
     const char * pcApplicationHostnameHook(void)
     {
-        /* FIX ME: If necessary, update to applicable registration name. */
 
         /* This function will be called during the DHCP: the machine will be registered
          * with an IP address plus this name. */
@@ -627,3 +528,19 @@ void vAssertCalled(const char * pcFile,
     }
 
 #endif
+
+    extern uint32_t ulApplicationGetNextSequenceNumber(
+         uint32_t ulSourceAddress,
+         uint16_t usSourcePort,
+         uint32_t ulDestinationAddress,
+         uint16_t usDestinationPort )
+    {
+         /* Ignoring input parameters. */
+         ( void ) ulSourceAddress;
+         ( void ) usSourcePort;
+         ( void ) ulDestinationAddress;
+         ( void ) usDestinationPort;
+
+         return uxRand();
+    }
+

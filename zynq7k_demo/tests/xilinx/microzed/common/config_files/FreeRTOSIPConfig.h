@@ -58,15 +58,16 @@
 /* If the network card/driver includes checksum offloading (IP/TCP/UDP checksums)
  * then set ipconfigDRIVER_INCLUDED_RX_IP_CHECKSUM to 1 to prevent the software
  * stack repeating the checksum calculations. */
-#define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM		( 1 )	/* X */
+#define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM		( 1 )
 #define ipconfigDRIVER_INCLUDED_RX_IP_CHECKSUM     1
+
 
 /* Several API's will block until the result is known, or the action has been
  * performed, for example FreeRTOS_send() and FreeRTOS_recv().  The timeouts can be
  * set per socket, using setsockopt().  If not set, the times below will be
  * used as defaults. */
-#define ipconfigSOCK_DEFAULT_RECEIVE_BLOCK_TIME    ( 10000 )	/* X */
-#define ipconfigSOCK_DEFAULT_SEND_BLOCK_TIME       ( 10000 )	/* X */
+#define ipconfigSOCK_DEFAULT_RECEIVE_BLOCK_TIME    ( 20000 )
+#define ipconfigSOCK_DEFAULT_SEND_BLOCK_TIME       ( 20000 )
 
 /* Include support for LLMNR: Link-local Multicast Name Resolution
  * (non-Microsoft) */
@@ -82,7 +83,7 @@
  * call to FreeRTOS_gethostbyname() will return immediately, without even creating
  * a socket. */
 #define ipconfigUSE_DNS_CACHE                      ( 1 )
-#define ipconfigDNS_CACHE_NAME_LENGTH              ( 16 )
+#define ipconfigDNS_CACHE_NAME_LENGTH              ( 254 )
 #define ipconfigDNS_CACHE_ENTRIES                  ( 4 )
 #define ipconfigDNS_REQUEST_ATTEMPTS               ( 2 )
 
@@ -131,7 +132,7 @@ extern uint32_t uxRand();
  * ipconfigMAX_SEND_BLOCK_TIME_TICKS is specified in RTOS ticks.  A time in
  * milliseconds can be converted to a time in ticks by dividing the time in
  * milliseconds by portTICK_PERIOD_MS. */
-#define ipconfigUDP_MAX_SEND_BLOCK_TIME_TICKS    ( 5000 / portTICK_PERIOD_MS )	/* X */
+#define ipconfigUDP_MAX_SEND_BLOCK_TIME_TICKS    ( 20000 / portTICK_PERIOD_MS )
 
 /* If ipconfigUSE_DHCP is 1 then FreeRTOS+TCP will attempt to retrieve an IP
  * address, netmask, DNS server address and gateway address from a DHCP server.  If
@@ -140,9 +141,9 @@ extern uint32_t uxRand();
  * set to 1 if a valid configuration cannot be obtained from a DHCP server for any
  * reason.  The static configuration used is that passed into the stack by the
  * FreeRTOS_IPInit() function call. */
-#define ipconfigUSE_DHCP                         0
+#define ipconfigUSE_DHCP                         1
 #define ipconfigDHCP_REGISTER_HOSTNAME           1
-#define ipconfigDHCP_USES_UNICAST                0
+#define ipconfigDHCP_USES_UNICAST                1
 
 /* If ipconfigDHCP_USES_USER_HOOK is set to 1 then the application writer must
  * provide an implementation of the DHCP callback function,
@@ -156,9 +157,8 @@ extern uint32_t uxRand();
  * static IP address passed as a parameter to FreeRTOS_IPInit() if the
  * re-transmission time interval reaches ipconfigMAXIMUM_DISCOVER_TX_PERIOD without
  * a DHCP reply being received. */
-//#define ipconfigMAXIMUM_DISCOVER_TX_PERIOD \
-  //  ( 120000 / portTICK_PERIOD_MS )
-#define ipconfigMAXIMUM_DISCOVER_TX_PERIOD		( pdMS_TO_TICKS( 30000 ) ) /* X */
+#define ipconfigMAXIMUM_DISCOVER_TX_PERIOD \
+    ( 120000 / portTICK_PERIOD_MS )
 
 /* The ARP cache is a table that maps IP addresses to MAC addresses.  The IP
  * stack can only send a UDP message to a remove IP address if it knowns the MAC
@@ -199,9 +199,9 @@ extern uint32_t uxRand();
  * are available to the IP stack.  The total number of network buffers is limited
  * to ensure the total amount of RAM that can be consumed by the IP stack is capped
  * to a pre-determinable value. */
-#define ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS    96 /* X */
+#define ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS    96
 
-#define ipconfigUSE_LINKED_RX_MESSAGES	1 /* X */
+#define ipconfigUSE_LINKED_RX_MESSAGES	1
 
 /* A FreeRTOS queue is used to send events from application tasks to the IP
  * stack.  ipconfigEVENT_QUEUE_LENGTH sets the maximum number of events that can
@@ -240,7 +240,7 @@ extern uint32_t uxRand();
  * lower value can save RAM, depending on the buffer management scheme used.  If
  * ipconfigCAN_FRAGMENT_OUTGOING_PACKETS is 1 then (ipconfigNETWORK_MTU - 28) must
  * be divisible by 8. */
-#define ipconfigNETWORK_MTU                            1500	/* X */
+#define ipconfigNETWORK_MTU                            1500
 
 /* Set ipconfigUSE_DNS to 1 to include a basic DNS client/resolver.  DNS is used
  * through the FreeRTOS_gethostbyname() API function. */
@@ -302,8 +302,8 @@ extern uint32_t uxRand();
 
 /* Include support for TCP hang protection.  All sockets in a connecting or
  * disconnecting stage will timeout after a period of non-activity. */
-#define ipconfigTCP_HANG_PROTECTION              ( 1 )
-#define ipconfigTCP_HANG_PROTECTION_TIME         ( 30 )
+//#define ipconfigTCP_HANG_PROTECTION              ( 1 )
+//#define ipconfigTCP_HANG_PROTECTION_TIME         ( 30 )
 
 /* Include support for TCP keep-alive messages. */
 #define ipconfigTCP_KEEP_ALIVE                   ( 1 )

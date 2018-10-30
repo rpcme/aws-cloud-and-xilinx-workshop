@@ -45,24 +45,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 * the demo) are contained in FreeRTOSIPConfig.h.
 *----------------------------------------------------------*/
 
-#define configMAX_API_CALL_INTERRUPT_PRIORITY	18	/* X */
+#define configMAX_API_CALL_INTERRUPT_PRIORITY	18
 
-/* FIX ME: Uncomment and set to the specifications for your MCU. */
-/* X */ /* Not used on A9 - timer source directly obtained from xparameters.h */
+/* Not used on A9 - timer source directly obtained from xparameters.h */
 //#define configCPU_CLOCK_HZ						100000000UL
 
-#define configUSE_DAEMON_TASK_STARTUP_HOOK         1 /* X */
+#define configUSE_DAEMON_TASK_STARTUP_HOOK         1
 #define configENABLE_BACKWARD_COMPATIBILITY        0
 #define configUSE_PREEMPTION                       1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION    1
-#define configUSE_TICKLESS_IDLE					0	/* X */
+#define configUSE_TICKLESS_IDLE					0
 #define configMAX_PRIORITIES                       ( 7 )
 #define configTICK_RATE_HZ                         ( 1000 )
-#define configPERIPHERAL_CLOCK_HZ  				( 33333000UL )	/* X */
-#define configMINIMAL_STACK_SIZE                   ( ( unsigned short ) 200 )	/* X */
-#define configTOTAL_HEAP_SIZE                      ( ( size_t ) ( 4 * 1024 * 1024 ) )	/* X */
-//#define configMINIMAL_STACK_SIZE                   ( ( unsigned short ) 60 )
-//#define configTOTAL_HEAP_SIZE                      ( ( size_t ) ( 2048 * 1024 ) )
+//#define configPERIPHERAL_CLOCK_HZ  				( 33333000UL )
+#define configMINIMAL_STACK_SIZE                   ( ( unsigned short ) 200 )
+#define configTOTAL_HEAP_SIZE                      ( ( size_t ) ( 4 * 1024 * 1024 ) )
 
 #define configMAX_TASK_NAME_LEN                    ( 15 )
 #define configUSE_TRACE_FACILITY                   1
@@ -71,10 +68,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define configUSE_CO_ROUTINES                      0
 #define configUSE_MUTEXES                          1
 #define configUSE_RECURSIVE_MUTEXES                1
-#define configQUEUE_REGISTRY_SIZE                  8	/* X */
+#define configQUEUE_REGISTRY_SIZE                  8
 #define configUSE_APPLICATION_TASK_TAG             0
 #define configUSE_COUNTING_SEMAPHORES              1
-#define configUSE_QUEUE_SETS					1	/* X */
+#define configUSE_QUEUE_SETS					1
 #define configUSE_ALTERNATIVE_API                  0
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS    3      /* FreeRTOS+FAT requires 2 pointers if a CWD is supported. */
 #define configRECORD_STACK_HIGH_ADDRESS            1
@@ -82,9 +79,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* Hook function related definitions. */
 #define configUSE_TICK_HOOK                        0
 #define configUSE_IDLE_HOOK                        0
-#define configUSE_MALLOC_FAILED_HOOK               0
-#define configCHECK_FOR_STACK_OVERFLOW             2	/* X */      /* Not applicable to the Win32 port. */
-//#define configCHECK_FOR_STACK_OVERFLOW             0	/* Not applicable to the Win32 port. */
+#define configUSE_MALLOC_FAILED_HOOK               1
+#define configCHECK_FOR_STACK_OVERFLOW             2
 
 /* Software timer related definitions. */
 #define configUSE_TIMERS                           1
@@ -111,17 +107,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /* Currently the TCP/IP stack is using dynamic allocation, and the MQTT task is
  * using static allocation. */
-#define configSUPPORT_DYNAMIC_ALLOCATION        1	/* X */ /* change to 1 for non MQTT?? */
-//#define configSUPPORT_STATIC_ALLOCATION         0	/* X */
-#define configSUPPORT_STATIC_ALLOCATION         1	/* X */
+#define configSUPPORT_DYNAMIC_ALLOCATION        1
+#define configSUPPORT_STATIC_ALLOCATION         1
 
 /* Set the following definitions to 1 to include the API function, or zero
  * to exclude the API function. */
 #define INCLUDE_vTaskPrioritySet                1
 #define INCLUDE_uxTaskPriorityGet               1
 #define INCLUDE_vTaskDelete                     1
-#define INCLUDE_vTaskCleanUpResources           1	/* X */
-//#define INCLUDE_vTaskCleanUpResources           0
+#define INCLUDE_vTaskCleanUpResources           0
 #define INCLUDE_vTaskSuspend                    1
 #define INCLUDE_vTaskDelayUntil                 1
 #define INCLUDE_vTaskDelay                      1
@@ -131,7 +125,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define INCLUDE_xTaskGetIdleTaskHandle          0
 #define INCLUDE_xQueueGetMutexHolder            1
 #define INCLUDE_eTaskGetState                   1
-#define INCLUDE_pcTaskGetTaskName				1	/* X */
+#define INCLUDE_pcTaskGetTaskName				1
 #define INCLUDE_xEventGroupSetBitsFromISR       1
 #define INCLUDE_xTimerPendFunctionCall          1
 #define INCLUDE_xTaskGetCurrentTaskHandle       1
@@ -159,23 +153,22 @@ void vAssertCalled( const char * pcFile,
                     uint32_t ulLine );
 
 #define configASSERT( x )    if( ( x ) == 0 )  TEST_ABORT()
+//#define configASSERT( x )    if( ( x ) == 0 )  vAssertCalled(__FILE__, __LINE__)
 
-//#define configTASK_RETURN_ADDRESS	NULL	/* X */
+//#define configTASK_RETURN_ADDRESS	NULL
 
 /* The function that implements FreeRTOS printf style output, and the macro
  * that maps the configPRINTF() macros to that function. */
 extern void vLoggingPrintf( const char * pcFormat, ... );
-#define configPRINTF( X )    vLoggingPrintf( X );
-//#define configPRINTF( X )    xil_printf( X );
+#define configPRINTF( X )    vLoggingPrintf X ;
 
 /* Non-format version thread-safe print */
 extern void vLoggingPrint( const char * pcMessage );
 #define configPRINT( X )     vLoggingPrint( X );
-//#define configPRINT( X )     xil_printf( X );
 
 /* Map the logging task's printf to the board specific output function. */
 #include <stdio.h>
-#define configPRINT_STRING( X )    xil_printf( X ); /* FIX ME: Change to your devices console print acceptance function. */
+#define configPRINT_STRING( X )    xil_printf( X );
 /* Sets the length of the buffers into which logging messages are written - so
  * also defines the maximum length of each log message. */
 #define configLOGGING_MAX_MESSAGE_LENGTH            100
@@ -191,7 +184,6 @@ extern void vLoggingPrint( const char * pcMessage );
  * Only API functions that end in ...FromISR() can be used within interrupts. */
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY        ( 1 << 5 )
 
-/* X */
 /****** Hardware specific settings. *******************************************/
 
 /*
@@ -227,23 +219,7 @@ Zynq MPU. */
  * command interpreter running, and it has its own local output buffer, so the
  * global buffer is just set to be one byte long as it is not used and should not
  * take up unnecessary RAM. */
-//#define configCOMMAND_INT_MAX_OUTPUT_SIZE    1
-#define configCOMMAND_INT_MAX_OUTPUT_SIZE    2096	/* X */
-
-/* Only used when running in the FreeRTOS Windows simulator.  Defines the
- * priority of the task used to simulate Ethernet interrupts. */
-#define configMAC_ISR_SIMULATOR_PRIORITY     ( configMAX_PRIORITIES - 1 )
-
-/* This demo creates a virtual network connection by accessing the raw Ethernet
- * or WiFi data to and from a real network connection.  Many computers have more
- * than one real network port, and configNETWORK_INTERFACE_TO_USE is used to tell
- * the demo which real port should be used to create the virtual port.  The ports
- * available are displayed on the console when the application is executed.  For
- * example, on my development laptop setting configNETWORK_INTERFACE_TO_USE to 4
- * results in the wired network being used, while setting
- * configNETWORK_INTERFACE_TO_USE to 2 results in the wireless network being
- * used. */
-#define configNETWORK_INTERFACE_TO_USE       2L
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE    1
 
 /* The address of an echo server that will be used by the two demo echo client
  * tasks:
@@ -266,7 +242,7 @@ Zynq MPU. */
 #define configMAC_ADDR2                      0x22
 #define configMAC_ADDR3                      0x33
 #define configMAC_ADDR4                      0x44
-#define configMAC_ADDR5                      0x21
+#define configMAC_ADDR5                      0x22
 
 /* Default IP address configuration.  Used in ipconfigUSE_DHCP is set to 0, or
  * ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
@@ -291,13 +267,6 @@ Zynq MPU. */
 #define configDNS_SERVER_ADDR2               84
 #define configDNS_SERVER_ADDR3               110
 
-/*
-#define configDNS_SERVER_ADDR0               208
-#define configDNS_SERVER_ADDR1               67
-#define configDNS_SERVER_ADDR2               222
-#define configDNS_SERVER_ADDR3               222
-*/
-
 /* Default netmask configuration.  Used in ipconfigUSE_DHCP is set to 0, or
  * ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
 #define configNET_MASK0                      255
@@ -311,8 +280,8 @@ Zynq MPU. */
 #define configPROFILING                      ( 0 )
 
 /* Pseudo random number generater used by some demo tasks. */
-//extern uint32_t ulRand();
-//#define configRAND32()    ulRand()
+extern uint32_t uxRand();
+#define configRAND32()    uxRand()
 
 
 
