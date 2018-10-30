@@ -1,1 +1,0 @@
-The project file should be in this directory.

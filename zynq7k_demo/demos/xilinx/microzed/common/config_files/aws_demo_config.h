@@ -34,7 +34,7 @@
 
 /* Timeout used when performing MQTT operations that do not need extra time
 to perform a TLS negotiation. */
-#define democonfigMQTT_TIMEOUT                             pdMS_TO_TICKS( 300 )
+#define democonfigMQTT_TIMEOUT                             pdMS_TO_TICKS( 3000 )
 
 /* Timeout used when establishing a connection, which required TLS
 * negotiation. */

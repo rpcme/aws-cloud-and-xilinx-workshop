@@ -163,7 +163,6 @@ int32_t SOCKETS_Connect( Socket_t xSocket,
         xTempAddress.sin_len = ( uint8_t ) sizeof( xTempAddress );
         xTempAddress.sin_port = pxAddress->usPort;
         lStatus = FreeRTOS_connect( pxContext->xSocket, &xTempAddress, xAddressLength );
-        ////xil_printf("FreeRTOS_connect %d \n\r", lStatus);
 
         /* Negotiate TLS if requested. */
         if( ( SOCKETS_ERROR_NONE == lStatus ) && ( pdTRUE == pxContext->xRequireTLS ) )
@@ -178,12 +177,10 @@ int32_t SOCKETS_Connect( Socket_t xSocket,
             xTLSParams.pxNetworkRecv = prvNetworkRecv;
             xTLSParams.pxNetworkSend = prvNetworkSend;
             lStatus = TLS_Init( &pxContext->pvTLSContext, &xTLSParams );
-            //xil_printf("TLS_Init %d \n\r", lStatus);
 
             if( SOCKETS_ERROR_NONE == lStatus )
             {
                 lStatus = TLS_Connect( pxContext->pvTLSContext );
-                xil_printf("TLS_Connect %d \n\r", lStatus);
             }
         }
     }
@@ -192,7 +189,6 @@ int32_t SOCKETS_Connect( Socket_t xSocket,
         lStatus = SOCKETS_SOCKET_ERROR;
     }
 
-    xil_printf("SOCKETS_Connect ret %d \n\r", lStatus);
     return lStatus;
 }
 /*-----------------------------------------------------------*/
@@ -526,7 +522,6 @@ static CK_SESSION_HANDLE xPkcs11Session = 0;
 static CK_FUNCTION_LIST_PTR pxPkcs11FunctionList = NULL;
 
 /*-----------------------------------------------------------*/
-#if 0
 uint32_t ulRand( void )
 {
     CK_RV xResult = 0;
@@ -593,5 +588,4 @@ uint32_t ulRand( void )
 
     return ulRandomValue;
 }
-#endif
 /*-----------------------------------------------------------*/

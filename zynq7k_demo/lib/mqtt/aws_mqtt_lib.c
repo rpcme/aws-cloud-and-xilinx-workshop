@@ -2511,7 +2511,6 @@ MQTTReturnCode_t MQTT_Connect( MQTTContext_t * pxMQTTContext,
          * MQTT client is already connected or connection is in
          * progress. */
         xReturnCode = ( pxMQTTContext->xConnectionState == eMQTTConnected ) ? eMQTTClientAlreadyConnected : eMQTTClientConnectionInProgress;
-        xil_printf("xReturnCode 0x%x \n\r", xReturnCode);
     }
     else
     {

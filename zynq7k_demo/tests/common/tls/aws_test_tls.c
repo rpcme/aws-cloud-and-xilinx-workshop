@@ -137,7 +137,6 @@ static void prvConnectWithProvisioning( ProvisioningParams_t * pxProvisioningPar
         TEST_ASSERT_EQUAL_INT32_MESSAGE( SOCKETS_ERROR_NONE, xResult, "Socket set sock opt server name indication failed" );
 
         /* DNS Lookup. */
-        //xil_printf("pcAWSIoTAddress %s \n\r", pcAWSIoTAddress);
         xMQTTServerAddress.ulAddress = SOCKETS_GetHostByName( pcAWSIoTAddress );
 
         /* Connect. */

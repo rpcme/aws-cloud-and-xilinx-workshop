@@ -831,7 +831,6 @@ static CK_RV prvSignVerifyRoundTrip( CK_MECHANISM_TYPE xMechanism,
     {
         xResult = pxFunctionList->C_FindObjectsFinal( xSession );
     }
-    //xil_printf("1d xResult 0x%x \n\r", xResult);
 
     /* Query the key type. */
     if( 0 == xResult )
@@ -931,7 +930,6 @@ static void prvSignVerifyTask( void * pvParameters )
     for( i = 0; i < pkcs11testSIGN_VERIFY_LOOP_COUNT; i++ )
     {
         xTestResult |= prvSignVerifyRoundTrip( CKM_SHA256_RSA_PKCS, NULL );
-        //xil_printf("xTestResult %d 0x%x \n\r", i, xTestResult);
 
         if( xTestResult != 0 )
         {

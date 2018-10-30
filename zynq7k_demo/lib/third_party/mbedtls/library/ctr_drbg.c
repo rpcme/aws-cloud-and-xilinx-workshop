@@ -340,7 +340,6 @@ int mbedtls_ctr_drbg_reseed( mbedtls_ctr_drbg_context *ctx,
     if( 0 != ctx->f_entropy( ctx->p_entropy, seed,
                              ctx->entropy_len ) )
     {
-    	xil_printf("mbedtls_ctr_drbg_reseed 0x%x \n\r", MBEDTLS_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED);
         return( MBEDTLS_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED );
     }
 

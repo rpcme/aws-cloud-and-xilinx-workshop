@@ -50,7 +50,7 @@
 #include "aws_clientcredential.h"
 
 /* Verbose printing. */
-#define tcptestPRINTF( x )	vLoggingPrintf x
+#define tcptestPRINTF( x )
 /* In case of test failures, FAILUREPRINTF may provide more detailed information. */
 #define tcptestFAILUREPRINTF( x )    vLoggingPrintf x
 /* Fail the test on tcptestASSERT. */
@@ -107,7 +107,7 @@ static void prvEchoClientTxTask( void * pvParameters );
 
 /* TCP Echo Client tasks multi-task test parameters. These can be configured in aws_test_tcp_config.h. */
 #ifndef tcptestTCP_ECHO_TASKS_STACK_SIZE
-    #define tcptestTCP_ECHO_TASKS_STACK_SIZE    ( configMINIMAL_STACK_SIZE * 4 )
+    #define tcptestTCP_ECHO_TASKS_STACK_SIZE    ( configMINIMAL_STACK_SIZE * 8 )
 #endif
 #ifndef tcptestTCP_ECHO_TASKS_PRIORITY
     #define tcptestTCP_ECHO_TASKS_PRIORITY      ( tskIDLE_PRIORITY )
@@ -377,7 +377,6 @@ static BaseType_t prvConnectHelper( Socket_t xSocket,
         xResult = SOCKETS_Connect( xSocket,
                                    &xEchoServerAddress,
                                    sizeof( xEchoServerAddress ) );
-        //xil_printf("SOCKETS_Connect ret %d \n\r", xResult);
     }
 
     return xResult;
@@ -777,16 +776,13 @@ static void prvSOCKETS_CloseWithoutReceiving( Server_t xConn )
     xResult = prvSetSockOptHelper( xSocket, xReceiveTimeOut, xSendTimeOut );
     TEST_ASSERT_EQUAL_INT32_MESSAGE( SOCKETS_ERROR_NONE, xResult, "Set sockopt Failed" );
 
-    //xil_printf("prvSOCKETS_CloseWithoutReceiving 1 \n\r");
     xResult = prvConnectHelper( xSocket, xConn );
     TEST_ASSERT_EQUAL_INT32_MESSAGE( SOCKETS_ERROR_NONE, xResult, "Failed to connect" );
 
-    //xil_printf("prvSOCKETS_CloseWithoutReceiving 2 \n\r");
     /* Send a lot of data to the echo server but never use the recv. */
     xResult = SOCKETS_Send( xSocket, &cTransmittedString, tcptestTWICE_MAX_FRAME_SIZE, 0 );
     TEST_ASSERT_GREATER_THAN_MESSAGE( 0, xResult, "Socket was not able to send" );
 
-    //xil_printf("prvSOCKETS_CloseWithoutReceiving 3 \n\r");
     /* Try to close. */
     xResult = prvCloseHelper( xSocket, &xSocketOpen );
     TEST_ASSERT_EQUAL_INT32_MESSAGE( SOCKETS_ERROR_NONE, xResult, "Socket failed to close" );

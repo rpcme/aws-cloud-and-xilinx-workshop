@@ -951,7 +951,6 @@ static BaseType_t prvSetupConnection( const MQTTEventData_t * const pxEventData 
                 if( SOCKETS_Connect( pxConnection->xSocket, &xMQTTServerAddress, sizeof( xMQTTServerAddress ) ) != SOCKETS_ERROR_NONE )
                 {
                     xStatus = pdFAIL;
-                    configPRINTF( ( "SOCKETS_Connect failed \r\n" ) );
                 }
             }
 
@@ -966,7 +965,6 @@ static BaseType_t prvSetupConnection( const MQTTEventData_t * const pxEventData 
             }
             else
             {
-            	configPRINTF( ( "prvSetupConnection \r\n" ) );
                 /* Connection Failed. */
                 prvGracefulSocketClose( pxConnection );
             }
@@ -1080,7 +1078,7 @@ static void prvProcessReceivedCONNACK( MQTTBrokerConnection_t * const pxConnecti
              * we get a disconnect from the core library also which is
              * when we unblock the task. This ensures the connect is not
              * re-tried until the socket is closed. */
-            configPRINTF( ( "MQTT Connect was rejected with error %d.\r\n", (int)pxParams->u.xMQTTConnACKData.xConnACkReturnCode ) );
+            configPRINTF( ( "MQTT Connect was rejected with error %d.\r\n", pxParams->u.xMQTTConnACKData.xConnACkReturnCode ) );
         }
     }
 }
@@ -1207,7 +1205,6 @@ static void prvProcessReceivedDisconnect( MQTTBrokerConnection_t * const pxConne
             ( void ) pxConnection->pxCallback( pxConnection->pvUserData, &( xCallbackParams ) );
         }
 
-        configPRINTF( ( "prvProcessReceivedDisconnect \r\n" ) );
         /* Close the connection. */
         prvGracefulSocketClose( pxConnection );
     }
