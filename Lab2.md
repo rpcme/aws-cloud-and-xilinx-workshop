@@ -62,7 +62,9 @@ The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you do
 	Target = IoT Cloud
 	Topic = hello/world
 11. Deploy the new Lambda and associated Subscription just created.  Selection "Action" in upper-right and click deploy.
-12. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world".  You should now see messages from your board.
+12. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world". You should now see a MQTT response from the Ultra96 platform in the test window response.  See picture below for expected response.
+
+![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
 
 # Outcomes
 In this lab we established basic "hello world" connectivity from an a:FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
