@@ -8,7 +8,7 @@ The MicroZed IIoT kit has three sensors availble through the FPGA. The sensors a
 
 The reference a:FreeRTOS image is pre-programmed to poll these interfaces at a fixed rate and send them to the Greengrass Core instance running on the Ultra96. The Greengrass Core will then route these messages to the AWS Cloud.  The a:FreeRTOS on MicroZed will use the Greengrass Discovery capability to identify and configure the message route via the Ultra96 associated with your acccounts Greengrass Group.  We will then subscribe to the sensor MQTT topics to verify the data flow to the cloud.
 1. In AWS IoT Console go to the "Test" menu on the left pane.
-2. Click on "Subscribe to a topic" and enter "remote_io_module/sensor_value".  In the IoT Console now you should see data values coming in from the different sensors.  These are the same values that would be shared with the unit controller in a distributed control application.
+2. Click on "Subscribe to a topic" and enter "remote_io_module/sensor_value".  In the IoT Console now you should see data values coming in from the different sensors.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
 3. Click on XYZ to get a live dashboard of the sensor values available in AWS Cloud.  This view is useful for remote asset owners that want to observe the current operation of their system as well as capturing historical operational trends and insights.
 
 ## MicroZed Sensor Failure
