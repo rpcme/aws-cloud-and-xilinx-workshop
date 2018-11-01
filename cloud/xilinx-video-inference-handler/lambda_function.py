@@ -47,12 +47,14 @@ class MyEventHandler(FileSystemEventHandler):
 
         logger.info("Number of boxes found: {}".format(boxes))
 
-        if boxes == 0:
+        if int(boxes) == 0:
             return
 
         basename = event.src_path.split('/')[-1]
         pngname = basename.replace( '.txt', '.png')
         payload = { 'filename' : pngname }
+
+        logger.info("Number of boxes found: {}".format(boxes))
 
         copy_to_s3(pngname)
 
