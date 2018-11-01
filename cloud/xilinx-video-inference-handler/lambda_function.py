@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 client = greengrasssdk.client('iot-data')
+s3 = boto3.resource('s3')
 
 # This is where the overlay will output files.
 path = "/home/xilinx/out"
@@ -26,10 +27,7 @@ client = greengrasssdk.client('iot-data')
 def copy_to_s3(file):
     session = Session()
     creds = session.get_credentials()
-
-    return
-
-def update_shadow(file, numboxes):
+    s3.meta.client.upload_file('{}/{}'.format(path,file), bucket, 'images/{}'.format(file))
     return
 
 def inference_watcher():
@@ -55,6 +53,8 @@ class MyEventHandler(FileSystemEventHandler):
         basename = event.src_path.split('/')[-1]
         pngname = basename.replace( '.txt', '.png')
         payload = { 'filename' : pngname }
+
+        copy_to_s3(pngname)
 
         client.publish(topic=topic,
             payload=json.dumps(payload))
