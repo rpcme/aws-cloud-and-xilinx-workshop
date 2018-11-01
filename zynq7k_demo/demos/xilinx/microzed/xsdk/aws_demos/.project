@@ -175,6 +175,16 @@
 			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/uncached_memory.h</locationURI>
 		</link>
 		<link>
+			<name>src/application_code/xilinx_code/uzed_iot.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/uzed_iot.c</locationURI>
+		</link>
+		<link>
+			<name>src/application_code/xilinx_code/uzed_iot.h</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/uzed_iot.h</locationURI>
+		</link>
+		<link>
 			<name>src/lib/aws/FreeRTOS</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
