@@ -300,6 +300,19 @@ cat <<EOF > ${d_agg_config}/resource-definition-init.json
           "SourcePath": "/home/xilinx/bitstream"
         }
       }
+    },
+    {
+      "Id": "${thing_afr}-home-xilinx-out",
+      "Name": "home-xilinx-bitstream",
+      "ResourceDataContainer": {
+        "LocalVolumeResourceData": {
+          "DestinationPath": "/home/xilinx/out",
+          "GroupOwnerSetting": {
+            "AutoAddGroupOwner": true
+          },
+          "SourcePath": "/home/xilinx/out"
+        }
+      }
     }
   ]
 }
@@ -318,10 +331,10 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# Two lambda functions: xilinx-bitstream-deployer-handler, xilinx-video-inferenence-handler
+# Two lambda functions: xilinx-bitstream-deployer-handler, xilinx-video-inference-handler
 # These functions MUST be deployed to AWS Lambda with Alias PROD prior to running this.
 xilinx_bitstream_deployer_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deployer-handler:PROD
-xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inferenence-handler:PROD
+xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inference-handler:PROD
 
 # Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
