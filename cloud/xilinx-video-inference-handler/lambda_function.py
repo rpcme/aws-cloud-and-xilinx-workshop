@@ -27,7 +27,7 @@ client = greengrasssdk.client('iot-data')
 def copy_to_s3(file):
     session = Session()
     creds = session.get_credentials()
-    s3.meta.client.upload_file('{}/{}'.format(path,file), bucket, 'images/{}'.format(file))
+    s3.meta.client.upload_file('{}/{}'.format(path,file), bucket, 'web/camera-images/{}'.format(file))
     return
 
 def inference_watcher():
