@@ -47,7 +47,7 @@ These are the steps to build the MicroZed code for the workshop:
 
    ![alt text](images/xsdk_create_boot_image.jpeg "")
 
-12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Boot Image'.
+12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
    ![alt text](images/xsdk_create_boot_image_menu.jpeg "")
 
 13. Copy BOOT.BIN from the Output path to your SD card.
