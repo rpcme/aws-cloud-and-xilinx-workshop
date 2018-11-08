@@ -35,17 +35,20 @@
  *********************************************************************************************************************/
 #include "optiga/pal/pal_gpio.h"
 #include "optiga/pal/pal_i2c.h"
+#include "xiic.h"
 
 /*********************************************************************************************************************
  * pal ifx i2c instance
  *********************************************************************************************************************/
+XIic i2c_ctx_0;
+
 /**
  * \brief PAL I2C configuration for OPTIGA. 
  */
 pal_i2c_t optiga_pal_i2c_context_0 =
 {
     /// Pointer to I2C master platform specific context
-    (void*)NULL,//&i2c_master_0,
+    (void*)&i2c_ctx_0,
     /// Slave address
     0x30,
     /// Upper layer context
