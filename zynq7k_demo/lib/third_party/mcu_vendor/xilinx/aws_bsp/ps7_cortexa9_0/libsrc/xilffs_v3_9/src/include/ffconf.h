@@ -105,7 +105,7 @@ extern "C" {
 /   1    - ASCII (Valid for only non-LFN configuration) */
 
 #ifdef FILE_SYSTEM_USE_LFN
-#define	_USE_LFN	2		/* 0 to 3 */
+#define	_USE_LFN	1		/* 0 to 3 */
 #else
 #define	_USE_LFN	0		/* 0 to 3 */
 #endif
