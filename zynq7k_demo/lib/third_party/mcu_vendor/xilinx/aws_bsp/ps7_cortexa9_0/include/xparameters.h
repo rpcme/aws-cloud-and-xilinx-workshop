@@ -34,7 +34,7 @@
 
 /* Definitions for peripheral PS7_DDR_0 */
 #define XPAR_PS7_DDR_0_S_AXI_BASEADDR 0x00100000
-#define XPAR_PS7_DDR_0_S_AXI_HIGHADDR 0x1FFFFFFF
+#define XPAR_PS7_DDR_0_S_AXI_HIGHADDR 0x3FFFFFFF
 
 
 /******************************************************************/
@@ -238,6 +238,29 @@
 
 /******************************************************************/
 
+/* Definitions for driver IIC */
+#define XPAR_XIIC_NUM_INSTANCES 1
+
+/* Definitions for peripheral AXI_IIC_0 */
+#define XPAR_AXI_IIC_0_DEVICE_ID 0
+#define XPAR_AXI_IIC_0_BASEADDR 0x41600000
+#define XPAR_AXI_IIC_0_HIGHADDR 0x4160FFFF
+#define XPAR_AXI_IIC_0_TEN_BIT_ADR 0
+#define XPAR_AXI_IIC_0_GPO_WIDTH 1
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral AXI_IIC_0 */
+#define XPAR_IIC_0_DEVICE_ID XPAR_AXI_IIC_0_DEVICE_ID
+#define XPAR_IIC_0_BASEADDR 0x41600000
+#define XPAR_IIC_0_HIGHADDR 0x4160FFFF
+#define XPAR_IIC_0_TEN_BIT_ADR 0
+#define XPAR_IIC_0_GPO_WIDTH 1
+
+
+/******************************************************************/
+
 /* Definitions for driver QSPIPS */
 #define XPAR_XQSPIPS_NUM_INSTANCES 1
 
@@ -247,7 +270,7 @@
 #define XPAR_PS7_QSPI_0_HIGHADDR 0xE000DFFF
 #define XPAR_PS7_QSPI_0_QSPI_CLK_FREQ_HZ 200000000
 #define XPAR_PS7_QSPI_0_QSPI_MODE 0
-#define XPAR_PS7_QSPI_0_QSPI_BUS_WIDTH 0
+#define XPAR_PS7_QSPI_0_QSPI_BUS_WIDTH 2
 
 
 /******************************************************************/
@@ -258,8 +281,20 @@
 #define XPAR_XQSPIPS_0_HIGHADDR 0xE000DFFF
 #define XPAR_XQSPIPS_0_QSPI_CLK_FREQ_HZ 200000000
 #define XPAR_XQSPIPS_0_QSPI_MODE 0
-#define XPAR_XQSPIPS_0_QSPI_BUS_WIDTH 0
+#define XPAR_XQSPIPS_0_QSPI_BUS_WIDTH 2
 
+
+/******************************************************************/
+
+/* Definitions for Fabric interrupts connected to ps7_scugic_0 */
+#define XPAR_FABRIC_AXI_QUAD_SPI_0_IP2INTC_IRPT_INTR 61U
+#define XPAR_FABRIC_AXI_IIC_0_IIC2INTC_IRPT_INTR 62U
+
+/******************************************************************/
+
+/* Canonical definitions for Fabric interrupts connected to ps7_scugic_0 */
+#define XPAR_FABRIC_SPI_0_VEC_ID XPAR_FABRIC_AXI_QUAD_SPI_0_IP2INTC_IRPT_INTR
+#define XPAR_FABRIC_IIC_0_VEC_ID XPAR_FABRIC_AXI_IIC_0_IIC2INTC_IRPT_INTR
 
 /******************************************************************/
 
@@ -329,7 +364,7 @@
 #define XPAR_PS7_SD_0_DEVICE_ID 0
 #define XPAR_PS7_SD_0_BASEADDR 0xE0100000
 #define XPAR_PS7_SD_0_HIGHADDR 0xE0100FFF
-#define XPAR_PS7_SD_0_SDIO_CLK_FREQ_HZ 50000000
+#define XPAR_PS7_SD_0_SDIO_CLK_FREQ_HZ 25000000
 #define XPAR_PS7_SD_0_HAS_CD 1
 #define XPAR_PS7_SD_0_HAS_WP 1
 #define XPAR_PS7_SD_0_BUS_WIDTH 0
@@ -344,12 +379,71 @@
 #define XPAR_XSDPS_0_DEVICE_ID XPAR_PS7_SD_0_DEVICE_ID
 #define XPAR_XSDPS_0_BASEADDR 0xE0100000
 #define XPAR_XSDPS_0_HIGHADDR 0xE0100FFF
-#define XPAR_XSDPS_0_SDIO_CLK_FREQ_HZ 50000000
+#define XPAR_XSDPS_0_SDIO_CLK_FREQ_HZ 25000000
 #define XPAR_XSDPS_0_HAS_CD 1
 #define XPAR_XSDPS_0_HAS_WP 1
 #define XPAR_XSDPS_0_BUS_WIDTH 0
 #define XPAR_XSDPS_0_MIO_BANK 0
 #define XPAR_XSDPS_0_HAS_EMIO 0
+
+
+/******************************************************************/
+
+/* Definitions for driver SPI */
+#define XPAR_XSPI_NUM_INSTANCES 1U
+
+/* Definitions for peripheral AXI_QUAD_SPI_0 */
+#define XPAR_AXI_QUAD_SPI_0_DEVICE_ID 0U
+#define XPAR_AXI_QUAD_SPI_0_BASEADDR 0x41E00000U
+#define XPAR_AXI_QUAD_SPI_0_HIGHADDR 0x41E0FFFFU
+#define XPAR_AXI_QUAD_SPI_0_FIFO_DEPTH 16U
+#define XPAR_AXI_QUAD_SPI_0_FIFO_EXIST 1U
+#define XPAR_AXI_QUAD_SPI_0_SPI_SLAVE_ONLY 0U
+#define XPAR_AXI_QUAD_SPI_0_NUM_SS_BITS 1U
+#define XPAR_AXI_QUAD_SPI_0_NUM_TRANSFER_BITS 8U
+#define XPAR_AXI_QUAD_SPI_0_SPI_MODE 0U
+#define XPAR_AXI_QUAD_SPI_0_TYPE_OF_AXI4_INTERFACE 0U
+#define XPAR_AXI_QUAD_SPI_0_AXI4_BASEADDR 0U
+#define XPAR_AXI_QUAD_SPI_0_AXI4_HIGHADDR 0U
+#define XPAR_AXI_QUAD_SPI_0_XIP_MODE 0U
+
+/* Canonical definitions for peripheral AXI_QUAD_SPI_0 */
+#define XPAR_SPI_0_DEVICE_ID 0U
+#define XPAR_SPI_0_BASEADDR 0x41E00000U
+#define XPAR_SPI_0_HIGHADDR 0x41E0FFFFU
+#define XPAR_SPI_0_FIFO_DEPTH 16U
+#define XPAR_SPI_0_FIFO_EXIST 1U
+#define XPAR_SPI_0_SPI_SLAVE_ONLY 0U
+#define XPAR_SPI_0_NUM_SS_BITS 1U
+#define XPAR_SPI_0_NUM_TRANSFER_BITS 8U
+#define XPAR_SPI_0_SPI_MODE 0U
+#define XPAR_SPI_0_TYPE_OF_AXI4_INTERFACE 0U
+#define XPAR_SPI_0_AXI4_BASEADDR 0U
+#define XPAR_SPI_0_AXI4_HIGHADDR 0U
+#define XPAR_SPI_0_XIP_MODE 0U
+#define XPAR_SPI_0_USE_STARTUP 0U
+
+
+
+/******************************************************************/
+
+/* Definitions for driver SPIPS */
+#define XPAR_XSPIPS_NUM_INSTANCES 1
+
+/* Definitions for peripheral PS7_SPI_1 */
+#define XPAR_PS7_SPI_1_DEVICE_ID 0
+#define XPAR_PS7_SPI_1_BASEADDR 0xE0007000
+#define XPAR_PS7_SPI_1_HIGHADDR 0xE0007FFF
+#define XPAR_PS7_SPI_1_SPI_CLK_FREQ_HZ 166666672
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral PS7_SPI_1 */
+#define XPAR_XSPIPS_0_DEVICE_ID XPAR_PS7_SPI_1_DEVICE_ID
+#define XPAR_XSPIPS_0_BASEADDR 0xE0007000
+#define XPAR_XSPIPS_0_HIGHADDR 0xE0007FFF
+#define XPAR_XSPIPS_0_SPI_CLK_FREQ_HZ 166666672
 
 
 /******************************************************************/
