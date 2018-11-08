@@ -160,6 +160,16 @@
 			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/memcpy.c</locationURI>
 		</link>
 		<link>
+			<name>src/application_code/xilinx_code/optiga_trust_x.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/optiga_trust_x.c</locationURI>
+		</link>
+		<link>
+			<name>src/application_code/xilinx_code/optiga_trust_x.h</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/optiga_trust_x.h</locationURI>
+		</link>
+		<link>
 			<name>src/application_code/xilinx_code/platform_config.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/demos/xilinx/microzed/common/application_code/xilinx_code/platform_config.h</locationURI>
@@ -251,6 +261,11 @@
 		</link>
 		<link>
 			<name>src/lib/third_party/pkcs11</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/trustx</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -573,6 +588,21 @@
 			<name>src/lib/third_party/pkcs11/pkcs11t.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/pkcs11/pkcs11t.h</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/trustx/mbedtls_port</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/third_party/trustx/examples/mbedtls_port</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/trustx/optiga</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/third_party/trustx/optiga</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/trustx/zynq7000_awsfreertos</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/third_party/trustx/pal/zynq7000_awsfreertos</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/FreeRTOS/portable/GCC</name>

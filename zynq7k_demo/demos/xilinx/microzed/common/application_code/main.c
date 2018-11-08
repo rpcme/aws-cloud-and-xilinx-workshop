@@ -43,6 +43,9 @@
 /* Demo includes */
 #include "aws_demo_runner.h"
 
+/* Hardware Security Module */
+#include "optiga_trust_x.h"
+
 /* AWS library includes. */
 #include "aws_system_init.h"
 #include "aws_logging_task.h"
@@ -174,6 +177,9 @@ int main( void )
                      ucGatewayAddress,
                      ucDNSServerAddress,
                      ucMACAddress );
+
+    TRUSTX_Init();
+
     /* Start the scheduler.  Initialization that requires the OS to be running,
      * including the Wi-Fi initialization, is performed in the RTOS daemon task
      * startup hook. */
@@ -238,9 +244,8 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     if( eNetworkEvent == eNetworkUp )
     {
     	configPRINT_STRING("Network connection successful.\n\r");
-        if( ( xTasksAlreadyCreated == pdFALSE ) && ( SYSTEM_Init() == pdPASS ) )
+        if( ( xTasksAlreadyCreated == pdFALSE ) && ( SYSTEM_Init() == pdPASS ) && (TRUSTX_Active() == pdTRUE))
         {
-        	//vDevModeKeyProvisioning( );
             DEMO_RUNNER_RunDemos();
             xTasksAlreadyCreated = pdTRUE;
         }
