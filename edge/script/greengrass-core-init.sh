@@ -20,30 +20,40 @@ d_agg_config=$(dirname $0)/../ggc-config
 if test ! -d ${d_agg_config}; then mkdir ${d_agg_config}; fi
 
 # find the thing arn
+echo Querying thingArn for Greengrass
 thing_agg_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_agg} \
                     --query thingArn)
 
+echo Querying thingArn for Amazon FreeRTOS
 thing_afr_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_afr} \
                     --query thingArn)
 
 # find the certificate arn the thing is attached to.
+echo Querying principal for Greengrass
 cert_agg_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_agg} \
                    --query principals[0])
 
+echo Querying principal for Amazon FreeRTOS
 cert_afr_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_afr} \
                    --query principals[0])
 
 # Check if the service role exists for the account.  If not, this must be
 # created.
+echo Checking if the service role for Greengrass has been attached.
 service_role_arn=$(aws greengrass get-service-role-for-account --output text \
                        --query RoleArn)
 
 if test -z ${service_role_arn}; then
-  echo Service role for AWS Greengrass not found. Creating.
+  echo Service role for AWS Greengrass for this region not found.  Locating.
+  service_role_arn=$(aws iam get-role --output text \
+                             --role-name GreengrassServiceRole \
+                             --query Role.Arn)
+  if test -z ${service_role_arn}; then
+    echo Service role not found.  Creating.
 
 cat <<EOF > ${d_agg_config}/agg-service-role.json
 {
@@ -60,16 +70,22 @@ cat <<EOF > ${d_agg_config}/agg-service-role.json
 }
 EOF
 
-  agg_sr_arn=$(aws iam create-role --output text \
-                   --path /service-role/ \
-                   --role-name GreengrassServiceRole \
-                   --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
-                   --query Role.Arn)
+    echo Creating the service role.
+    agg_sr_arn=$(aws iam create-role --output text \
+                     --path /service-role/ \
+                     --role-name GreengrassServiceRole \
+                     --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
+                     --query Role.Arn)
 
-  aws greengrass associate-service-role-to-account \
-      --role-arn ${agg_sr_arn}
+    #TODO IT LOOKS LIKE WE ARE MISSING POLICY ATTACHMENT HERE!
+    
+    aws greengrass associate-service-role-to-account \
+        --role-arn ${agg_sr_arn}
+  else
+    aws greengrass associate-service-role-to-account \
+        --role-arn ${service_role_arn}
+  fi
 fi
-
 # Create the role for the Greengrass group.  This enables TES for the S3 bucket
 # so we can copy the images to the cloud and download bitstream from the cloud.
 role_agg_name=role-greengrass-group-${thing_agg}
