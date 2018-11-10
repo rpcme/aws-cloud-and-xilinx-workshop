@@ -78,7 +78,7 @@ EOF
                      --query Role.Arn)
 
     #TODO IT LOOKS LIKE WE ARE MISSING POLICY ATTACHMENT HERE!
-    
+
     aws greengrass associate-service-role-to-account \
         --role-arn ${agg_sr_arn}
   else
@@ -229,108 +229,7 @@ if test ! -d /home/xilinx/bitstream; then mkdir -p /home/xilinx/bitstream; fi
 
 cat <<EOF > ${d_agg_config}/resource-definition-init.json
 {
-  "Resources": [
-    {
-      "Id": "${thing_afr}-i2c-0",
-      "Name": "i2c-0",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/i2c-0"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-i2c-1",
-      "Name": "i2c-1",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/i2c-1"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-uio0",
-      "Name": "uio0",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/uio0"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-mem",
-      "Name": "mem",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/mem"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-lib-firmware",
-      "Name": "lib-firmware",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/lib/firmware",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/lib/firmware"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx",
-      "Name": "home-xilinx",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx-bitstream",
-      "Name": "home-xilinx-bitstream",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx/bitstream",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx/bitstream"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx-out",
-      "Name": "home-xilinx-bitstream",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx/out",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx/out"
-        }
-      }
-    }
-  ]
+  "Resources": []
 }
 EOF
 
