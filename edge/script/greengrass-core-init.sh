@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 s3_bucket=$1
 prefix=$2
