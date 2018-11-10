@@ -20,11 +20,11 @@ d_agg_config=$(dirname $0)/../ggc-config
 if test ! -d ${d_agg_config}; then mkdir ${d_agg_config}; fi
 
 # find the thing arn
-thing_agg_arn=$(aws iot describe-thing        \
+thing_agg_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_agg} \
                     --query thingArn)
 
-thing_afr_arn=$(aws iot describe-thing        \
+thing_afr_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_afr} \
                     --query thingArn)
 
@@ -39,7 +39,7 @@ cert_afr_arn=$(aws iot list-thing-principals --output text \
 
 # Check if the service role exists for the account.  If not, this must be
 # created.
-service_role_arn=$(aws greengrass get-service-role-for-account \
+service_role_arn=$(aws greengrass get-service-role-for-account --output text \
                        --query RoleArn)
 
 if test -z ${service_role_arn}; then
@@ -60,7 +60,7 @@ cat <<EOF > ${d_agg_config}/agg-service-role.json
 }
 EOF
 
-  agg_sr_arn=$(aws iam create-role \
+  agg_sr_arn=$(aws iam create-role --output text \
                    --path /service-role/ \
                    --role-name GreengrassServiceRole \
                    --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
@@ -78,7 +78,7 @@ role_policy_agg_name=role-greengrass-group-${thing_agg}-policy
 my_region=$(echo ${thing_agg_arn} | cut -f4 -d':')
 my_account=$(echo ${thing_agg_arn} | cut -f5 -d':')
 
-agg_role=$(aws iam get-role --role-name ${role_agg_name} --query Role.Arn)
+agg_role=$(aws iam get-role --output text --role-name ${role_agg_name} --query Role.Arn)
 
 if test $? != 0; then
 cat <<EOF > ${d_agg_config}/core-role-trust.json
@@ -132,7 +132,7 @@ cat <<EOF > ${d_agg_config}/core-definition-init.json
 EOF
 
 echo Creating the core definition.
-core_v_arn=$(aws greengrass create-core-definition                           \
+core_v_arn=$(aws greengrass create-core-definition --output text             \
                  --name ${thing_agg}-core                                    \
                  --initial-version file://${d_agg_config}/core-definition-init.json \
                  --query LatestVersionArn)
@@ -160,7 +160,7 @@ cat <<EOF > ${d_agg_config}/device-definition-init.json
 EOF
 
 echo Creating the device definition.
-device_v_arn=$(aws greengrass create-device-definition                           \
+device_v_arn=$(aws greengrass create-device-definition --output text                          \
                  --name ${thing_agg}-device                                    \
                  --initial-version file://${d_agg_config}/device-definition-init.json \
                  --query LatestVersionArn)
@@ -195,7 +195,7 @@ cat <<EOF > ${d_agg_config}/logger-definition-init.json
 EOF
 
 echo Creating the logger definition.
-logger_v_arn=$(aws greengrass create-logger-definition \
+logger_v_arn=$(aws greengrass create-logger-definition --output text \
                    --name ${thing_agg}-logger \
                    --initial-version file://${d_agg_config}/logger-definition-init.json \
                    --query LatestVersionArn)
@@ -319,7 +319,7 @@ cat <<EOF > ${d_agg_config}/resource-definition-init.json
 EOF
 
 echo Creating the resource definition.
-resource_v_arn=$(aws greengrass create-resource-definition \
+resource_v_arn=$(aws greengrass create-resource-definition --output text \
                      --name ${thing_agg}-resource \
                      --initial-version file://${d_agg_config}/resource-definition-init.json \
                      --query LatestVersionArn)
@@ -389,7 +389,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
 EOF
 
 echo Creating the function definition.
-function_v_arn=$(aws greengrass create-function-definition \
+function_v_arn=$(aws greengrass create-function-definition --output text \
                      --name ${thing_agg}-function \
                      --initial-version file://${d_agg_config}/function-definition-init.json \
                      --query LatestVersionArn)
@@ -445,7 +445,7 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 EOF
 
 echo Creating the subscription definition.
-subscription_v_arn=$(aws greengrass create-subscription-definition \
+subscription_v_arn=$(aws greengrass create-subscription-definition --output text \
                          --name ${thing_agg}-subscription \
                          --initial-version file://${d_agg_config}/subscription-definition-init.json \
                          --query LatestVersionArn)
@@ -470,7 +470,7 @@ cat <<EOF > ${d_agg_config}/group-init.json
 EOF
 
 echo Creating the Greengrass group.
-group_v_arn=$(aws greengrass create-group \
+group_v_arn=$(aws greengrass create-group --output text \
                          --name ${thing_agg}-group \
                          --initial-version file://${d_agg_config}/group-init.json \
                          --query LatestVersionArn)
