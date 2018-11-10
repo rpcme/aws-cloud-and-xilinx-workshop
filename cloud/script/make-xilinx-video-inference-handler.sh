@@ -1,6 +1,6 @@
 #! /bin/sh
 
-function_name=xilinx-video-inference-handler
+function_name=$1
 role_name=lambdas-for-greengrass
 
 base=$(dirname $0)/../${function_name}
