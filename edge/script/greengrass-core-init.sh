@@ -347,32 +347,14 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "EncodingType": "json",
         "Environment": {
           "AccessSysfs": true,
-          "ResourceAccessPolicies": [
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-mem"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-i2c-0"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-i2c-1"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-uio0"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-lib-firmware"
-            }
-          ]
+          "ResourceAccessPolicies": []
+        },
+        "Execution": {
+          "IsolationMode": "NoContainer",
+          "RunAs": {
+            "Uid": 0,
+            "Gid": 0
+          }
         },
         "Executable": "python",
         "MemorySize": 1048576,
@@ -387,16 +369,14 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "EncodingType": "json",
         "Environment": {
           "AccessSysfs": true,
-          "ResourceAccessPolicies": [
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx-bitstream"
-            }
-          ]
+          "ResourceAccessPolicies": []
+        },
+        "Execution": {
+          "IsolationMode": "NoContainer",
+          "RunAs": {
+            "Uid": 0,
+            "Gid": 0
+          }
         },
         "Executable": "python",
         "MemorySize": 1048576,
