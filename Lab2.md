@@ -40,8 +40,22 @@ The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you dow
 The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
 
 1. Copy the private key and certificate to AWS Greengrass.
-2. Modify the AWS Greengrass configuration file so the Thing ARN attribute matches the provisioned Thing ARN.  In this workshop, this means modifying the AWS account number.
-3. Copy the configuration to AWS Greengrass.
+
+   ```bash
+   cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/*pem /greengrass/certs/
+   ```
+   
+2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation. 
+
+   ```bash
+   cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/config.json /greengrass/config/
+   ```
+
+3. Make the initial AWS Greengrass group configuration.  The group creation has been automated to reduce the amount of time required for this procedure.
+
+	```bash
+	cd $WORKSHOP_HOME/edge/script
+	
 4. Start AWS Greengrass.
 
 	```bash
