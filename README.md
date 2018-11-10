@@ -1,6 +1,5 @@
 # Workshop:  Integrate the AWS Cloud with Responsive Xilinx Machine Learning at the Edge
 
-
 In this workshop, learn how you can integrate Xilinx edge machine learning with massive scale AWS Cloud analytics, machine learning model building, and dashboards.  Based on an Oil & Gas scenario, you will learn how to combine AWS Cloud services with AWS Greengrass on Zynq Ultrascale+ and Amazon FreeRTOS on Xilinx Zynq-7000.  After this workshop, you will have a concrete understanding of Machine Learning applicability at the edge and its relationship with the AWS Cloud.
 
 # Lab 1: Setup the Environment
