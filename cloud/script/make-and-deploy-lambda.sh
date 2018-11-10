@@ -1,4 +1,5 @@
-#! /bin/sh
+#! /bin/bash
+set -x
 
 function_name=$1
 role_name=lambdas-for-greengrass
@@ -9,10 +10,10 @@ pushd ${base}
 zip -q -r ${zipfile} *
 popd
 
-function_arn=$(aws lambda get-function \
+function_arn=$(aws lambda get-function --output text \
                    --function-name ${function_name} \
                    --query Configuration.FunctionArn)
-role_arn=$(aws iam get-role \
+role_arn=$(aws iam get-role --output text \
                --role-name ${role_name} \
                --query Role.Arn)
 
@@ -35,10 +36,12 @@ cat <<EOF > /tmp/${role_name}-trust.json
   ]
 }
 EOF
-role_arn=$(aws iam create-role \
+
+role_arn=$(aws iam create-role --output text \
                --role-name ${role_name} \
                --assume-role-policy-document file:///tmp/${role_name}-trust.json \
                --query Role.Arn)
+
 cat <<EOF > /tmp/${role_name}-policy.json
 {
     "Version": "2012-10-17",
@@ -55,13 +58,14 @@ cat <<EOF > /tmp/${role_name}-policy.json
     ]
 }
 EOF
-aws iam put-role-policy                                                     \
+
+aws iam put-role-policy --output text                                                    \
     --role-name ${role_name}                                                \
     --policy-name ${role_name}-policy                                           \
     --policy-document file:///tmp/${role_name}-policy.json
   fi
 
-  function_version=$(aws lambda create-function \
+  function_version=$(aws lambda create-function --output text \
       --function-name ${function_name} \
       --zip-file fileb://${zipfile}  \
       --handler lambda_function.lambda_handler \
@@ -93,3 +97,4 @@ else
         --function-version ${function_version}
   fi
 fi
+
