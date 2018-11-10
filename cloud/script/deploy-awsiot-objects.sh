@@ -119,4 +119,31 @@ aws iot attach-principal-policy \
     --policy-name ${policy_afr} \
     --principal ${cert_arn_afr}
 
+
+echo Constructing the AWS Greengrass config.json for this deployment.
+my_region=$(echo ${thing_arn_agg} | cut -f4 -d:)
+my_iothost=$(aws iot describe-endpoint --output text)
+wget -O ${dc_agg}/rootca.pem \
+https://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem
+
+cat <<EOF > $dc_agg/config.json
+{
+    "coreThing": {
+        "caPath": "rootca.pem",
+        "certPath": "${thing_agg}.crt.pem",
+        "keyPath": "${thing_agg}.key.prv.pem",
+        "thingArn": "${thing_arn_agg}",
+        "iotHost": "${my_iothost}",
+        "ggHost": "greengrass.iot.${my_region}.amazonaws.com"
+    },
+    "runtime": {
+        "cgroup": {
+            "useSystemd": "no",
+            "allowFunctionsToRunAsRoot":"yes"
+        }
+    },
+    "managedRespawn": false
+}
+EOF
+
 echo Done!
