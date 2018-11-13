@@ -67,7 +67,7 @@ In this section, you will clone the workshop Git repository.  The Git repository
 
    ```bash
    git clone https://github.com/rpcme/aws-cloud-and-xilinx-workshop
-   export $WORKSHOP_HOME=$(pwd)/aws-cloud-and-xilinx-workshop
+   export WORKSHOP_HOME=$(pwd)/aws-cloud-and-xilinx-workshop
    cd $WORKSHOP_HOME
    ```
 You're done! Let's move to the next section.
