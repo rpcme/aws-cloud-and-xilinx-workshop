@@ -124,6 +124,8 @@ In this section, we will install and configure the AWS CLI.  The AWS CLI will be
    2. Your AWS Secret Access Key
    3. Default region name - use *us-east-1*
    4. Default output format - use *json*
+
+
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
 ### Deploy AWS Cloud Artifacts
