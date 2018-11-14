@@ -128,6 +128,8 @@ In this section, we will install and configure the AWS CLI.  The AWS CLI will be
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
+The following scripts will succeed if your IAM user has the *IAMFullAccess* policy attached with no permission boundaries. This is very broad, and narrower options might succeed.
+
 ### Deploy AWS Cloud Artifacts
 
 In this section, you will deploy AWS Cloud artifacts to your AWS account by using AWS Cloudformation.
