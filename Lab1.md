@@ -122,7 +122,7 @@ In this section, we will install and configure the AWS CLI.  The AWS CLI will be
    For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
    1. Your AWS Access Key ID
    2. Your AWS Secret Access Key
-   3. Default region name - use *us-east-1*
+   3. Default region name - use *eu-west-1*
    4. Default output format - use *json*
 
 
