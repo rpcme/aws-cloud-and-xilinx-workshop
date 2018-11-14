@@ -29,7 +29,10 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 1. Ensure that the microSD is plugged in.
 2. Plug in the 12V power supply to J5.
 3. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
-4. Connect one microUSB cable to J1 of the Ultra96 and the USB hub. This provides three services to your PC: a debug UART interface, a portable drive named 'PYNQ-USB' to navigate the Ultra96 file system, and an RNDIS ethernet interface.
+4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This provides three services to your PC:
+    1. A debug UART interface
+    2. A portable drive named 'PYNQ-USB' to navigate the Ultra96 file system
+    3. An RNDIS ethernet interface
 
 After the set-up the Ultra96 should look like the picture below.
 
@@ -63,9 +66,14 @@ Ensure you do not have VPN software running for this workshop.
 
 Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
 
-Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Run the command 'ip a' to see all ethernet interfaces. You should see:
-usb0 at 192.168.3.1/24
-eth0 at an address determined by an external DHCP server connected via the switch.
+Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
+
+Run the command 'ip a' to see all ethernet interfaces. You should see:
+1. usb0 at 192.168.3.1/24
+2. eth0 at an address determined by your DHCP server behind the switch
+3. Other interfaces will not be used in this workshop
+
+Now run 'ping -c 3 www.xilinx.com' to verify internet connectivity.
 
 The Windows RNDIS adapter should be at the address 192.168.3.105/24.
 
@@ -74,7 +82,7 @@ The Windows RNDIS adapter should be at the address 192.168.3.105/24.
 
 ### Prerequisites
 
-These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud.
+These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. Perform the following steps in the terminal emulator for the Ultra96.
 
 ### Clone Workshop Repository
 
@@ -105,7 +113,7 @@ In this section, we will install and configure the AWS CLI.  The AWS CLI will be
    sudo pip3 install awscli
    ```
 
-3. Configure the AWS CLI.
+3. Configure the AWS CLI. Accept the default options presented by hitting ENTER each time.
 
 	```bash
 	aws configure
