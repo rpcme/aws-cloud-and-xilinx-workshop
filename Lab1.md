@@ -113,14 +113,18 @@ In this section, we will install and configure the AWS CLI.  The AWS CLI will be
    sudo pip3 install awscli
    ```
 
-3. Configure the AWS CLI. Accept the default options presented by hitting ENTER each time.
+2. Configure the AWS CLI. Accept the default options presented by hitting ENTER each time.
 
 	```bash
 	aws configure
 	```
 
-   For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page.
-
+   For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
+   1. Your AWS Access Key ID
+   2. Your AWS Secret Access Key
+   3. Default region name - use *us-east-1*
+   4. Default output format - use *json*
+Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
 ### Deploy AWS Cloud Artifacts
 
