@@ -39,7 +39,7 @@ These are the steps to build the MicroZed code for the workshop:
 
 	Click Finish.
 	
-9. Edit the file "aws_demos/src/application_code/common_demos/inclued/aws_credential.h" and edit the initializations based on your AWS account:
+9. Edit the file "aws_demos/src/application_code/common_demos/inclued/aws_clientcredential.h" and edit the initializations based on your AWS account:
     - clientcredentialMQTT_BROKER_ENDPOINT
     - clientcredentialIOT_THING_NAME
 
