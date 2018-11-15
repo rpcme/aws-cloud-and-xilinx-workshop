@@ -27,7 +27,7 @@ These are the steps to build the MicroZed code for the workshop:
 
 8. Import pre-defined projects into workspace – the root directory should be ```AFR_HOME```.
 
-   File -> Import... -> General -> Existing Projects into Workspace -> Next -> Select Root Directory
+   File -> Import... -> General -> Existing Projects into Workspace -> Next -> Select Root Directory -> Browse...
    DOUBLE CHECK THE ROOT DIRECTORY AFTER SETTING IT AS IT MAY END UP SELECTING A SUBDIRECTORY. MANUALLY EDIT IF NECESSARY.
    Make sure to select all projects except 'aws_tests' which is not used in this workshop.
    
