@@ -13,7 +13,7 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
-	./deploy-awsiot.sh
+	./deploy-awsiot-objects.sh
 	```
 
 When the script completes, the keys and certificates will be in the directories specified above.
@@ -37,7 +37,8 @@ The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you dow
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
-The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
+The Ultra96 runs Linux and AWS Greengrass. Use the following steps to prepare the credentials for your Ultra96 board,
+so that your Ultra96 can be used as a greengrass core.
 
 1. Copy the private key and certificate to AWS Greengrass.
 
@@ -55,12 +56,14 @@ The Ultra96 runs Linux and AWS Greengrass.  You will copy the credentials you do
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
+	```
 	
-4. Start AWS Greengrass.
+4. Start AWS Greengrass. The following step has to be run each time you reboot the Ultra96.
 
 	```bash
 	/greengrass/ggc/core/greengrassd start
 	```
+
 5. Perform the initial deployment of AWS Greengrass.
 6. Copy the "hello world" Lambda function from Git at XYZ.  It will be wrapped as a zip file labeled hello_world_python_lambda.zip.
 7. Upload the function to the AWS Lambda in the AWS Console.  Ensure that the "Handler" is defined as greengrassHelloWorld.function_handler.

@@ -10,7 +10,8 @@ bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
              --create-bucket-configuration '{ "LocationConstraint": "us-west-2" }' \
              --bucket "${bucket_name}" \
-             --query Location)
+             --query Location \
+             --create-bucket-configuration LocationConstraint=eu-west-1)
 
 my_ip=$(curl ifconfig.co)
 
