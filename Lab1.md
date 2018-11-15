@@ -109,9 +109,9 @@ In this section, we will configure the AWS CLI. The AWS CLI has already been ins
 
 Accept the default options presented by hitting ENTER each time.
 
-	```bash
-	aws configure
-	```
+```bash
+aws configure
+```
 
 For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
 1. Your AWS Access Key ID
