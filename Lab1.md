@@ -105,25 +105,19 @@ You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will install and configure the AWS CLI.  The AWS CLI will be installed using the ```pip3``` utility.
+In this section, we will configure the AWS CLI. The AWS CLI has already been installed for you.
 
-1. Install the AWS CLI.
-
-   ```bash
-   sudo pip3 install awscli
-   ```
-
-2. Configure the AWS CLI. Accept the default options presented by hitting ENTER each time.
+Accept the default options presented by hitting ENTER each time.
 
 	```bash
 	aws configure
 	```
 
-   For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
-   1. Your AWS Access Key ID
-   2. Your AWS Secret Access Key
-   3. Default region name - use *eu-west-1*
-   4. Default output format - use *json*
+For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
+1. Your AWS Access Key ID
+2. Your AWS Secret Access Key
+3. Default region name - use *eu-west-1*
+4. Default output format - use *json*
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
@@ -142,17 +136,12 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-cloud-handlers.sh
+	./deploy-s3-objects.sh test1
 	```
 
-Need to add this:
+The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-```bash
-sudo apt-get install -y dnsutils
-dig TXT +short o-o.myaddr.l.google.com @ns1.google.com | awk -F'"' '{ print $2}'
-```
-
-The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment id to check the status of the deployment. 
+The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets.
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
