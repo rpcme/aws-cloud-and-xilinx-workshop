@@ -137,10 +137,10 @@ cat <<EOF > $dc_agg/config.json
         "ggHost": "greengrass.iot.${my_region}.amazonaws.com"
     },
     "runtime": {
-        "cgroup": {
-            "useSystemd": "no",
-            "allowFunctionsToRunAsRoot":"yes"
-        }
+      "allowFunctionsToRunAsRoot":"yes",
+      "cgroup": {
+        "useSystemd": "no",
+      }
     },
     "managedRespawn": false
 }
