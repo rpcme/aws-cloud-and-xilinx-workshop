@@ -96,6 +96,7 @@ void vTrustXInitCallback( TimerHandle_t xTimer )
 void vTrustXTaskCallbackHandler( void * pvParameters )
 {
 //	optiga_lib_status_t status = OPTIGA_LIB_ERROR;
+    ProvisioningParams_t xParams;
 
 	if ( xSemaphoreTake(xTrustXSemaphoreHandle, xTrustXSemaphoreWaitTicks) == pdTRUE )
 	{
@@ -106,8 +107,6 @@ void vTrustXTaskCallbackHandler( void * pvParameters )
 //		status = example_authenticate_chip();
 
 		read_ifx_cert();
-
-	    ProvisioningParams_t xParams;
 
 	    xParams.ulClientPrivateKeyType = CKK_EC;
 	    xParams.pcClientPrivateKey = ( uint8_t * ) CLIENT_PRIVATE_KEY_PEM;
