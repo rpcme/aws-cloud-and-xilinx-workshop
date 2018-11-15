@@ -42,6 +42,8 @@ These are the steps to build the MicroZed code for the workshop:
 9. Edit the file "aws_demos/src/application_code/common_demos/inclued/aws_clientcredential.h" and edit the initializations based on your AWS account:
     - clientcredentialMQTT_BROKER_ENDPOINT
     - clientcredentialIOT_THING_NAME
+
+
 Remember to save the file when you are done
 
 10. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings
