@@ -72,7 +72,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
-	./greengrass-core-init.sh test1-aws-cloud-and-xilinx-workshop
+	./greengrass-core-init.sh s3-aws-cloud-and-xilinx-workshop
 	```
 
 4. Start AWS Greengrass.
@@ -80,7 +80,7 @@ so that your Ultra96 can be used as a greengrass core.
 	Run these commands in the Ultra96 terminal window.
 
 	```bash
-	/greengrass/ggc/core/greengrassd start
+	sudo /greengrass/ggc/core/greengrassd start
 	```
 
 5. Perform the initial deployment of AWS Greengrass.
