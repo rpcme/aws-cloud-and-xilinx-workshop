@@ -171,13 +171,14 @@ int main( void )
                             tskIDLE_PRIORITY,
                             mainLOGGING_MESSAGE_QUEUE_LENGTH );
 
-    /* FreeRTOS TCP IP initialization function */
-    FreeRTOS_IPInit( ucIPAddress,
-                     ucNetMask,
-                     ucGatewayAddress,
-                     ucDNSServerAddress,
-                     ucMACAddress );
+//    /* FreeRTOS TCP IP initialization function */
+//    FreeRTOS_IPInit( ucIPAddress,
+//                     ucNetMask,
+//                     ucGatewayAddress,
+//                     ucDNSServerAddress,
+//                     ucMACAddress );
 
+    /* OPTIGA(TM) Trust X initialization function */
     TRUSTX_Init();
 
     /* Start the scheduler.  Initialization that requires the OS to be running,
