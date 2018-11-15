@@ -88,7 +88,7 @@ so that your Ultra96 can be used as a greengrass core.
 	Run these commands in the Ultra96 terminal window.
 
 	```bash
-	cd $WORKSHOP_HOME/edge/script
+	cd $WORKSHOP_HOME/cloud/script
 	./greengrass-core-deploy.sh
 	```
 
