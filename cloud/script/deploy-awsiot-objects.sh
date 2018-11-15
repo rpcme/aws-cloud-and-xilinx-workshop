@@ -139,7 +139,7 @@ cat <<EOF > $dc_agg/config.json
     "runtime": {
       "allowFunctionsToRunAsRoot":"yes",
       "cgroup": {
-        "useSystemd": "no",
+        "useSystemd": "no"
       }
     },
     "managedRespawn": false
