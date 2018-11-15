@@ -16,11 +16,12 @@ group_info_version=$(echo $group_info_raw | tr -s ' ' ' ' | cut -f2 -d ' ')
 echo "deploying id      [$group_info_id]"
 echo "          version [$group_info_version]"
 
-deployment_id=$(aws greengrass create-deployment \
+deployment_id_raw=$(aws greengrass create-deployment \
                     --deployment-type NewDeployment \
                     --group-id ${group_info_id} \
                     --group-version ${group_info_version} \
                     --query DeploymentId)
+deployment_id=$(echo $deployment_id_raw | cut -d'"' -f 2)
 
 deployment_status=InProgress
 
