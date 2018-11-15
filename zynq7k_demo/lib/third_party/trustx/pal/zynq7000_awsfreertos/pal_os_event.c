@@ -59,8 +59,9 @@ typedef struct callbacks {
 
 static pal_os_event_clbs_t clb_ctx_0;
 
-SemaphoreHandle_t xSemaphore = NULL;
-TimerHandle_t     xTimer = NULL;
+static TaskHandle_t xTaskToNotify = NULL;
+TimerHandle_t       xTimer = NULL;
+TaskHandle_t        xEventTaskHandle = NULL;
 
 /**
 *  Timer callback handler. 
@@ -76,12 +77,12 @@ void vTimerCallback( TimerHandle_t xTimer )
  {
     /* Optionally do something if the pxTimer parameter is NULL. */
     configASSERT( xTimer );
+    configASSERT( xTaskToNotify );
 
-    /*
-     * You can't call callback from the timer callback, this might lead to a corruption
-     * Use a semaphore instead
-     * */
-    xSemaphoreGive( xSemaphore );
+    /* Notify the task that the transmission is complete. */
+    xTaskNotifyGive( xTaskToNotify );
+
+    portEXIT_CRITICAL();
 }
 
 /// @endcond
@@ -95,15 +96,19 @@ void vTaskCallbackHandler( void * pvParameters )
 	portMAX_DELAY works only if INCLUDE_vTaskSuspend id define to 1
 	*/
 	do {
-		if( xSemaphoreTake( xSemaphore, ( TickType_t ) portMAX_DELAY ) == pdTRUE )
-        {
-			if (clb_ctx_0.func)
-			{
-				func = clb_ctx_0.func;
-				func_args = clb_ctx_0.args;
-				func((void*)func_args);
-			}
+		/* Wait to be notified that the event timer is expired.  Note the first
+		    parameter is pdTRUE, which has the effect of clearing the task's notification
+		    value back to 0, making the notification value act like a binary (rather than
+		    a counting) semaphore.  */
+		ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+
+		if (clb_ctx_0.func)
+		{
+			func = clb_ctx_0.func;
+			func_args = clb_ctx_0.args;
+			func((void*)func_args);
 		}
+
 	} while(1);
 }
 
@@ -123,25 +128,18 @@ pal_status_t pal_os_event_init(void)
 	BaseType_t xReturned;
 
 	do {
-		/* Create a semaphore and take it now */
-		xSemaphore = xSemaphoreCreateMutex();
-		if( xSemaphore == NULL )
-		{
-			break;
-		}
-		xSemaphoreTake( xSemaphore, ( TickType_t ) 10 );
-
 		/* Create the handler for the callbacks. */
 		xReturned = xTaskCreate( vTaskCallbackHandler,       /* Function that implements the task. */
-								"otx_os_tsk",                /* Text name for the task. */
+								"EvntTsk",                /* Text name for the task. */
 								configMINIMAL_STACK_SIZE*5,  /* Stack size in words, not bytes. */
-								NULL,        /* Parameter passed into the task. */
-								5,           /* Priority at which the task is created. */
-								NULL );      /* Used to pass out the created task's handle. */
+								NULL,        				/* Parameter passed into the task. */
+								tskIDLE_PRIORITY,           /* Priority at which the task is created. */
+								&xEventTaskHandle );      /* Used to pass out the created task's handle. */
 		if( xReturned != pdPASS  )
 		{
 			break;
 		}
+	    xTaskToNotify = xEventTaskHandle;
 
 		xTimer = xTimerCreate("otx_os_tmr",        /* Just a text name, not used by the kernel. */
 							  1 / portTICK_PERIOD_MS,    /* The timer period in ticks. */
