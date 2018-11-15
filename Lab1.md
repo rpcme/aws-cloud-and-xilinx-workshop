@@ -106,13 +106,6 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 	./deploy-cloud-handlers.sh
 	```
 
-Need to add this:
-
-```bash
-sudo apt-get install -y dnsutils
-dig TXT +short o-o.myaddr.l.google.com @ns1.google.com | awk -F'"' '{ print $2}'
-```
-
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment id to check the status of the deployment. 
 
 ## Outcomes
