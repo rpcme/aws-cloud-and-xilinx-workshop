@@ -314,7 +314,7 @@ if test $? != 0; then
   echo Exiting.
   exit 1
 fi
-
+˜
 # Create the subscription definition
 cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 {
