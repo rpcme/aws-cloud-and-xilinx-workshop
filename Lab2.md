@@ -14,22 +14,23 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
-	./deploy-cf-objects.sh
+	./deploy-awsiot-objects.sh
 	```
 
 When the script completes, the keys and certificates will be in the directories specified above.
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
-The Ultra96 device runs Linux and AWS Greengrass.  You will copy the credentials you download from the IoT console to the Ultra96 SD Card with TBD file name(s) into TBD directory. These credentials will link the device to your account which we will then use to deploy a simple "Hello world" Lambda function and subscribe to the associated MQTT message from the platform.
+The Ultra96 runs Linux and AWS Greengrass. Use the following steps to prepare the credentials for your Ultra96 board,
+so that your Ultra96 can be used as a greengrass core.
 
 1. Copy the private key and certificate to AWS Greengrass.
 
    ```bash
    cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/*pem /greengrass/certs/
    ```
-   
-2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation. 
+
+2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation.
 
    ```bash
    cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/config.json /greengrass/config/
@@ -73,7 +74,7 @@ The Ultra96 device runs Linux and AWS Greengrass.  You will copy the credentials
 	cd $WORKSHOP_HOME/edge/script
 	./greengrass-core-init.sh
 	```
-	
+
 4. Start AWS Greengrass.
 
 	Run these commands in the Ultra96 terminal window.
@@ -85,7 +86,7 @@ The Ultra96 device runs Linux and AWS Greengrass.  You will copy the credentials
 5. Perform the initial deployment of AWS Greengrass.
 
 	Run these commands in the Ultra96 terminal window.
-	
+
 	```bash
 	cd $WORKSHOP_HOME/edge/script
 	./greengrass-core-deploy.sh
@@ -121,4 +122,3 @@ In this lab we established basic "hello world" connectivity from an a:FreeRTOS I
 [Next Lab](./Lab3.md)
 
 [Index](./README.md)
-

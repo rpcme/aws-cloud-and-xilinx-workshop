@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 s3_bucket=$1
 prefix=$2
@@ -254,6 +254,11 @@ xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:fun
 # Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
 {
+  "DefaultConfig":{
+    "Execution": {
+      "IsolationMode":"NoContainer"
+    }
+  },
   "Functions": [
     {
       "Id": "xilinx_video_inference_handler",
@@ -261,18 +266,16 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Environment": {
-          "AccessSysfs": true,
-          "ResourceAccessPolicies": []
-        },
-        "Execution": {
-          "IsolationMode": "NoContainer",
-          "RunAs": {
-            "Uid": 0,
-            "Gid": 0
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
           }
         },
         "Executable": "python",
-        "MemorySize": 1048576,
         "Pinned": true,
         "Timeout": 500
       }
@@ -283,18 +286,16 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Environment": {
-          "AccessSysfs": true,
-          "ResourceAccessPolicies": []
-        },
-        "Execution": {
-          "IsolationMode": "NoContainer",
-          "RunAs": {
-            "Uid": 0,
-            "Gid": 0
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
           }
         },
         "Executable": "python",
-        "MemorySize": 1048576,
         "Pinned": false,
         "Timeout": 500
       }
@@ -304,7 +305,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
 EOF
 
 echo Creating the function definition.
-function_v_arn=$(aws greengrass create-function-definition --output text \
+function_v_arn=$(aws greengrass-pp create-function-definition --output text \
                      --name ${thing_agg}-function \
                      --initial-version file://${d_agg_config}/function-definition-init.json \
                      --query LatestVersionArn)

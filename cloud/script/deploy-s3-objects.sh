@@ -9,7 +9,8 @@ bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
              --bucket "${bucket_name}" \
-             --query Location)
+             --query Location \
+             --create-bucket-configuration LocationConstraint=eu-west-1)
 
 my_ip=$(curl ifconfig.co)
 

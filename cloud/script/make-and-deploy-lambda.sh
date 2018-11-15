@@ -1,5 +1,4 @@
 #! /bin/bash
-set -x
 
 function_name=$1
 role_name=lambdas-for-greengrass
