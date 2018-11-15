@@ -13,7 +13,7 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
-	./deploy-awsiot.sh
+	./deploy-awsiot-objects.sh
 	```
 
 When the script completes, the keys and certificates will be in the directories specified above.
