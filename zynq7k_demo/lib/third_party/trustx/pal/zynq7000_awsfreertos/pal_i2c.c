@@ -145,20 +145,41 @@ void invoke_upper_layer_callback (const pal_i2c_t* p_pal_i2c_ctx, host_lib_statu
  */
 pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
 {
-	int rc = XST_SUCCESS;
+	pal_status_t status = PAL_STATUS_FAILURE;
+	int xiic_status = XST_FAILURE;
 	XIic_Config *pConfig;
-	XIic* p_i2c = p_i2c_context->p_i2c_hw_config;
+	XIic* p_i2c = (XIic*)p_i2c_context->p_i2c_hw_config;
 
-	MAY_DIE({(pConfig = XIic_LookupConfig(XPAR_IIC_0_DEVICE_ID)) || (rc = XST_FAILURE);});
-	MAY_DIE({rc = XIic_CfgInitialize(p_i2c, pConfig,	pConfig->BaseAddress);});
-	MAY_DIE({rc = XIic_SetAddress(p_i2c, XII_ADDR_TO_SEND_TYPE, p_i2c_context->slave_address);});
+	do
+	{
+		pConfig = XIic_LookupConfig(XPAR_IIC_0_DEVICE_ID);
+		if (pConfig == NULL)
+		{
+			break;
+		}
 
-	XIic_IntrGlobalDisable(pConfig->BaseAddress);
+		xiic_status = XIic_CfgInitialize(p_i2c, pConfig, pConfig->BaseAddress);
+		if (xiic_status == XST_FAILURE)
+		{
+			break;
+		}
 
-	MAY_DIE({rc = XIic_Start(p_i2c);});
+		xiic_status = XIic_SetAddress(p_i2c, XII_ADDR_TO_SEND_TYPE, p_i2c_context->slave_address);
+		if (xiic_status == XST_FAILURE)
+		{
+			break;
+		}
 
-L_DIE:
-    return rc==XST_SUCCESS?PAL_STATUS_SUCCESS:PAL_STATUS_FAILURE;
+		XIic_IntrGlobalDisable(pConfig->BaseAddress);
+
+		xiic_status =  XIic_Start(p_i2c);
+		if (xiic_status == XST_FAILURE)
+		{
+			break;
+		}
+	}while(1);
+
+	return status;
 }
 
 /**
