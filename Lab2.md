@@ -27,13 +27,13 @@ so that your Ultra96 can be used as a greengrass core.
 1. Copy the private key and certificate to AWS Greengrass.
 
    ```bash
-   cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/*pem /greengrass/certs/
+   sudo cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/*pem /greengrass/certs/
    ```
 
 2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation.
 
    ```bash
-   cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/config.json /greengrass/config/
+   sudo cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/config.json /greengrass/config/
    ```
 
 6. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
