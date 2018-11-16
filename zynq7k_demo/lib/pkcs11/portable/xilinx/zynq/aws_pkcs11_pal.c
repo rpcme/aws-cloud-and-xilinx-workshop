@@ -1,29 +1,28 @@
-/******************************************************************************
-*
-* Copyright (C) 2018 Xilinx, Inc.  All rights reserved.
-*
-* Amazon FreeRTOS PKCS#11 for Xilinx Zynq Microzed V1.0.0
-* Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-* XILINX BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
-* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*
-******************************************************************************/
+/*
+ * Copyright (C) 2018 Xilinx, Inc.
+ * Amazon FreeRTOS PKCS#11 for Xilinx Zynq Microzed V1.0.0
+ * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * http://aws.amazon.com/freertos
+ * http://www.FreeRTOS.org
+ */
 
 /**
  * @file aws_pkcs11_pal.c
@@ -43,48 +42,7 @@
 #include "ff.h"
 #include "xil_printf.h"
 #include "task.h"
-#include "mbedtls/aes.h"
 
-
-static const unsigned char aes_iv_pkcs11[16] =
-{
-    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-};
-
-static const unsigned char aes_key_pkcs11[32] =
-{
-		0x60, 0x3D, 0xEB, 0x10, 0x15, 0xCA, 0x71, 0xBE,
-		0x2B, 0x73, 0xAE, 0xF0, 0x85, 0x7D, 0x77, 0x81,
-		0x1F, 0x35, 0x2C, 0x07, 0x3B, 0x61, 0x08, 0xD7,
-		0x2D, 0x98, 0x10, 0xA3, 0x09, 0x14, 0xDF, 0xF4
-};
-
-#define AES_KEYBITS	(32*8)
-
-
-int file_aes_helper(uint8_t *input, uint8_t *output, int mode, uint32_t len)
-{
-	mbedtls_aes_context ctx;
-	int ret = 0;
-	uint32_t offset = 0;
-	unsigned char iv[16];
-
-    memcpy( iv,  aes_iv_pkcs11, 16 );
-
-	mbedtls_aes_init( &ctx );
-	ret = mbedtls_aes_setkey_enc( &ctx, aes_key_pkcs11, AES_KEYBITS );
-    if( ret != 0 )
-        goto exit;
-
-    ret = mbedtls_aes_crypt_cfb128( &ctx, mode, len, &offset, iv, input, output );
-    if( ret != 0 )
-        goto exit;
-
-exit:
-    mbedtls_aes_free( &ctx );
-    return( ret );
-}
 
 /**
  * @brief Writes a file to local storage.
@@ -106,7 +64,6 @@ BaseType_t PKCS11_PAL_SaveFile( char * pcFileName,
 	static FIL fil;
 	FRESULT Res;
 	uint32_t n;
-	uint8_t *aesbuf;
 
 	if ((strncmp(pcFileName, pkcs11configFILE_NAME_CLIENT_CERTIFICATE, strlen(pkcs11configFILE_NAME_CLIENT_CERTIFICATE)) != 0) &&
 		(strncmp(pcFileName, pkcs11configFILE_NAME_KEY, strlen(pkcs11configFILE_NAME_KEY)) != 0)) {
@@ -122,26 +79,14 @@ BaseType_t PKCS11_PAL_SaveFile( char * pcFileName,
 		return pdFALSE;
 	}
 
-	aesbuf = pvPortMalloc(ulDataSize);
-	Res = file_aes_helper(pucData, aesbuf, MBEDTLS_AES_ENCRYPT, ulDataSize);
-	if (Res != 0) {
-		f_close(&fil);
-		vPortFree(aesbuf);
-		taskEXIT_CRITICAL();
-		xil_printf("PKCS11_PAL_SaveFile ERROR: Encryption of file %s failed  Res %d\r\n", pcFileName, Res);
-		return pdFALSE;
-	}
-
-	Res = f_write(&fil, aesbuf, ulDataSize, &n);
+	Res = f_write(&fil, pucData, ulDataSize, &n);
 	if ((n < ulDataSize) || (Res != 0)) {
 		f_close(&fil);
-		vPortFree(aesbuf);
 		taskEXIT_CRITICAL();
 		xil_printf("PKCS11_PAL_SaveFile ERROR: Write to file %s failed  Res %d\r\n", pcFileName, Res);
 		return pdFALSE;
 	}
 	f_close(&fil);
-	vPortFree(aesbuf);
 	taskEXIT_CRITICAL();
 
 	return pdTRUE;
@@ -202,16 +147,6 @@ BaseType_t PKCS11_PAL_ReadFile( char * pcFileName,
 		return pdFALSE;
 	}
 	buf[n-1] = 0;
-
-	Res = file_aes_helper(buf, buf, MBEDTLS_AES_DECRYPT, *pulDataSize);
-	if (Res != 0) {
-		f_close(&fil);
-		vPortFree(buf);
-		taskEXIT_CRITICAL();
-		xil_printf("PKCS11_PAL_ReadFile ERROR: Decryption of file %s failed  Res %d\r\n", pcFileName, Res);
-		return pdFALSE;
-	}
-
 	*ppucData = buf;
 	f_close(&fil);
 	taskEXIT_CRITICAL();
