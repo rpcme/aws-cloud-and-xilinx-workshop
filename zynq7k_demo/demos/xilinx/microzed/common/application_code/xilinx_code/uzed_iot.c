@@ -989,10 +989,10 @@ static void SampleBarometer(System* pSystem)
 	}
 	f = (float)sqTmp / 4096.0F;
 	prvPublishTopic(pSystem, TOPIC_BAROMETER_PRESSURE, "%.2f hPa", f);
-	configPRINTF(("pbBuf[1]= %0x \n", pbBuf[1]));
-	configPRINTF(("pbBuf[2]= %0x \n", pbBuf[2]));
-	configPRINTF(("pbBuf[3]= %0x \n", pbBuf[3]));
-	configPRINTF(("sqTmp=%ld \n", sqTmp));
+	configPRINTF(("pbBuf[1]= %0x \r\n", pbBuf[1]));
+	configPRINTF(("pbBuf[2]= %0x \r\n", pbBuf[2]));
+	configPRINTF(("pbBuf[3]= %0x \r\n", pbBuf[3]));
+	configPRINTF(("sqTmp=%ld \r\n", sqTmp));
 
 	sqTmp = 0
 			| ((u32)pbBuf[4] << 0)	// l
@@ -1003,9 +1003,9 @@ static void SampleBarometer(System* pSystem)
 	}
 	f = (float)sqTmp/100.0;
 	prvPublishTopic(pSystem, TOPIC_BAROMETER_TEMPERATURE, "%.2f C", f);
-	configPRINTF(("pbBuf[4]= %0x \n", pbBuf[4]));
-	configPRINTF(("pbBuf[5]= %0x \n", pbBuf[5]));
-	configPRINTF(("sqTmp= %ld \n", sqTmp));
+	configPRINTF(("pbBuf[4]= %0x \r\n", pbBuf[4]));
+	configPRINTF(("pbBuf[5]= %0x \r\n", pbBuf[5]));
+	configPRINTF(("sqTmp= %ld \r\n", sqTmp));
 
 L_DIE:
 	return;
@@ -1065,7 +1065,7 @@ static void StartHygrometer(System* pSystem)
 
 
 	for(count=0; count<16; count++)
-		configPRINTF(("pbHygrometerCalibration[%u]=%u\n", count, pSystem->pbHygrometerCalibration[count]));  
+		configPRINTF(("pbHygrometerCalibration[%u]=%u\r\n", count, pSystem->pbHygrometerCalibration[count]));  
 
 
 	/*
@@ -1170,8 +1170,8 @@ static void SampleHygrometer(System* pSystem)
 	H0_rh = buffer[0]>>1;
 	H1_rh = buffer[1]>>1;
 
-	configPRINTF(("HYGROMETER H0_rh=%d \n", H0_rh));
-	configPRINTF(("HYGROMETER H1_rh=%d \n", H1_rh));
+	configPRINTF(("HYGROMETER H0_rh=%d \r\n", H0_rh));
+	configPRINTF(("HYGROMETER H1_rh=%d \r\n", H1_rh));
 
 
 	buffer[0]=0; buffer[1]=0;
@@ -1187,12 +1187,12 @@ static void SampleHygrometer(System* pSystem)
 	});
 
 
-	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_LSB = %x \n", buffer[0]));
-	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_MSB = %x \n", buffer[1]));
+	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_LSB = %x \r\n", buffer[0]));
+	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_MSB = %x \r\n", buffer[1]));
 
 
 	H0_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
-	configPRINTF(("HYGROMETER H0_T0_out = %d \n", H0_T0_out));
+	configPRINTF(("HYGROMETER H0_T0_out = %d \r\n", H0_T0_out));
 
 
 	buffer[0]=0; buffer[1]=0;
@@ -1207,11 +1207,11 @@ static void SampleHygrometer(System* pSystem)
 		pSystem->pcErr = "HYGROMETER_REG_H1_T0_OUT_MSB -> %08x";
 	});
 
-	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_LSB = %x \n", buffer[0]));
-	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_MSB = %x \n", buffer[1]));
+	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_LSB = %x \r\n", buffer[0]));
+	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_MSB = %x \r\n", buffer[1]));
 
 	H1_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
-	configPRINTF(("HYGROMETER H1_T0_out = %d \n", H1_T0_out));
+	configPRINTF(("HYGROMETER H1_T0_out = %d \r\n", H1_T0_out));
 
 
 	buffer[0]=0; buffer[1]=0;
@@ -1228,14 +1228,14 @@ static void SampleHygrometer(System* pSystem)
 
 
 	H_T_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
-	configPRINTF(( "HYGROMETER H_T_out = %d \n", H_T_out));
+	configPRINTF(( "HYGROMETER H_T_out = %d \r\n", H_T_out));
 
 	/*5. Compute the RH [%] value by linear interpolation */
 	value=0;
 	tmp = ((int)(H_T_out - H0_T0_out)) * ((int)(H1_rh - H0_rh));
 	value = (u16) ((tmp/(H1_T0_out - H0_T0_out))+ H0_rh) ;
 
-	configPRINTF(("HYGROMETER value =  %u \n", value));
+	configPRINTF(("HYGROMETER value =  %u \r\n", value));
 
 	/* Saturation condition*/
 	if(value>1000) value = 1000;
@@ -1262,8 +1262,8 @@ static void SampleHygrometer(System* pSystem)
         pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T1_degC_x8)  -> %08x";
 	});
 
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_degC_x8 = %u \n", buff2[0]));
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_degC_x8 = %u \n", buff2[1]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_degC_x8 = %u \r\n", buff2[0]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_degC_x8 = %u \r\n", buff2[1]));
 
 
 	/*2. Read from 0x35 register the value of the MSB bits of T1_degC and T0_degC */
@@ -1278,8 +1278,8 @@ static void SampleHygrometer(System* pSystem)
 	T0_degC = T0_degC_x8_u16>>3;
 	T1_degC = T1_degC_x8_u16>>3;
 	
-	configPRINTF(("HYGROMETER  T0_degC = %d \n",  T0_degC));
-	configPRINTF(("HYGROMETER  T1_degC = %d \n",  T1_degC));
+	configPRINTF(("HYGROMETER  T0_degC = %d \r\n",  T0_degC));
+	configPRINTF(("HYGROMETER  T1_degC = %d \r\n",  T1_degC));
 
 
 	/*3. Read from 0x3C & 0x3D registers the value of T0_OUT*/
@@ -1306,17 +1306,17 @@ static void SampleHygrometer(System* pSystem)
         pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x";
 	});
 
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_LSB = %u \n", buff2[0]));
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_MSB = %u \n", buff2[1]));
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_LSB = %u \n", buff2[2]));
-	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_MSB = %u \n", buff2[3]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_LSB = %u \r\n", buff2[0]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_MSB = %u \r\n", buff2[1]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_LSB = %u \r\n", buff2[2]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_MSB = %u \r\n", buff2[3]));
 
 
 	T0_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
 	T1_out = (((u16)buff2[3])<<8) | (u16)buff2[2];
 
-	configPRINTF(("HYGROMETER T0_out = %d \n", T0_out));
-	configPRINTF(("HYGROMETER T1_out = %d \n", T1_out));
+	configPRINTF(("HYGROMETER T0_out = %d \r\n", T0_out));
+	configPRINTF(("HYGROMETER T1_out = %d \r\n", T1_out));
 
 	/* 5.Read from 0x2A & 0x2B registers the value T_OUT (ADC_OUT).*/
 	buff2[0]=0; buff2[1]=0; buff2[2]=0; buff2[3]=0;
@@ -1331,7 +1331,7 @@ static void SampleHygrometer(System* pSystem)
 
 	T_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
 
-	configPRINTF(("HYGROMETER T_out = %d \n", T_out));
+	configPRINTF(("HYGROMETER T_out = %d \r\n", T_out));
 
 	/* 6. Compute the Temperature value by linear interpolation*/
 	value=0;
