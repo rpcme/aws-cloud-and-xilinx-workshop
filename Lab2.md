@@ -19,6 +19,14 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 
 When the script completes, the keys and certificates will be in the directories specified above.
 
+3. Using the RNDIS adapter of Ultra96, copy some files from the ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` directory to your laptop. In a psftp session, you would:
+    1. open xilinx@192.168.1.3  # Enter *xilinx* for password
+    2. lcd c:\temp
+    3. cd aws-cloud-and-xilinx-workshop/edge/auth-node-zynq7k
+    4. get node-zynq7k.crt.pem
+    5. get node-zynq7k.key.prv.pem
+    5. quit
+
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
 The Ultra96 runs Linux and AWS Greengrass. Use the following steps to prepare the credentials for your Ultra96 board,
@@ -99,13 +107,18 @@ so that your Ultra96 can be used as a greengrass core.
 
 ## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
 
-The MicroZed device runs Amazon FreeRTOS.  You will copy the credentials you download from the IoT console to the MicroZed SD Card with ```$WORKSHOP_HOME/edge/auth-node-zynq7k/gateway-ultra96.crt.pem``` and ```$WORKSHOP_HOME/edge/auth-node-zynq7k/gateway-ultra96.key.prv.pem``` files into **TBD** directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
+The MicroZed device runs Amazon FreeRTOS from a micro SD card. Your card contains a pre-built file 'BOOT.bin'. You need to add more files to this card to link your hardware to your IoT account.
+will copy the credentials files ```$WORKSHOP_HOME/edge/auth-node-zynq7k/node-zynq7k.crt.pem``` and ```$WORKSHOP_HOME/edge/auth-node-zynq7k/node-zynq7k.key.prv.pem``` into directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
 
 1. Power off the MiroZed board by unplugging the USB cables.
 2. Eject the SD Card.
-3. Copy the AWS credential files to TBD directory.  Ensure they have TBD file names.
+3. Move the SD card to your laptop. Note the drive letter.
+3. Copy the following files from C:\temp to the SD card, and eject it cleanly.
+    1. node-zynq7k.crt.pem
+    2. node-zynq7k.key.prv.pem
+    3. node-zynq7k.broker.txt
 4. Plug the microSD card into the MicroZed board and power the system.
-5. In the AWS IoT Console, navigate to the **Test** tool listed in the left column.
+5. In the AWS IoT Console for your region, navigate to the **Test** tool listed in the left column.
 6. Select "Publish to a topic" sub-menu and enter "freertos/demos/echo" and click the "Publish to topic". See picture below.
 
 	![alt text](images/AFR_HelloWorld_Test.png "a:FreeRTOS Publish Test")

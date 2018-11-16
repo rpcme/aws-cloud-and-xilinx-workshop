@@ -38,7 +38,7 @@ After the set-up the Ultra96 should look like the picture below.
 
 ![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
-### Power up your Devices
+### Power up your Hardware
 
 The MicroZed should power up automatically when you plug in the microUSB cable. Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
 The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated.
@@ -61,7 +61,10 @@ Ensure you have a serial port terminal emulator such as Putty installed. It can 
 #### RNDIS USB Ethernet Installation
 You should see an adapter in Control Panel\Network and Internet\Network Connections labeled 'RNDIS'. If you do not see it, you may need to enable RNDIS on your PC. See https://developer.toradex.com/knowledge-base/how-to-install-microsoft-rndis-driver-for-windows-7
 
-### Configuring and Deploying your Devices
+#### Install SFTP on your Laptop
+If you have installed Putty, its version of SFTP is called PSFTP. You can use this to transfer files between your laptop and the Ultra96 over the RNDIS adapter.
+
+### Configuring and Deploying your Hardware
 Ensure you do not have VPN software running for this workshop.
 
 Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
@@ -75,7 +78,7 @@ Run the command 'ip a' to see all ethernet interfaces. You should see:
 
 Now run 'ping -c 3 www.xilinx.com' to verify internet connectivity.
 
-The Windows RNDIS adapter should be at the address 192.168.3.105/24.
+The Windows RNDIS adapter should be at the address 192.168.3.105/24; ultra96 will be at 192.168.3.1
 
 ## AWS Cloud Setup
 
@@ -142,6 +145,16 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
 The above deployment will prepare an S3 bucket named `s3-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets.
+
+### Store your AWS IoT Endpoint address in a text file
+To find your endpoint address:
+1. Login to the AWS IoT console for the Region that you entered above when you ran 'aws configure'.
+2. Click on *Settings*
+3. Ensure your *Custom endpoint* is *Enabled*
+4. Copy to the clipboard the contents of the *EndPoint* box in the *Custom endpoint* section
+5. Create and open a text file on your laptop in *C:\temp* called *node-zynq7k.broker.txt*. 
+6. Paste your clipboard into this file and save it
+
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
