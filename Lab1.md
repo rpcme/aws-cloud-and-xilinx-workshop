@@ -68,12 +68,12 @@ Configure your terminal emulator to access the two COM ports by saving individua
 
 Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
 
-Run the command 'ip a' to see all ethernet interfaces. You should see:
+Run the command `ip a` to see all ethernet interfaces. You should see:
 1. usb0 at 192.168.3.1/24
 2. eth0 at an address determined by your DHCP server behind the switch
 3. Other interfaces will not be used in this workshop
 
-Now run 'ping -c 3 www.xilinx.com' to verify internet connectivity.
+Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
 The Windows RNDIS adapter should be at the address 192.168.3.105/24.
 
