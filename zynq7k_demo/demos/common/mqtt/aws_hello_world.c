@@ -212,12 +212,6 @@ static BaseType_t prvCreateClientAndConnectToBroker( void )
     /* Check this function has not already been executed. */
     configASSERT( xMQTTHandle == NULL );
 
-    if(pdFALSE == ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
-        				(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
-        				clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN )) {
-		xil_printf("Failed to read broker endpoint information\r\n");
-		return pdFAIL;
-	}
     configPRINTF( ( "MQTT echo broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
 
     /* The MQTT client object must be created before it can be used.  The

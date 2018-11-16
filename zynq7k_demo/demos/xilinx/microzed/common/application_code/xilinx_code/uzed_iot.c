@@ -590,15 +590,6 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
         0                                     /* Size of certificate used for secure connection. */
     };
 
-    if(pdFALSE == ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
-        				(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
-        				clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN )) {
-        pSystem->rc = XST_FAILURE;
-    	pSystem->pcErr = "Failed to read broker endpoint information";
-    	pSystem->xMQTTHandle = NULL;
-        return;
-	}
-
     configPRINTF( ( "MQTT echo broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously

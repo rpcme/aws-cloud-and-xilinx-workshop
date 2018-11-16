@@ -27,8 +27,5 @@
 #define _AWS_SYSTEM_INIT_H_
 
 BaseType_t SYSTEM_Init();
-BaseType_t ReadBrokerId( const char * pcFileName,
-                                uint8_t * pucData,
-                                uint32_t ulDataSize );
 
 #endif /* _AWS_SYSTEM_INIT_H_ */

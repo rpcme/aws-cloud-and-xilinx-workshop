@@ -26,35 +26,17 @@
 #include "aws_system_init.h"
 #include "ff.h"
 #include "xil_printf.h"
+#include "aws_pkcs11_config.h"
 
 /* Library code. */
 extern BaseType_t BUFFERPOOL_Init( void );
 extern BaseType_t MQTT_AGENT_Init( void );
 extern BaseType_t SOCKETS_Init( void );
 
+#define clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN	127
+const char clientcredentialMQTT_BROKER_ENDPOINT[clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN+1];
+
 /*-----------------------------------------------------------*/
-
-/**
- * @brief Initializes Amazon FreeRTOS libraries.
- */
-BaseType_t SYSTEM_Init()
-{
-    BaseType_t xResult = pdPASS;
-
-    xResult = BUFFERPOOL_Init();
-
-    if( xResult == pdPASS )
-    {
-        xResult = MQTT_AGENT_Init();
-    }
-
-    if( xResult == pdPASS )
-    {
-        xResult = SOCKETS_Init();
-    }
-
-    return xResult;
-}
 
 /**
  * @brief Reads a file containing broker id from local storage.
@@ -106,4 +88,35 @@ BaseType_t ReadBrokerId( const char * pcFileName,
 	}
 
 	return pdTRUE;
+}
+
+/*-----------------------------------------------------------*/
+
+/**
+ * @brief Initializes Amazon FreeRTOS libraries.
+ */
+BaseType_t SYSTEM_Init()
+{
+    BaseType_t xResult = pdPASS;
+
+    xResult = BUFFERPOOL_Init();
+
+    if( xResult == pdPASS )
+    {
+        xResult = MQTT_AGENT_Init();
+    }
+
+    if( xResult == pdPASS )
+    {
+        xResult = SOCKETS_Init();
+    }
+
+    if(xResult == pdPASS )
+    {
+    	xResult = ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
+						(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
+						clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN );
+    }
+
+    return xResult;
 }

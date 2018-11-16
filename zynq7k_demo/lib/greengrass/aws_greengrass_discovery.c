@@ -240,13 +240,6 @@ BaseType_t GGD_JSONRequestStart( Socket_t * pxSocket )
     xHostAddressData.ulCertificateSize = 0;
     xHostAddressData.usPort = clientcredentialGREENGRASS_DISCOVERY_PORT;
 
-    if(pdFALSE == ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
-        				(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
-        				clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN )) {
-    	ggdconfigPRINT("Failed to read broker endpoint information\r\n");
-		return pdFAIL;
-	}
-
     /* Establish secure connection. */
     xStatus = GGD_SecureConnect_Connect( &xHostAddressData,
                                          pxSocket,
