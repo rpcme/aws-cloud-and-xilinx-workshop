@@ -600,42 +600,42 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
     if( eMQTTAgentSuccess == MQTT_AGENT_Create( &pSystem->xMQTTHandle ) ) {
-        if(UZED_USE_GG) {
-            configPRINTF( ( "Attempting automated selection of Greengrass device\r\n" ) );
+#if UZED_USE_GG
+        configPRINTF( ( "Attempting automated selection of Greengrass device\r\n" ) );
 
-            memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
-            if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
-                xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
-                xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
-                xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
-                xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;
-                xConnectParameters.pucClientId = (const uint8_t*)clientcredentialIOT_THING_NAME;
-                xConnectParameters.usClientIdLength = (uint16_t)strlen(clientcredentialIOT_THING_NAME);
-                xConnectParameters.xSecuredConnection = pdTRUE; /* Deprecated. */
-                xConnectParameters.pvUserData = NULL;
-                xConnectParameters.pxCallback = NULL;
-                xConnectParameters.pcCertificate = pxHostAddressData->pcCertificate;
-                xConnectParameters.ulCertificateSize = pxHostAddressData->ulCertificateSize;
-            } else {
-                xConnectParameters.pcURL = 0;
-                pSystem->rc = XST_FAILURE;
-                pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate";
-                pSystem->xMQTTHandle = NULL;
-            }
+        memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
+        if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
+            xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
+            xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
+            xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
+            xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;
+            xConnectParameters.pucClientId = (const uint8_t*)clientcredentialIOT_THING_NAME;
+            xConnectParameters.usClientIdLength = (uint16_t)strlen(clientcredentialIOT_THING_NAME);
+            xConnectParameters.xSecuredConnection = pdTRUE; /* Deprecated. */
+            xConnectParameters.pvUserData = NULL;
+            xConnectParameters.pxCallback = NULL;
+            xConnectParameters.pcCertificate = pxHostAddressData->pcCertificate;
+            xConnectParameters.ulCertificateSize = pxHostAddressData->ulCertificateSize;
         } else {
-            /* Connect to the broker. */
-            xConnectParameters.pcURL = clientcredentialMQTT_BROKER_ENDPOINT; /* The URL of the MQTT broker to connect to. */
-            xConnectParameters.xFlags = democonfigMQTT_AGENT_CONNECT_FLAGS;   /* Connection flags. */
-            xConnectParameters.xURLIsIPAddress = pdFALSE;                              /* Deprecated. */
-            xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
-            xConnectParameters.pucClientId = UZedCLIENT_ID;                        /* Client Identifier of the MQTT client. It should be unique per broker. */
-            xConnectParameters.usClientIdLength = (uint16_t)strlen((const char*)UZedCLIENT_ID);
-            xConnectParameters.xSecuredConnection = pdFALSE;                              /* Deprecated. */
-            xConnectParameters.pvUserData = NULL;                                 /* User data supplied to the callback. Can be NULL. */
-            xConnectParameters.pxCallback = NULL;                                 /* Callback used to report various events. Can be NULL. */
-            xConnectParameters.pcCertificate = NULL;                                 /* Certificate used for secure connection. Can be NULL. */
-            xConnectParameters.ulCertificateSize = 0;                                     /* Size of certificate used for secure connection. */
+            xConnectParameters.pcURL = 0;
+            pSystem->rc = XST_FAILURE;
+            pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate";
+            pSystem->xMQTTHandle = NULL;
         }
+#else
+        /* Connect to the broker. */
+        xConnectParameters.pcURL = clientcredentialMQTT_BROKER_ENDPOINT; /* The URL of the MQTT broker to connect to. */
+        xConnectParameters.xFlags = democonfigMQTT_AGENT_CONNECT_FLAGS;   /* Connection flags. */
+        xConnectParameters.xURLIsIPAddress = pdFALSE;                              /* Deprecated. */
+        xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
+        xConnectParameters.pucClientId = UZedCLIENT_ID;                        /* Client Identifier of the MQTT client. It should be unique per broker. */
+        xConnectParameters.usClientIdLength = (uint16_t)strlen((const char*)UZedCLIENT_ID);
+        xConnectParameters.xSecuredConnection = pdFALSE;                              /* Deprecated. */
+        xConnectParameters.pvUserData = NULL;                                 /* User data supplied to the callback. Can be NULL. */
+        xConnectParameters.pxCallback = NULL;                                 /* Callback used to report various events. Can be NULL. */
+        xConnectParameters.pcCertificate = NULL;                                 /* Certificate used for secure connection. Can be NULL. */
+        xConnectParameters.ulCertificateSize = 0;                                     /* Size of certificate used for secure connection. */
+#endif
 
         if(xConnectParameters.pcURL) {
             configPRINTF( ( "INFO: UZed attempting to connect to %s.\r\n", xConnectParameters.pcURL ) );
