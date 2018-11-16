@@ -54,5 +54,8 @@ Remember to save the file when you are done
 
 12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
    ![alt text](images/xsdk_create_boot_image_menu.jpeg "")
+   
+   IMPORTANT: Click OK if the following popup message appears:
+   ![alt text](images/xsdk_create_boot_image_override.jpeg "")
 
 13. Copy BOOT.BIN from the Output path to your SD card.
