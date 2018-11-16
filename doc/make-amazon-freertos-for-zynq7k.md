@@ -48,7 +48,7 @@ Remember to save the file when you are done
 
 10. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings. Click on the Console tab so you know when the build is done.
 
-11. Highlight the project 'aws_demo' by left-clicking it once. Right click on it, and select 'Create Boot Image'
+11. Highlight the project 'aws_demos' by left-clicking it once. Right click on it, and select 'Create Boot Image'
 
    ![alt text](images/xsdk_create_boot_image.jpeg "")
 
