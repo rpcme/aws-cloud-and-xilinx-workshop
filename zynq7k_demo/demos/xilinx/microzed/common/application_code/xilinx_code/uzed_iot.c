@@ -1632,7 +1632,7 @@ static void StopSystem(System* pSystem)
 	BlinkLed(pSystem, 5, pdFALSE);
 
 	/* End the demo by deleting all created resources. */
-	configPRINTF( ( "MQTT barometer demo finished.\r\n" ) );
+	configPRINTF( ( "MQTT UZed sensor demo finished.\r\n" ) );
 	vTaskDelete( NULL ); /* Delete this task. */
 }
 
