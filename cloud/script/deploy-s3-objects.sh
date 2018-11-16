@@ -5,6 +5,8 @@ if test -z "${prefix}"; then
   echo you need to provide a bucket prefix as first argument.
 fi
 
+local_path=/home/xilinx/s3-sync
+bitstream=/usr/local/lib/python3.6/dist-packages/pydeephi/boards/Ultra96/gstreamer_deephi.bit
 bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
@@ -38,3 +40,9 @@ EOF
 echo Constraining bucket access to this specific device
 
 aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_policy_location}
+
+
+echo Upload a bitstream to S3 bucket
+mkdir -p ${local_path}
+cp -f ${bitstream} ${local_path}
+$aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
