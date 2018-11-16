@@ -86,6 +86,8 @@
 
 /* Credentials includes. */
 #include "aws_clientcredential.h"
+#include "aws_system_init.h"
+#include "aws_pkcs11_config.h"
 
 /* Demo includes. */
 #include "aws_demo_config.h"
@@ -588,6 +590,16 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
         0                                     /* Size of certificate used for secure connection. */
     };
 
+    if(pdFALSE == ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
+        				(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
+        				clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN )) {
+        pSystem->rc = XST_FAILURE;
+    	pSystem->pcErr = "Failed to read broker endpoint information";
+    	pSystem->xMQTTHandle = NULL;
+        return;
+	}
+
+    configPRINTF( ( "MQTT echo broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
@@ -607,13 +619,11 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
         } else {
             /* Could not connect, so delete the MQTT client. */
             ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
-            configPRINTF( ( "ERROR:  MQTT UZed failed to connect\r\n" ) );
             pSystem->rc = XST_FAILURE;
         	pSystem->pcErr = "Could not connect to MQTT Agent";
             pSystem->xMQTTHandle = NULL;
         }
     } else {
-    	configPRINTF( ( "ERROR:  Could not create MQTT Agent\r\n" ) );
         pSystem->rc = XST_FAILURE;
     	pSystem->pcErr = "Could not create MQTT Agent";
     	pSystem->xMQTTHandle = NULL;
