@@ -1084,6 +1084,15 @@ static void SampleHygrometer(System* pSystem)
 	u8 b;
 	u8 pbBuf[5];
 	float f1;
+	int	H0_T0_out, H1_T0_out, H_T_out;
+	int H0_rh, H1_rh;
+	u8	buffer[2];
+	int tmp=0;
+	u16 value=0;
+	int T0_out, T1_out, T_out, T0_degC_x8_u16, T1_degC_x8_u16;
+	int T0_degC, T1_degC;
+	u8 buff2[4], tmp5=0;
+	int tmp32=0;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
 	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
