@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS MQTT Echo Demo V1.2.6
+ * Amazon FreeRTOS MQTT UZed Demo V1.0
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -590,7 +590,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
         0                                     /* Size of certificate used for secure connection. */
     };
 
-    configPRINTF( ( "MQTT echo broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
+    configPRINTF( ( "MQTT UZed broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
@@ -1667,9 +1667,9 @@ void vStartMQTTUZedIotDemo( void )
 {
     configPRINTF( ( "Creating MQTT UZed Task...\r\n" ) );
 
-    /* Create the task that publishes messages to the MQTT broker every five
-     * seconds.  This task, in turn, creates the task that echoes data received
-     * from the broker back to the broker. */
+    /*
+     * Create the task that publishes messages to the MQTT broker periodically
+     */
     ( void ) xTaskCreate( prvMQTTConnectAndPublishTask,        		/* The function that implements the demo task. */
                           "MQTTUZedIot",                       		/* The name to assign to the task being created. */
 						  democonfigMQTT_UZED_IOT_TASK_STACK_SIZE, 	/* The size, in WORDS (not bytes), of the stack to allocate for the task being created. */
