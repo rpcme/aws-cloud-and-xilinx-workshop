@@ -1093,7 +1093,6 @@ static void SampleHygrometer(System* pSystem)
 	BaseType_t xTimeout;
 	u8 b;
 	u8 pbBuf[5];
-	float f1;
 	int	H0_T0_out, H1_T0_out, H_T_out;
 	int H0_rh, H1_rh;
 	u8	buffer[2];
