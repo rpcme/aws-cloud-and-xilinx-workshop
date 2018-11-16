@@ -992,7 +992,7 @@ static void SampleBarometer(System* pSystem)
 	configPRINTF(("pbBuf[1]= %0x \n", pbBuf[1]));
 	configPRINTF(("pbBuf[2]= %0x \n", pbBuf[2]));
 	configPRINTF(("pbBuf[3]= %0x \n", pbBuf[3]));
-	configPRINTF((sqTmp="%ld \n", sqTmp));
+	configPRINTF(("sqTmp=%ld \n", sqTmp));
 
 	sqTmp = 0
 			| ((u32)pbBuf[4] << 0)	// l
