@@ -110,6 +110,11 @@
 #endif
 #include "xspi_l.h"
 #include "uzed_iot.h"
+#if UZED_USE_GG
+#include "aws_ggd_config.h"
+#include "aws_ggd_config_defaults.h"
+#include "aws_greengrass_discovery.h"
+#endif
 
 /*-----------------------------------------------------------*/
 // System parameters for the MicroZed IOT kit
@@ -614,8 +619,8 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
             xConnectParameters.xSecuredConnection = pdTRUE; /* Deprecated. */
             xConnectParameters.pvUserData = NULL;
             xConnectParameters.pxCallback = NULL;
-            xConnectParameters.pcCertificate = pxHostAddressData->pcCertificate;
-            xConnectParameters.ulCertificateSize = pxHostAddressData->ulCertificateSize;
+            xConnectParameters.pcCertificate = pSystem->xHostAddressData.pcCertificate;
+            xConnectParameters.ulCertificateSize = pSystem->xHostAddressData.ulCertificateSize;
         } else {
             xConnectParameters.pcURL = 0;
             pSystem->rc = XST_FAILURE;
