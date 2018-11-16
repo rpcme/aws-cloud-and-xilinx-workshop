@@ -13,7 +13,7 @@ These are the steps to build the MicroZed code for the workshop:
 
    ![alt text](images/xsdk_disable_build_automatically.jpeg "")
 
-5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New
+5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New...
 
    ![alt text](images/xsdk_string_subst.jpeg "")
 
@@ -48,11 +48,14 @@ Remember to save the file when you are done
 
 10. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings. Click on the Console tab so you know when the build is done.
 
-11. Highlight the project 'aws_demo' by left-clicking it once. Right click on it, and select 'Create Boot Image'
+11. Highlight the project 'aws_demos' by left-clicking it once. Right click on it, and select 'Create Boot Image'
 
    ![alt text](images/xsdk_create_boot_image.jpeg "")
 
 12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
    ![alt text](images/xsdk_create_boot_image_menu.jpeg "")
+   
+   IMPORTANT: Click OK if the following popup message appears:
+   ![alt text](images/xsdk_create_boot_image_override.jpeg "")
 
 13. Copy BOOT.BIN from the Output path to your SD card.

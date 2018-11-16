@@ -71,12 +71,12 @@ Configure your terminal emulator to access the two COM ports by saving individua
 
 Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
 
-Run the command 'ip a' to see all ethernet interfaces. You should see:
+Run the command `ip a` to see all ethernet interfaces. You should see:
 1. usb0 at 192.168.3.1/24
 2. eth0 at an address determined by your DHCP server behind the switch
 3. Other interfaces will not be used in this workshop
 
-Now run 'ping -c 3 www.xilinx.com' to verify internet connectivity.
+Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
 The Windows RNDIS adapter should be at the address 192.168.3.105/24; ultra96 will be at 192.168.3.1
 
@@ -120,12 +120,13 @@ For more information or details on configuration, visit the [Configuring the AWS
 1. Your AWS Access Key ID
 2. Your AWS Secret Access Key
 3. Default region name - use *eu-west-1*
-4. Default output format - use *json*
+4. Default output format
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
-The following scripts will succeed if your IAM user has the *IAMFullAccess* policy attached with no permission boundaries. This is very broad, and narrower options might succeed.
+The following scripts will succeed if your IAM user has the *AdministratorAccess* policy and *AWSGreengrassResourceAccessRolePolicy* attached with no permission boundaries.
+This is very broad, and narrower options might succeed.
 
 ### Deploy AWS Cloud Artifacts
 
@@ -139,12 +140,14 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-s3-objects.sh s3
+	./deploy-s3-objects.sh test1
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `s3-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets.
+The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets. 
+In this lab, we will just use `test1` as an example prefix, as users may want to use other prefixes later.
+
 
 ### Store your AWS IoT Endpoint address in a text file
 To find your endpoint address:
