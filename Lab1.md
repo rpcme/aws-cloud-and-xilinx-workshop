@@ -140,13 +140,12 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-s3-objects.sh test1
+	./deploy-s3-objects.sh s3
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets. 
-In this lab, we will just use `test1` as an example prefix, as users may want to use other prefixes later.
+The above deployment will prepare an S3 bucket named `s3-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets. 
 
 
 ### Store your AWS IoT Endpoint address in a text file
