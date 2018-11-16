@@ -13,7 +13,7 @@ These are the steps to build the MicroZed code for the workshop:
 
    ![alt text](images/xsdk_disable_build_automatically.jpeg "")
 
-5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New
+5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New...
 
    ![alt text](images/xsdk_string_subst.jpeg "")
 
