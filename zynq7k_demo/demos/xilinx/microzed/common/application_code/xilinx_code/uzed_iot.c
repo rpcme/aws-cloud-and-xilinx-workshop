@@ -63,6 +63,16 @@
  */
 #define UZedDONT_BLOCK         ( ( TickType_t ) 0 )
 
+/**
+ * @brief If set to 1, LEDs are used for status. Do not turn on other tasks such as echo which also use leds
+ */
+#define UZED_USE_LED 0
+
+/**
+ * @brief If set to 1, use GreenGrass instead of raw MQTT
+ */
+#define UZED_USE_GG 0
+
 //////////////////// END USER PARAMETERS ////////////////////
 
 #if SAMPLING_PERIOD_MS < 100
@@ -95,7 +105,7 @@
 #include "xparameters.h"
 #include "xstatus.h"
 #include "xiic.h"
-#if UZED_DEBUG
+#if UZED_USE_LED
 #include "xgpiops.h"
 #endif
 #include "xspi_l.h"
@@ -103,6 +113,10 @@
 
 /*-----------------------------------------------------------*/
 // System parameters for the MicroZed IOT kit
+
+#if UZED_USE_GG
+#define GG_DISCOVERY_FILE_SIZE    2500
+#endif
 
 /**
  * @brief This is the LPS25HB on the Arduino shield board
@@ -113,7 +127,7 @@
  */
 #define HYGROMETER_SLAVE_ADDRESS	0x5F
 
-#if UZED_DEBUG
+#if UZED_USE_LED
 /**
  * @brief LED pin represents connection state
  */
@@ -292,11 +306,15 @@ typedef struct TopicInfo {
  */
 typedef struct System {
 	XIic 	iic;
-#if UZED_DEBUG
+#if UZED_USE_LED
 	XGpioPs gpio;
 #endif
 
 	MQTTAgentHandle_t xMQTTHandle;
+#if UZED_USE_GG
+    GGD_HostAddressData_t xHostAddressData;
+    char pcJSONFile[ GG_DISCOVERY_FILE_SIZE ];
+#endif
 
 	u8 pbHygrometerCalibration[16];
 
@@ -527,7 +545,7 @@ static void StopHere(void)
 
 static void BlinkLed(System* pSystem,BaseType_t xCount, BaseType_t xFinalOn)
 {
-#if UZED_DEBUG
+#if UZED_USE_LED
 	BaseType_t x;
 	const TickType_t xHalfSecond = MS_TO_TICKS( 500 );
 
@@ -575,44 +593,67 @@ static const TopicInfo* GetTopicInfo(TOPIC eTopic)
 
 static void prvCreateClientAndConnectToBroker( System* pSystem )
 {
-    MQTTAgentConnectParams_t xConnectParameters =
-    {
-        clientcredentialMQTT_BROKER_ENDPOINT, /* The URL of the MQTT broker to connect to. */
-        democonfigMQTT_AGENT_CONNECT_FLAGS,   /* Connection flags. */
-        pdFALSE,                              /* Deprecated. */
-        clientcredentialMQTT_BROKER_PORT,     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
-        UZedCLIENT_ID,                        /* Client Identifier of the MQTT client. It should be unique per broker. */
-        0,                                    /* The length of the client Id, filled in later as not const. */
-        pdFALSE,                              /* Deprecated. */
-        NULL,                                 /* User data supplied to the callback. Can be NULL. */
-        NULL,                                 /* Callback used to report various events. Can be NULL. */
-        NULL,                                 /* Certificate used for secure connection. Can be NULL. */
-        0                                     /* Size of certificate used for secure connection. */
-    };
+    MQTTAgentConnectParams_t xConnectParameters;
 
     configPRINTF( ( "MQTT UZed broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
     if( eMQTTAgentSuccess == MQTT_AGENT_Create( &pSystem->xMQTTHandle ) ) {
-        /* Fill in the MQTTAgentConnectParams_t member that is not const,
-         * and therefore could not be set in the initializer (where
-         * xConnectParameters is declared in this function). */
-        xConnectParameters.usClientIdLength = ( uint16_t ) strlen( ( const char * ) UZedCLIENT_ID );
+        if(UZED_USE_GG) {
+            configPRINTF( ( "Attempting automated selection of Greengrass device\r\n" ) );
 
-        /* Connect to the broker. */
-        configPRINTF( ( "INFO: MQTT UZed attempting to connect to %s.\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
-
-        if( eMQTTAgentSuccess ==
-        		MQTT_AGENT_Connect( pSystem->xMQTTHandle, &xConnectParameters, democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT ) ) {
-            configPRINTF( ( "SUCCESS: MQTT UZed connected.\r\n" ) );
-            pSystem->rc = XST_SUCCESS;
+            memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
+            if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
+                xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
+                xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
+                xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
+                xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;
+                xConnectParameters.pucClientId = (const uint8_t*)clientcredentialIOT_THING_NAME;
+                xConnectParameters.usClientIdLength = (uint16_t)strlen(clientcredentialIOT_THING_NAME);
+                xConnectParameters.xSecuredConnection = pdTRUE; /* Deprecated. */
+                xConnectParameters.pvUserData = NULL;
+                xConnectParameters.pxCallback = NULL;
+                xConnectParameters.pcCertificate = pxHostAddressData->pcCertificate;
+                xConnectParameters.ulCertificateSize = pxHostAddressData->ulCertificateSize;
+            } else {
+                xConnectParameters.pcURL = 0;
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate";
+                pSystem->xMQTTHandle = NULL;
+            }
         } else {
-            /* Could not connect, so delete the MQTT client. */
-            ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
-            pSystem->rc = XST_FAILURE;
-        	pSystem->pcErr = "Could not connect to MQTT Agent";
-            pSystem->xMQTTHandle = NULL;
+            /* Connect to the broker. */
+            xConnectParameters.pcURL = clientcredentialMQTT_BROKER_ENDPOINT; /* The URL of the MQTT broker to connect to. */
+            xConnectParameters.xFlags = democonfigMQTT_AGENT_CONNECT_FLAGS;   /* Connection flags. */
+            xConnectParameters.xURLIsIPAddress = pdFALSE;                              /* Deprecated. */
+            xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
+            xConnectParameters.pucClientId = UZedCLIENT_ID;                        /* Client Identifier of the MQTT client. It should be unique per broker. */
+            xConnectParameters.usClientIdLength = (uint16_t)strlen((const char*)UZedCLIENT_ID);
+            xConnectParameters.xSecuredConnection = pdFALSE;                              /* Deprecated. */
+            xConnectParameters.pvUserData = NULL;                                 /* User data supplied to the callback. Can be NULL. */
+            xConnectParameters.pxCallback = NULL;                                 /* Callback used to report various events. Can be NULL. */
+            xConnectParameters.pcCertificate = NULL;                                 /* Certificate used for secure connection. Can be NULL. */
+            xConnectParameters.ulCertificateSize = 0;                                     /* Size of certificate used for secure connection. */
+        }
+
+        if(xConnectParameters.pcURL) {
+            configPRINTF( ( "INFO: UZed attempting to connect to %s.\r\n", xConnectParameters.pcURL ) );
+            if(eMQTTAgentSuccess == MQTT_AGENT_Connect(
+                    pSystem->xMQTTHandle,
+                    &xConnectParameters,
+                    democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT
+                    )
+                ) {
+                configPRINTF( ( "SUCCESS: MQTT UZed connected.\r\n" ) );
+                pSystem->rc = XST_SUCCESS;
+            } else {
+                /* Could not connect, so delete the MQTT client. */
+                ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Could not connect to MQTT Agent";
+                pSystem->xMQTTHandle = NULL;
+            }
         }
     } else {
         pSystem->rc = XST_FAILURE;
@@ -1518,7 +1559,7 @@ static void SamplePLTempSensor(System* pSystem)
 static void StartSystem(System* pSystem)
 {
 	XIic_Config *pI2cConfig;
-#if UZED_DEBUG
+#if UZED_USE_LED
 	XGpioPs_Config* pGpioConfig;
 #endif
 
@@ -1535,7 +1576,7 @@ static void StartSystem(System* pSystem)
 
     /*-----------------------------------------------------------------*/
 
-#if UZED_DEBUG
+#if UZED_USE_LED
 	pGpioConfig = XGpioPs_LookupConfig(XPAR_PS7_GPIO_0_DEVICE_ID);
 	configASSERT(pGpioConfig != NULL);
 
