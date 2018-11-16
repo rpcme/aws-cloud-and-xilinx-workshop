@@ -47,6 +47,10 @@
 #include "aws_helper_secure_connect.h"
 #include "jsmn.h"
 
+#include "aws_system_init.h"
+#include "aws_clientcredential.h"
+#include "aws_pkcs11_config.h"
+
 /* Standard includes. */
 #include <stdlib.h>
 #include <string.h>
@@ -235,6 +239,13 @@ BaseType_t GGD_JSONRequestStart( Socket_t * pxSocket )
     xHostAddressData.pcCertificate = NULL;                                 /* Use default certificate. */
     xHostAddressData.ulCertificateSize = 0;
     xHostAddressData.usPort = clientcredentialGREENGRASS_DISCOVERY_PORT;
+
+    if(pdFALSE == ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
+        				(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
+        				clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN )) {
+    	ggdconfigPRINT("Failed to read broker endpoint information\r\n");
+		return pdFAIL;
+	}
 
     /* Establish secure connection. */
     xStatus = GGD_SecureConnect_Connect( &xHostAddressData,

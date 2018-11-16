@@ -27,6 +27,8 @@
 #ifndef __AWS_CLIENTCREDENTIAL__H__
 #define __AWS_CLIENTCREDENTIAL__H__
 
+#include <stdint.h>
+
 /*
  * Include for device certificate and private key
  */
@@ -35,12 +37,13 @@
 /*
  * MQTT Broker endpoint.
  */
-static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "DESCRIBE-ENDPOINT-HERE";
-
+#define clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN	127
+static const char clientcredentialMQTT_BROKER_ENDPOINT[clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN+1];
+//static const char* clientcredentialMQTT_BROKER_ENDPOINT = "FIXME";
 
 /* Use of a "define" and not a "static const" here to be able to
  * use pre-compile concatenation on the string. */
-#define clientcredentialIOT_THING_NAME               "THING_NAME_HERE"
+#define clientcredentialIOT_THING_NAME               "node-zynq7k"
 
 /*
  * Port number the MQTT broker is using.

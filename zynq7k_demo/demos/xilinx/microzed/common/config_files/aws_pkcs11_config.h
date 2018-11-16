@@ -32,11 +32,14 @@
 #ifndef _AWS_PKCS11_CONFIG_H_
 #define _AWS_PKCS11_CONFIG_H_
 
+#include "aws_clientcredential.h"
+
  /**
  * @brief File storage location definitions.
  */
-#define pkcs11configFILE_NAME_CLIENT_CERTIFICATE    "FreeRTOS_P11_Certificate.dat"
-#define pkcs11configFILE_NAME_KEY                   "FreeRTOS_P11_Key.dat"
+#define pkcs11configFILE_NAME_CLIENT_CERTIFICATE    clientcredentialIOT_THING_NAME ".crt.pem"
+#define pkcs11configFILE_NAME_KEY                   clientcredentialIOT_THING_NAME ".key.prv.pem"
+#define pkcs11configFILE_NAME_BROKER_ID				clientcredentialIOT_THING_NAME ".broker.txt"
 
 /* A non-standard version of C_INITIALIZE should be used by this port. */
 /* #define pkcs11configC_INITIALIZE_ALT */

@@ -30,6 +30,11 @@
  * @brief Device specific helpers for PKCS11 Interface.
  */
 
+/* C runtime includes. */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 /* Amazon FreeRTOS Includes. */
 #include "aws_pkcs11.h"
 #include "aws_pkcs11_config.h"
@@ -40,10 +45,6 @@
 #include "task.h"
 #include "mbedtls/aes.h"
 
-/* C runtime includes. */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 static const unsigned char aes_iv_pkcs11[16] =
 {
@@ -193,13 +194,14 @@ BaseType_t PKCS11_PAL_ReadFile( char * pcFileName,
 	}
 
 	Res = f_read(&fil, buf, n, pulDataSize);
-	if ((*pulDataSize == 0) || (Res != 0)) {
+	if ((*pulDataSize != n) || (Res != 0)) {
 		f_close(&fil);
 		vPortFree(buf);
 		taskEXIT_CRITICAL();
 		xil_printf("PKCS11_PAL_ReadFile ERROR: Read from file %s failed  Res %d\r\n", pcFileName, Res);
 		return pdFALSE;
 	}
+	buf[n-1] = 0;
 
 	Res = file_aes_helper(buf, buf, MBEDTLS_AES_DECRYPT, *pulDataSize);
 	if (Res != 0) {
