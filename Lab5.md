@@ -1,10 +1,11 @@
-# Lab 5: Bring Back Data
-In this lab, you will make use of the Lambda function we deployed in Lab 4 to to send a ML based "person activity" alert from the remote asset unit controller USB camera to the AWS Cloud along with a still frame video capture of the image.
+# Lab 5: Deriving Machine Learning Inference Value
+
+In this lab, you will make use of the AWS Lambda function we deployed in Lab 4 to to send a Machine Learning based "person activity" alert from the remote asset unit controller USB camera to the AWS Cloud along with a still frame video capture of the image.
 
 1. In AWS IoT Console go to your Greengrass group and select the Ultra96 board.  Click on Subscriptions and click on "Add Subscription".
   * Source = Lambda function: reInvent_Xilinx_EdgeML_Example
   * Target = IoT Cloud
-  * Topic = unit_controller/person_detect
+  * Topic = ```unit_controller/person_detect```
 2. Click on "Actions" and "Deploy" to update the MQTT data communications from the Ultra96.
 3. In AWS IoT Console go to "Test" in the left column.  Click on "Subcribe to a topic" and enter "unit_controller/person_detect".  You should now see two pieces of data in the received message:
   * Detection_Event_Trigger - Boolean that indicates if any persons were detected

@@ -47,6 +47,10 @@
 #include "aws_helper_secure_connect.h"
 #include "jsmn.h"
 
+#include "aws_system_init.h"
+#include "aws_clientcredential.h"
+#include "aws_pkcs11_config.h"
+
 /* Standard includes. */
 #include <stdlib.h>
 #include <string.h>

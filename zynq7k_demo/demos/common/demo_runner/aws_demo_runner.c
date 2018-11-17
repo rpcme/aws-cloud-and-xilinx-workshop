@@ -44,7 +44,7 @@ extern void vStartMQTTEchoDemo( void );
 /* extern void vStartShadowDemoTasks( void ); */
 /* extern void vStartGreenGrassDiscoveryTask( void ); */
 /* extern void vStartOTAUpdateDemoTask( void ); */
-/* extern void vStartMQTTUZedIotDemo(void); */
+extern void vStartMQTTUZedIotDemo(void);
 
 /*-----------------------------------------------------------*/
 
@@ -61,5 +61,5 @@ void DEMO_RUNNER_RunDemos( void )
     /* vStartShadowDemoTasks(); */
     //vStartGreenGrassDiscoveryTask();
     /* vStartOTAUpdateDemoTask(); */
-    /* vStartMQTTUZedIotDemo(); */
+    vStartMQTTUZedIotDemo();
 }

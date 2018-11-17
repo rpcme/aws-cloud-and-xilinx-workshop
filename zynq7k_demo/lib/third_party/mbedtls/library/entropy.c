@@ -301,6 +301,7 @@ static int entropy_gather_internal( mbedtls_entropy_context *ctx )
 
 cleanup:
     mbedtls_zeroize( buf, sizeof( buf ) );
+
     return( ret );
 }
 

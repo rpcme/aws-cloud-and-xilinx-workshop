@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 s3_bucket=$1
 prefix=$2
@@ -20,30 +20,40 @@ d_agg_config=$(dirname $0)/../ggc-config
 if test ! -d ${d_agg_config}; then mkdir ${d_agg_config}; fi
 
 # find the thing arn
-thing_agg_arn=$(aws iot describe-thing        \
+echo Querying thingArn for Greengrass
+thing_agg_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_agg} \
                     --query thingArn)
 
-thing_afr_arn=$(aws iot describe-thing        \
+echo Querying thingArn for Amazon FreeRTOS
+thing_afr_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_afr} \
                     --query thingArn)
 
 # find the certificate arn the thing is attached to.
+echo Querying principal for Greengrass
 cert_agg_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_agg} \
                    --query principals[0])
 
+echo Querying principal for Amazon FreeRTOS
 cert_afr_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_afr} \
                    --query principals[0])
 
 # Check if the service role exists for the account.  If not, this must be
 # created.
-service_role_arn=$(aws greengrass get-service-role-for-account \
+echo Checking if the service role for Greengrass has been attached.
+service_role_arn=$(aws greengrass-pp get-service-role-for-account --output text \
                        --query RoleArn)
 
 if test -z ${service_role_arn}; then
-  echo Service role for AWS Greengrass not found. Creating.
+  echo Service role for AWS Greengrass for this region not found.  Locating.
+  service_role_arn=$(aws iam get-role --output text \
+                             --role-name GreengrassServiceRole \
+                             --query Role.Arn)
+  if test -z ${service_role_arn}; then
+    echo Service role not found.  Creating.
 
 cat <<EOF > ${d_agg_config}/agg-service-role.json
 {
@@ -60,16 +70,20 @@ cat <<EOF > ${d_agg_config}/agg-service-role.json
 }
 EOF
 
-  agg_sr_arn=$(aws iam create-role \
-                   --path /service-role/ \
-                   --role-name GreengrassServiceRole \
-                   --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
-                   --query Role.Arn)
+    echo Creating the service role.
+    agg_sr_arn=$(aws iam create-role --output text \
+                     --path /service-role/ \
+                     --role-name GreengrassServiceRole \
+                     --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
+                     --query Role.Arn)
 
-  aws greengrass associate-service-role-to-account \
-      --role-arn ${agg_sr_arn}
+    aws greengrass-pp associate-service-role-to-account \
+        --role-arn ${agg_sr_arn}
+  else
+    aws greengrass-pp associate-service-role-to-account \
+        --role-arn ${service_role_arn}
+  fi
 fi
-
 # Create the role for the Greengrass group.  This enables TES for the S3 bucket
 # so we can copy the images to the cloud and download bitstream from the cloud.
 role_agg_name=role-greengrass-group-${thing_agg}
@@ -78,9 +92,9 @@ role_policy_agg_name=role-greengrass-group-${thing_agg}-policy
 my_region=$(echo ${thing_agg_arn} | cut -f4 -d':')
 my_account=$(echo ${thing_agg_arn} | cut -f5 -d':')
 
-agg_role=$(aws iam get-role --role-name ${role_agg_name} --query Role.Arn)
-
-if test $? != 0; then
+echo Creating the gateway role.
+agg_role_found=$(aws iam list-roles --output text --query "Roles[?RoleName == '${role_agg_name}']")
+if [ -z "$agg_role_found" ]; then
 cat <<EOF > ${d_agg_config}/core-role-trust.json
 {
   "Version": "2012-10-17",
@@ -107,7 +121,7 @@ cat <<EOF > ${d_agg_config}/core-role-policy.json
     "Statement": {
         "Effect": "Allow",
         "Action": ["s3:Put","s3:Get"],
-        "Resource": "arn:aws:s3::${my_account}:${s3_bucket}"
+        "Resource": "arn:aws:s3:::${my_account}:${s3_bucket}"
     }
 }
 EOF
@@ -117,6 +131,8 @@ EOF
       --policy-name ${role_policy_agg_name}                                   \
       --policy-document file://${d_agg_config}/core-role-policy.json
 fi
+agg_role=$(aws iam get-role --output text --role-name ${role_agg_name} --query Role.Arn)
+
 # Create the core definition with initial version
 cat <<EOF > ${d_agg_config}/core-definition-init.json
 {
@@ -132,7 +148,7 @@ cat <<EOF > ${d_agg_config}/core-definition-init.json
 EOF
 
 echo Creating the core definition.
-core_v_arn=$(aws greengrass create-core-definition                           \
+core_v_arn=$(aws greengrass-pp create-core-definition --output text             \
                  --name ${thing_agg}-core                                    \
                  --initial-version file://${d_agg_config}/core-definition-init.json \
                  --query LatestVersionArn)
@@ -160,7 +176,7 @@ cat <<EOF > ${d_agg_config}/device-definition-init.json
 EOF
 
 echo Creating the device definition.
-device_v_arn=$(aws greengrass create-device-definition                           \
+device_v_arn=$(aws greengrass-pp create-device-definition --output text                          \
                  --name ${thing_agg}-device                                    \
                  --initial-version file://${d_agg_config}/device-definition-init.json \
                  --query LatestVersionArn)
@@ -195,7 +211,7 @@ cat <<EOF > ${d_agg_config}/logger-definition-init.json
 EOF
 
 echo Creating the logger definition.
-logger_v_arn=$(aws greengrass create-logger-definition \
+logger_v_arn=$(aws greengrass-pp create-logger-definition --output text \
                    --name ${thing_agg}-logger \
                    --initial-version file://${d_agg_config}/logger-definition-init.json \
                    --query LatestVersionArn)
@@ -213,113 +229,12 @@ if test ! -d /home/xilinx/bitstream; then mkdir -p /home/xilinx/bitstream; fi
 
 cat <<EOF > ${d_agg_config}/resource-definition-init.json
 {
-  "Resources": [
-    {
-      "Id": "${thing_afr}-i2c-0",
-      "Name": "i2c-0",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/i2c-0"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-i2c-1",
-      "Name": "i2c-1",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/i2c-1"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-uio0",
-      "Name": "uio0",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/uio0"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-mem",
-      "Name": "mem",
-      "ResourceDataContainer": {
-        "LocalDeviceResourceData": {
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/dev/mem"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-lib-firmware",
-      "Name": "lib-firmware",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/lib/firmware",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/lib/firmware"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx",
-      "Name": "home-xilinx",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx-bitstream",
-      "Name": "home-xilinx-bitstream",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx/bitstream",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx/bitstream"
-        }
-      }
-    },
-    {
-      "Id": "${thing_afr}-home-xilinx-out",
-      "Name": "home-xilinx-bitstream",
-      "ResourceDataContainer": {
-        "LocalVolumeResourceData": {
-          "DestinationPath": "/home/xilinx/out",
-          "GroupOwnerSetting": {
-            "AutoAddGroupOwner": true
-          },
-          "SourcePath": "/home/xilinx/out"
-        }
-      }
-    }
-  ]
+  "Resources": []
 }
 EOF
 
 echo Creating the resource definition.
-resource_v_arn=$(aws greengrass create-resource-definition \
+resource_v_arn=$(aws greengrass-pp create-resource-definition --output text \
                      --name ${thing_agg}-resource \
                      --initial-version file://${d_agg_config}/resource-definition-init.json \
                      --query LatestVersionArn)
@@ -339,6 +254,11 @@ xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:fun
 # Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
 {
+  "DefaultConfig":{
+    "Execution": {
+      "IsolationMode":"NoContainer"
+    }
+  },
   "Functions": [
     {
       "Id": "xilinx_video_inference_handler",
@@ -346,36 +266,16 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Environment": {
-          "AccessSysfs": true,
-          "ResourceAccessPolicies": [
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-mem"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-i2c-0"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-i2c-1"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-uio0"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-lib-firmware"
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
             }
-          ]
+          }
         },
         "Executable": "python",
-        "MemorySize": 1048576,
         "Pinned": true,
         "Timeout": 500
       }
@@ -386,20 +286,16 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Environment": {
-          "AccessSysfs": true,
-          "ResourceAccessPolicies": [
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx"
-            },
-            {
-              "Permission": "rw",
-              "ResourceId": "${thing_afr}-home-xilinx-bitstream"
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
             }
-          ]
+          }
         },
         "Executable": "python",
-        "MemorySize": 1048576,
         "Pinned": false,
         "Timeout": 500
       }
@@ -409,7 +305,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
 EOF
 
 echo Creating the function definition.
-function_v_arn=$(aws greengrass create-function-definition \
+function_v_arn=$(aws greengrass-pp create-function-definition --output text \
                      --name ${thing_agg}-function \
                      --initial-version file://${d_agg_config}/function-definition-init.json \
                      --query LatestVersionArn)
@@ -465,7 +361,7 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 EOF
 
 echo Creating the subscription definition.
-subscription_v_arn=$(aws greengrass create-subscription-definition \
+subscription_v_arn=$(aws greengrass-pp create-subscription-definition --output text \
                          --name ${thing_agg}-subscription \
                          --initial-version file://${d_agg_config}/subscription-definition-init.json \
                          --query LatestVersionArn)
@@ -490,7 +386,7 @@ cat <<EOF > ${d_agg_config}/group-init.json
 EOF
 
 echo Creating the Greengrass group.
-group_v_arn=$(aws greengrass create-group \
+group_v_arn=$(aws greengrass-pp create-group --output text \
                          --name ${thing_agg}-group \
                          --initial-version file://${d_agg_config}/group-init.json \
                          --query LatestVersionArn)
@@ -502,7 +398,10 @@ if test $? != 0; then
 fi
 
 echo Associating the role to the Greengrass group.
-aws greengrass associate-role-to-group --group-id $(echo $group_v_arn | cut -f5 -d'/') --role-arn ${agg_role}
+group_info_raw=$(aws greengrass list-groups --output text \
+                     --query "Groups[?Name == '${thing_agg}-group'].[Id,LatestVersion]")
+group_info_id=$(echo $group_info_raw | tr -s ' ' ' ' | cut -f1 -d ' ')
+aws greengrass-pp associate-role-to-group --group-id ${group_info_id} --role-arn ${agg_role}
 
 if test $? != 0; then
   echo Greengrass role association failed. Clean and try again.
@@ -510,5 +409,5 @@ if test $? != 0; then
   exit 1
 fi
 
-# Finis
+# Finish
 echo Thank you and have a nice day.

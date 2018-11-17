@@ -1,4 +1,5 @@
 # Lab 4: Deploy Edge ML
+
 In this lab we will deploy an FPGA based edge machine learning (ML) video surveillance application to the remote asset unit controller (Ultra96).  Amazon IoT Console will serve as the system deployment dashboard and operation mechanism to incrementally add this function to the running system.
 
 1. Connect the eCon USB camera to the Ultra96 board J8.  See the picture below showing Ultra96 with the camera connected.

@@ -1920,6 +1920,7 @@ BaseType_t xReturn;
 												( tskIDLE_PRIORITY | portPRIVILEGE_BIT ),
 												pxIdleTaskStackBuffer,
 												pxIdleTaskTCBBuffer ); /*lint !e961 MISRA exception, justified as it is not a redundant explicit cast to all supported compilers. */
+
 		if( xIdleTaskHandle != NULL )
 		{
 			xReturn = pdPASS;
