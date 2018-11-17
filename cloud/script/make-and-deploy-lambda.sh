@@ -86,7 +86,7 @@ else
       --query Version)
 
   if test $? != 0; then
-    echo Something bad happened.  Maybe you need to remove the lambda function in the cloud and start again.
+    echo Something bad happened. Remove the lambdas in the cloud and try again.
     exit 1
   else
     echo Function updated successfully.

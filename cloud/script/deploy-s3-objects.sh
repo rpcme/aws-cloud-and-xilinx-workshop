@@ -5,9 +5,9 @@ if test -z "${prefix}"; then
   echo you need to provide a bucket prefix as first argument.
 fi
 
-local_path=/home/xilinx/s3-sync
 bitstream=/usr/local/lib/python3.6/dist-packages/pydeephi/boards/Ultra96/gstreamer_deephi.bit
-bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
+bucket_name=${prefix}-s3
+local_path=/home/xilinx/${bucket_name}
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
              --bucket "${bucket_name}" \

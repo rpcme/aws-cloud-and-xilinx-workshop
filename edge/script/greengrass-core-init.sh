@@ -44,7 +44,7 @@ cert_afr_arn=$(aws iot list-thing-principals --output text \
 # Check if the service role exists for the account.  If not, this must be
 # created.
 echo Checking if the service role for Greengrass has been attached.
-service_role_arn=$(aws greengrass get-service-role-for-account --output text \
+service_role_arn=$(aws greengrass-pp get-service-role-for-account --output text \
                        --query RoleArn)
 
 if test -z ${service_role_arn}; then
@@ -77,12 +77,10 @@ EOF
                      --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
                      --query Role.Arn)
 
-    #TODO IT LOOKS LIKE WE ARE MISSING POLICY ATTACHMENT HERE!
-
-    aws greengrass associate-service-role-to-account \
+    aws greengrass-pp associate-service-role-to-account \
         --role-arn ${agg_sr_arn}
   else
-    aws greengrass associate-service-role-to-account \
+    aws greengrass-pp associate-service-role-to-account \
         --role-arn ${service_role_arn}
   fi
 fi
@@ -94,9 +92,9 @@ role_policy_agg_name=role-greengrass-group-${thing_agg}-policy
 my_region=$(echo ${thing_agg_arn} | cut -f4 -d':')
 my_account=$(echo ${thing_agg_arn} | cut -f5 -d':')
 
-agg_role=$(aws iam get-role --output text --role-name ${role_agg_name} --query Role.Arn)
-
-if test $? != 0; then
+echo Creating the gateway role.
+agg_role_found=$(aws iam list-roles --output text --query "Roles[?RoleName == '${role_agg_name}']")
+if [ -z "$agg_role_found" ]; then
 cat <<EOF > ${d_agg_config}/core-role-trust.json
 {
   "Version": "2012-10-17",
@@ -123,7 +121,7 @@ cat <<EOF > ${d_agg_config}/core-role-policy.json
     "Statement": {
         "Effect": "Allow",
         "Action": ["s3:Put","s3:Get"],
-        "Resource": "arn:aws:s3::${my_account}:${s3_bucket}"
+        "Resource": "arn:aws:s3:::${my_account}:${s3_bucket}"
     }
 }
 EOF
@@ -133,6 +131,8 @@ EOF
       --policy-name ${role_policy_agg_name}                                   \
       --policy-document file://${d_agg_config}/core-role-policy.json
 fi
+agg_role=$(aws iam get-role --output text --role-name ${role_agg_name} --query Role.Arn)
+
 # Create the core definition with initial version
 cat <<EOF > ${d_agg_config}/core-definition-init.json
 {
@@ -148,7 +148,7 @@ cat <<EOF > ${d_agg_config}/core-definition-init.json
 EOF
 
 echo Creating the core definition.
-core_v_arn=$(aws greengrass create-core-definition --output text             \
+core_v_arn=$(aws greengrass-pp create-core-definition --output text             \
                  --name ${thing_agg}-core                                    \
                  --initial-version file://${d_agg_config}/core-definition-init.json \
                  --query LatestVersionArn)
@@ -176,7 +176,7 @@ cat <<EOF > ${d_agg_config}/device-definition-init.json
 EOF
 
 echo Creating the device definition.
-device_v_arn=$(aws greengrass create-device-definition --output text                          \
+device_v_arn=$(aws greengrass-pp create-device-definition --output text                          \
                  --name ${thing_agg}-device                                    \
                  --initial-version file://${d_agg_config}/device-definition-init.json \
                  --query LatestVersionArn)
@@ -211,7 +211,7 @@ cat <<EOF > ${d_agg_config}/logger-definition-init.json
 EOF
 
 echo Creating the logger definition.
-logger_v_arn=$(aws greengrass create-logger-definition --output text \
+logger_v_arn=$(aws greengrass-pp create-logger-definition --output text \
                    --name ${thing_agg}-logger \
                    --initial-version file://${d_agg_config}/logger-definition-init.json \
                    --query LatestVersionArn)
@@ -234,7 +234,7 @@ cat <<EOF > ${d_agg_config}/resource-definition-init.json
 EOF
 
 echo Creating the resource definition.
-resource_v_arn=$(aws greengrass create-resource-definition --output text \
+resource_v_arn=$(aws greengrass-pp create-resource-definition --output text \
                      --name ${thing_agg}-resource \
                      --initial-version file://${d_agg_config}/resource-definition-init.json \
                      --query LatestVersionArn)
@@ -315,7 +315,7 @@ if test $? != 0; then
   echo Exiting.
   exit 1
 fi
-˜
+
 # Create the subscription definition
 cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 {
@@ -361,7 +361,7 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 EOF
 
 echo Creating the subscription definition.
-subscription_v_arn=$(aws greengrass create-subscription-definition --output text \
+subscription_v_arn=$(aws greengrass-pp create-subscription-definition --output text \
                          --name ${thing_agg}-subscription \
                          --initial-version file://${d_agg_config}/subscription-definition-init.json \
                          --query LatestVersionArn)
@@ -386,7 +386,7 @@ cat <<EOF > ${d_agg_config}/group-init.json
 EOF
 
 echo Creating the Greengrass group.
-group_v_arn=$(aws greengrass create-group --output text \
+group_v_arn=$(aws greengrass-pp create-group --output text \
                          --name ${thing_agg}-group \
                          --initial-version file://${d_agg_config}/group-init.json \
                          --query LatestVersionArn)
@@ -398,7 +398,10 @@ if test $? != 0; then
 fi
 
 echo Associating the role to the Greengrass group.
-aws greengrass associate-role-to-group --group-id $(echo $group_v_arn | cut -f5 -d'/') --role-arn ${agg_role}
+group_info_raw=$(aws greengrass list-groups --output text \
+                     --query "Groups[?Name == '${thing_agg}-group'].[Id,LatestVersion]")
+group_info_id=$(echo $group_info_raw | tr -s ' ' ' ' | cut -f1 -d ' ')
+aws greengrass-pp associate-role-to-group --group-id ${group_info_id} --role-arn ${agg_role}
 
 if test $? != 0; then
   echo Greengrass role association failed. Clean and try again.
@@ -406,5 +409,5 @@ if test $? != 0; then
   exit 1
 fi
 
-# Finis
+# Finish
 echo Thank you and have a nice day.

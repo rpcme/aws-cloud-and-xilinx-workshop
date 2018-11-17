@@ -13,8 +13,8 @@ group_info_raw=$(aws greengrass list-groups --output text \
 group_info_id=$(echo $group_info_raw | tr -s ' ' ' ' | cut -f1 -d ' ')
 group_info_version=$(echo $group_info_raw | tr -s ' ' ' ' | cut -f2 -d ' ')
 
-echo "deploying id      [$group_info_id]"
-echo "          version [$group_info_version]"
+echo "deployment id      [$group_info_id]"
+echo "deployment version [$group_info_version]"
 
 deployment_id_raw=$(aws greengrass create-deployment \
                     --deployment-type NewDeployment \
