@@ -166,8 +166,8 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. 
-The script will also create a local folder `/home/xilinx/test1-s3-sync` for your files to synchronize with the S3 bucket. 
+The above deployment will prepare an S3 bucket named `test1-s3` for you. 
+The script will also create a local folder `/home/xilinx/test1-s3` for your files to synchronize with the S3 bucket. 
 
 By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more / other buckets. 
 
