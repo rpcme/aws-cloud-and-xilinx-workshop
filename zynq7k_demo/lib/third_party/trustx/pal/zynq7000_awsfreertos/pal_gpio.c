@@ -58,7 +58,7 @@
 * 
 * <b>API Details:</b>
 *      The API sets the pin high, only if the pin is assigned to a valid gpio context.<br>
-*      Otherwise the API returns without any faliure status.<br>
+*      Otherwise the API returns without any failure status.<br>
 *
 *\param[in] p_gpio_context Pointer to pal layer gpio context
 *

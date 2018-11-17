@@ -58,7 +58,7 @@
 /*********************************************************************************************************************
  * LOCAL DATA
  *********************************************************************************************************************/
-/* Varibale to indicate the re-entrant count of the i2c bus acquire function*/
+/* Variable to indicate the reentrant count of the i2c bus acquire function*/
 static volatile uint32_t g_entry_count = 0;
 
 /* The AWS demo controls this semaphore as well. Demo initializes the I2C interface */
@@ -136,7 +136,7 @@ void invoke_upper_layer_callback (const pal_i2c_t* p_pal_i2c_ctx, host_lib_statu
  *
  * \param[in] p_i2c_context   Pal i2c context to be initialized
  *
- * \retval  #PAL_STATUS_SUCCESS  Returns when the I2C master init it successfull
+ * \retval  #PAL_STATUS_SUCCESS  Returns when the I2C master init it successful
  * \retval  #PAL_STATUS_FAILURE  Returns when the I2C init fails.
  */
 pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
@@ -201,7 +201,7 @@ pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
  *
  * \param[in] p_i2c_context   I2C context to be de-initialized
  *
- * \retval  #PAL_STATUS_SUCCESS  Returns when the I2C master de-init it successfull
+ * \retval  #PAL_STATUS_SUCCESS  Returns when the I2C master de-init it successful
  * \retval  #PAL_STATUS_FAILURE  Returns when the I2C de-init fails.
  */
 pal_status_t pal_i2c_deinit(const pal_i2c_t* p_i2c_context)
