@@ -63,11 +63,6 @@
  */
 #define UZedDONT_BLOCK         ( ( TickType_t ) 0 )
 
-/**
- * Semaphore to control i2c line
- */
-SemaphoreHandle_t xIicSemaphore;
-
 //////////////////// END USER PARAMETERS ////////////////////
 
 #if SAMPLING_PERIOD_MS < 100
@@ -83,6 +78,7 @@ SemaphoreHandle_t xIicSemaphore;
 
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 #include "message_buffer.h"
 
@@ -305,6 +301,11 @@ static TopicInfo pTopicInfo[] = {
 		{TOPIC_SYSTEM_STATUS,							(const uint8_t*)"/remote_io_module/sensor_status/System_Error",			0},
 		{TOPIC_LAST,									(const uint8_t*)NULL,													0}
 };
+
+/**
+ * Semaphore to control Iic interface
+ */
+SemaphoreHandle_t xIicSemaphore;
 
 /*-----------------------------------------------------------*/
 /**
@@ -1257,7 +1258,7 @@ static void StartSystem(System* pSystem)
 	/* Attempt to create a semaphore. */
 	xIicSemaphore = xSemaphoreCreateBinary();
 
-	if( xSemaphore == NULL )
+	if( xIicSemaphore == NULL )
 	{
 		goto L_DIE;
 	}
