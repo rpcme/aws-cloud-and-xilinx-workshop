@@ -63,6 +63,11 @@
  */
 #define UZedDONT_BLOCK         ( ( TickType_t ) 0 )
 
+/**
+ * Semaphore to control i2c line
+ */
+SemaphoreHandle_t xIicSemaphore;
+
 //////////////////// END USER PARAMETERS ////////////////////
 
 #if SAMPLING_PERIOD_MS < 100
@@ -676,19 +681,27 @@ static int ReadIicRegs(System* pSystem,u8 bSlaveAddress,BaseType_t xCount,u8 bFi
 		bFirstSlaveReg |= 0x80;
 	}
 
+	portENTER_CRITICAL();
+
 	MAY_DIE({
+		xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
 		if(1 != XIic_Send(pSystem->iic.BaseAddress,bSlaveAddress,&bFirstSlaveReg,1,XIIC_REPEATED_START)) {
 			pSystem->rc = 1;
 			pSystem->pcErr = "ReadIicRegs::XIic_Send(Addr) -> %08x";
 		}
+		xSemaphoreGive(xIicSemaphore);
 	});
 	MAY_DIE({
+		xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
 		xReceived = XIic_Recv(pSystem->iic.BaseAddress,bSlaveAddress,pbBuf,xCount,XIIC_STOP);
 		if(xCount != xReceived) {
 			pSystem->rc = xReceived;
 			pSystem->pcErr = "ReadIicRegs::XIic_Recv(Data) -> %08x";
 		}
+		xSemaphoreGive(xIicSemaphore);
 	});
+
+	portEXIT_CRITICAL();
 
 L_DIE:
 	return pSystem->rc;
@@ -708,11 +721,13 @@ static int WriteIicRegs(System* pSystem, u8 bSlaveAddress, BaseType_t xCount, u8
 	}
 
 	MAY_DIE({
+		xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
 		xSent = XIic_Send(pSystem->iic.BaseAddress,bSlaveAddress,pbBuf,xCount,XIIC_STOP);
 		if(xCount != xSent) {
 			pSystem->rc = xSent;
 			pSystem->pcErr = "WriteIicRegs::XIic_Send(Buf) -> %08x";
 		}
+		xSemaphoreGive(xIicSemaphore);
 	});
 
 L_DIE:
@@ -1239,6 +1254,16 @@ static void StartSystem(System* pSystem)
 
     /*-----------------------------------------------------------------*/
 
+	/* Attempt to create a semaphore. */
+	xIicSemaphore = xSemaphoreCreateBinary();
+
+	if( xSemaphore == NULL )
+	{
+		goto L_DIE;
+	}
+
+	xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
+
 	pI2cConfig = XIic_LookupConfig(XPAR_IIC_0_DEVICE_ID);
 	configASSERT(pI2cConfig != NULL);
 
@@ -1253,6 +1278,7 @@ static void StartSystem(System* pSystem)
 		pSystem->pcErr = "XIic_Start() -> %08x";
 	});
 
+	xSemaphoreGive(xIicSemaphore);
 
     /*-----------------------------------------------------------------*/
 
@@ -1306,7 +1332,9 @@ static void StopSystem(System* pSystem)
 	StopBarometer(pSystem);
 
 	if(pSystem->iic.IsReady) {
+		xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
 		XIic_Stop(&pSystem->iic);
+		xSemaphoreGive(xIicSemaphore);
 	}
 
 	BlinkLed(pSystem, 5, pdFALSE);

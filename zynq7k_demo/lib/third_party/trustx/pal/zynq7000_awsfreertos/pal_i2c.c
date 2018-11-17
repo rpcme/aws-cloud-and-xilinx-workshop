@@ -61,6 +61,9 @@
 /* Varibale to indicate the re-entrant count of the i2c bus acquire function*/
 static volatile uint32_t g_entry_count = 0;
 
+/* The AWS demo controls this semaphore as well. Demo initializes the I2C interface */
+extern SemaphoreHandle_t xIicSemaphore;
+
 /**********************************************************************************************************************
  * LOCAL ROUTINES
  *********************************************************************************************************************/
@@ -69,14 +72,7 @@ static volatile uint32_t g_entry_count = 0;
 //lint --e{715} suppress the unused p_i2c_context variable lint error , since this is kept for future enhancements
 static pal_status_t pal_i2c_acquire(const void* p_i2c_context)
 {
-    if(g_entry_count == 0)
-    {
-        g_entry_count++;
-        if(g_entry_count == 1)
-        {
-            return PAL_STATUS_SUCCESS;
-        }
-    }
+	xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
     return PAL_STATUS_FAILURE;
 }
 
@@ -84,7 +80,7 @@ static pal_status_t pal_i2c_acquire(const void* p_i2c_context)
 //lint --e{715} suppress the unused p_i2c_context variable lint, since this is kept for future enhancements
 static void pal_i2c_release(const void* p_i2c_context)
 {
-    g_entry_count = 0;
+	xSemaphoreGive(xIicSemaphore);
 }
 /// @endcond
 
@@ -150,6 +146,7 @@ pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
 	XIic_Config *pConfig;
 	XIic* p_i2c = (XIic*)p_i2c_context->p_i2c_hw_config;
 
+#ifndef OPTIGA_NO_I2C_INIT
 	do
 	{
 		pConfig = XIic_LookupConfig(XPAR_IIC_0_DEVICE_ID);
@@ -178,6 +175,9 @@ pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
 			break;
 		}
 	}while(1);
+#else
+	status = PAL_STATUS_SUCCESS;
+#endif
 
 	return status;
 }

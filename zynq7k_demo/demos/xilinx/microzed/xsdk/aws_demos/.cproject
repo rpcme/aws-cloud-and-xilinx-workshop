@@ -51,6 +51,7 @@
 								<option id="xilinx.gnu.compiler.symbols.defined.1582221985" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_CMDLIB_WITH_RTOS"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_ECDSA_SIGN_ALT"/>
+									<listOptionValue builtIn="false" value="OPTIGA_NO_I2C_INIT"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_ECDSA_VERIFY_ALT"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_ECDH_COMPUTE_SHARED_ALT"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_ECDH_GEN_PUBLIC_ALT"/>
