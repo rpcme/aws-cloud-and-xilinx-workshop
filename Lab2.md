@@ -91,7 +91,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/cloud/script
-	./deploy-greengrass-group.sh
+	./deploy-greengrass-group.sh <your-group-prefix>
 	```
 
 8. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world". You should now see a MQTT response from the Ultra96 platform in the test window response.  See picture below for expected response.
