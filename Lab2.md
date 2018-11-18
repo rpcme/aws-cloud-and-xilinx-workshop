@@ -14,11 +14,11 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
-	./deploy-awsiot-objects.sh
+	./deploy-awsiot-objects.sh <your-group-prefix>
 	```
 
    When the script completes, the keys and certificates will be in the directories specified above. 
-   You can also optionally provide a prefix for you group by calling `./deploy-awsiot-objects.sh <your-prefix>`.
+   Note that your AWS Greengrass group prefix does not have to be the same as your unique prefix used in S3 deployment.
 
 3. Using the RNDIS adapter of Ultra96, copy some files from the ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` directory to your laptop. In a psftp session, you would:
     1. open xilinx@192.168.1.3  # Enter *xilinx* for password
@@ -73,7 +73,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
-	./greengrass-core-init.sh <your-s3-bucket-name>
+	./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
 	```
    Based on the previous lab, your s3 bucket name should have a format of `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`.
 
