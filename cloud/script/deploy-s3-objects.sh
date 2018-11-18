@@ -43,7 +43,12 @@ echo Constraining bucket access to this specific device
 aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_policy_location}
 
 
-echo Upload a bitstream to S3 bucket
+echo Upload files to S3 bucket
 mkdir -p ${local_path}
 cp -f ${bitstream} ${local_path}
+cat <<EOF > ${local_path}/parameters.txt
+5
+2
+EOF
 aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
+mkdir -p /home/xilinx/download
