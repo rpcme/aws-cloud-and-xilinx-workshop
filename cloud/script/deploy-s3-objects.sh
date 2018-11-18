@@ -2,7 +2,8 @@
 
 prefix=$1
 if test -z "${prefix}"; then
-  echo you need to provide a bucket prefix as first argument.
+  echo ERROR: first argument must be the bucket prefix.
+  exit 1
 fi
 
 bitstream=/usr/local/lib/python3.6/dist-packages/pydeephi/boards/Ultra96/gstreamer_deephi.bit
@@ -45,4 +46,4 @@ aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_pol
 echo Upload a bitstream to S3 bucket
 mkdir -p ${local_path}
 cp -f ${bitstream} ${local_path}
-$aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
+aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
