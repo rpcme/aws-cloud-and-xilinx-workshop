@@ -72,8 +72,9 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
-	./greengrass-core-init.sh test1-s3
+	./greengrass-core-init.sh <your_s3_bucekt_name>
 	```
+   Based on the previous lab, your s3 bucket name should have a format of `<your_unique_prefix>-aws-cloud-and-xilinx-workshop`.
 
 6. Start AWS Greengrass.
 
