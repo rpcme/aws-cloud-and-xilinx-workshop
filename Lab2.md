@@ -17,7 +17,8 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 	./deploy-awsiot-objects.sh
 	```
 
-When the script completes, the keys and certificates will be in the directories specified above.
+   When the script completes, the keys and certificates will be in the directories specified above. 
+   You can also optionally provide a prefix for you group by calling `./deploy-awsiot-objects.sh <your-prefix>`.
 
 3. Using the RNDIS adapter of Ultra96, copy some files from the ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` directory to your laptop. In a psftp session, you would:
     1. open xilinx@192.168.1.3  # Enter *xilinx* for password
