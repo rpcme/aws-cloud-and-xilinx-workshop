@@ -7,7 +7,7 @@ if test -z "${prefix}"; then
 fi
 
 bitstream=/usr/local/lib/python3.6/dist-packages/pydeephi/boards/Ultra96/gstreamer_deephi.bit
-bucket_name=${prefix}-s3
+bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
 local_path=/home/xilinx/${bucket_name}
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \

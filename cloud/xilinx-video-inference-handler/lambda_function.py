@@ -22,8 +22,8 @@ s3 = boto3.resource('s3')
 
 
 # This is where the video inference results are stored
-# Assume there is only 1 folder with suffix `-s3` in "/home/xilinx"
-bucket = glob.glob1('/home/xilinx', '*-s3')[0]
+# Assume there is only 1 folder with suffix `-aws-cloud-and-xilinx-workshop`
+bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 topic = "/generator/camera"
 
