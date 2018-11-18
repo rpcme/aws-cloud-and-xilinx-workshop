@@ -7,6 +7,10 @@ if test -z "$s3_bucket"; then
   echo ERROR: first argument must be named S3 bucket.
   exit 1
 fi
+if test -z "$prefix"; then
+  echo ERROR: second argument must be provided as a prefix for your group name.
+  exit 1
+fi
 
 if test -z "$prefix"; then
   thing_agg=gateway-ultra96
