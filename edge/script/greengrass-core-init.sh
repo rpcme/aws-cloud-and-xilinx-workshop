@@ -246,8 +246,12 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# Two lambda functions: xilinx-bitstream-deployer-handler, xilinx-video-inference-handler
+# Three lambda functions: 
+#   xilinx-hello-world
+#   xilinx-bitstream-deployer-handler
+#   xilinx-video-inference-handler
 # These functions MUST be deployed to AWS Lambda with Alias PROD prior to running this.
+xilinx_hello_world_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-hello-world:PROD
 xilinx_bitstream_deployer_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deployer-handler:PROD
 xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inference-handler:PROD
 
@@ -260,6 +264,26 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
     }
   },
   "Functions": [
+    {
+      "Id": "xilinx_hello_world",
+      "FunctionArn": "${xilinx_hello_world_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
+        "Environment": {
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
+          }
+        },
+        "Executable": "python",
+        "Pinned": true,
+        "Timeout": 500
+      }
+    },
     {
       "Id": "xilinx_video_inference_handler",
       "FunctionArn": "${xilinx_video_inference_handler_arn}",
@@ -321,10 +345,40 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
 {
   "Subscriptions": [
     {
+      "Id":      "hello-world-to-cloud",
+      "Source":  "${xilinx_hello_world_arn}",
+      "Subject": "hello/world",
+      "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-hello-world",
+      "Source":  "cloud",
+      "Subject": "hello/world",
+      "Target":  "${xilinx_hello_world_arn}"
+    },
+    {
       "Id":      "inference-handler-to-cloud",
       "Source":  "${xilinx_video_inference_handler_arn}",
       "Subject": "/generator/camera",
       "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-inference-handler",
+      "Source":  "cloud",
+      "Subject": "/generator/camera",
+      "Target":  "${xilinx_video_inference_handler_arn}"
+    },
+    {
+      "Id":      "deployer-handler-to-cloud",
+      "Source":  "${xilinx_bitstream_deployer_handler_arn}",
+      "Subject": "/generator/camera",
+      "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-deployer-handler",
+      "Source":  "cloud",
+      "Subject": "/generator/camera",
+      "Target":  "${xilinx_bitstream_deployer_handler_arn}"
     },
     {
       "Id":      "greengrass-device-to-cloud",
