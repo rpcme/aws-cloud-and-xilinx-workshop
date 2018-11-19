@@ -14,10 +14,11 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
-	./deploy-awsiot-objects.sh
+	./deploy-awsiot-objects.sh <your-group-prefix>
 	```
 
-When the script completes, the keys and certificates will be in the directories specified above.
+   When the script completes, the keys and certificates will be in the directories specified above. 
+   Note that your AWS Greengrass group prefix does not have to be the same as your unique prefix used in S3 deployment.
 
 3. Using the RNDIS adapter of Ultra96, copy some files from the ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` directory to your laptop. In a psftp session, you would:
     1. open xilinx@192.168.1.3  # Enter *xilinx* for password
@@ -35,13 +36,13 @@ so that your Ultra96 can be used as a greengrass core.
 1. Copy the private key and certificate to AWS Greengrass.
 
    ```bash
-   sudo cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/*pem /greengrass/certs/
+   sudo cp $WORKSHOP_HOME/edge/auth-*gateway-ultra96/*pem /greengrass/certs/
    ```
 
 2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation.
 
    ```bash
-   sudo cp $WORKSHOP_HOME/edge/auth-gateway-ultra96/config.json /greengrass/config/
+   sudo cp $WORKSHOP_HOME/edge/auth-*gateway-ultra96/config.json /greengrass/config/
    ```
 
 3. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
@@ -72,8 +73,9 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
-	./greengrass-core-init.sh test1-s3
+	./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
 	```
+   Based on the previous lab, your s3 bucket name should have a format of `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`.
 
 6. Start AWS Greengrass.
 
@@ -89,7 +91,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $WORKSHOP_HOME/cloud/script
-	./deploy-greengrass-group.sh
+	./deploy-greengrass-group.sh <your-group-prefix>
 	```
 
 8. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world". You should now see a MQTT response from the Ultra96 platform in the test window response.  See picture below for expected response.

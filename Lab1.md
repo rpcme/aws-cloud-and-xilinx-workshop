@@ -158,18 +158,24 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    ```bash
    cd $WORKSHOP_HOME/cloud/script
    ```
-2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
+2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts 
+such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the 
+Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-s3-objects.sh test1
+	./deploy-s3-objects.sh <your-unique-prefix>
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `test1-s3` for you. 
-The script will also create a local folder `/home/xilinx/test1-s3` for your files to synchronize with the S3 bucket. 
+The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
+The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
+for your files to synchronize with the S3 bucket. You should be able to see a bitstream uploaded on your S3 bucket,
+while your local folder is empty. In later labs we will download this bitstream onto your board.
 
-By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more / other buckets. 
+Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
+of a certain name, you cannot have a bucket with that same name. 
+If you see *BucketAlreadyExists* error, try to rerun the script with another prefix.
 
 
 ### Store your AWS IoT Endpoint address in a text file
