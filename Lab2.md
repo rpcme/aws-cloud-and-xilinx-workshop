@@ -60,14 +60,15 @@ so that your Ultra96 can be used as a greengrass core.
 	- Applies a version number to the function
 	- Creates an alias for the function
 
-4. Although in this lab we are only using 1 lambda function, let's repeat this step for all the lambda
+4. Although in this lab we are only using one lambda function, let's repeat this step for all the lambda
    functions so that we do not need to re-create the AWS Greengrass group.
    
 	```bash
+	./make-and-deploy-lambda.sh xilinx-bitstream-deploy-handler
+	./make-and-deploy-lambda.sh xilinx-image-upload-handler
 	./make-and-deploy-lambda.sh xilinx-video-inference-handler
-	./make-and-deploy-lambda.sh xilinx-bitstream-deployer-handler
 	```
-   Again, these 2 lambdas will be used in later labs.
+   Again, these lambdas will be used in later labs.
 
 5. Make the initial AWS Greengrass group configuration.  The group creation has been automated to reduce the amount of time required for this procedure.
 
