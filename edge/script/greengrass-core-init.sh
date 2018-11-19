@@ -281,7 +281,10 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Uid": 0,
               "Gid": 0
             }
-          }
+          },
+          "Variables": { 
+                "BOARD":"Ultra96"
+           }
         },
         "Executable": "python",
         "Pinned": true,
@@ -301,7 +304,10 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Uid": 0,
               "Gid": 0
             }
-          }
+          },
+          "Variables": { 
+                "BOARD":"Ultra96"
+           }
         },
         "Executable": "python",
         "Pinned": true,
@@ -321,7 +327,10 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Uid": 0,
               "Gid": 0
             }
-          }
+          },
+          "Variables": { 
+                "BOARD":"Ultra96"
+           }
         },
         "Executable": "python",
         "Pinned": false,
