@@ -35,7 +35,7 @@ In this lab we will deploy a new machine learning edge inference function to the
 [Go to Lab 4](./Lab4.md)
 
 
-# Lab 5: Bring Back Data
+# Lab 5: Deriving Machine Learning Inference Value
 
 Time to completion: 25 minutes
 

@@ -59,7 +59,6 @@ thing_arn_afr=$(aws iot create-thing --output text         \
                     --query thingArn)
 
 # eventual consistency
-echo Please Wait...
 sleep 5
 
 echo Attaching thing [${thing_afr}] to its certificate.
@@ -85,7 +84,6 @@ aws iot create-policy   --output text              \
     --query policyArn
 
 # Potential for eventual consistency here.
-echo Please wait...
 sleep 5
 
 echo Attaching policy [${policy_agg}] to its certificate.
@@ -111,7 +109,6 @@ aws iot create-policy --output text                \
     --query policyArn
 
 # Potential for eventual consistency here.
-echo Please wait...
 sleep 5
 
 echo Attaching policy [${policy_afr}] to its certificate.

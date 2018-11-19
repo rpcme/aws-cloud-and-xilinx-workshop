@@ -108,7 +108,8 @@ You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI. The AWS CLI has already been installed for you.
+In this section, we will configure the AWS CLI on the Ultra96 board. 
+The AWS CLI has already been installed for you.
 
 Accept the default options presented by hitting ENTER each time.
 
@@ -125,8 +126,28 @@ For more information or details on configuration, visit the [Configuring the AWS
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
-The following scripts will succeed if your IAM user has the *AdministratorAccess* policy and *AWSGreengrassResourceAccessRolePolicy* attached with no permission boundaries.
-This is very broad, and narrower options might succeed.
+The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
+This is very broad, and narrower options might succeed. 
+
+To make sure greengrass runs properly, you also need to associate the 
+*AWSGreengrassResourceAccessRolePolicy* to your account:
+
+1. Open up your IAM service and create a role called `greengrass_service_role`.
+
+2. Attach the *AWSGreengrassResourceAccessRolePolicy* to the role. The result looks like the following:
+
+	![alt text](images/IAM_Role.PNG "IAM Role")
+
+3. Copy the 'Role ARN' field.
+
+4. Use the following command in your terminal
+
+    ```bash
+    aws greengrass associate-service-role-to-account --role-arn <your-copied-ARN>
+    ```
+    
+   If this is successful, you will see a confirmation from the terminal that the role is associated to the account.
+
 
 ### Deploy AWS Cloud Artifacts
 
@@ -137,16 +158,24 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    ```bash
    cd $WORKSHOP_HOME/cloud/script
    ```
-2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
+2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts 
+such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the 
+Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-s3-objects.sh test1
+	./deploy-s3-objects.sh <your-unique-prefix>
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets. 
-In this lab, we will just use `test1` as an example prefix, as users may want to use other prefixes later.
+The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
+The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
+for your files to synchronize with the S3 bucket. You should be able to see a bitstream uploaded on your S3 bucket,
+while your local folder is empty. In later labs we will download this bitstream onto your board.
+
+Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
+of a certain name, you cannot have a bucket with that same name. 
+If you see *BucketAlreadyExists* error, try to rerun the script with another prefix.
 
 
 ### Store your AWS IoT Endpoint address in a text file

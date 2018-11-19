@@ -9,12 +9,21 @@ pushd ${base}
 zip -q -r ${zipfile} *
 popd
 
-function_arn=$(aws lambda get-function --output text \
+function_found=$(aws lambda list-functions --output text \
+        --query "Functions[?FunctionName=='${function_name}']")
+if [ ! -z "${function_found}" ]; then
+  function_arn=$(aws lambda get-function --output text \
                    --function-name ${function_name} \
                    --query Configuration.FunctionArn)
-role_arn=$(aws iam get-role --output text \
-               --role-name ${role_name} \
-               --query Role.Arn)
+fi
+
+role_found=$(aws iam list-roles --output text \
+        --query "Roles[?RoleName=='${role_name}']")
+if [ ! -z "${role_found}" ]; then
+    role_arn=$(aws iam get-role --output text \
+                    --role-name ${role_name} \
+                    --query Role.Arn)
+fi
 
 if test -z "${function_arn}"; then
   echo Creating lambda function in the cloud.
@@ -64,6 +73,7 @@ aws iam put-role-policy --output text                                           
     --policy-document file:///tmp/${role_name}-policy.json
   fi
 
+  sleep 5
   function_version=$(aws lambda create-function --output text \
       --function-name ${function_name} \
       --zip-file fileb://${zipfile}  \
@@ -77,6 +87,7 @@ aws iam put-role-policy --output text                                           
         --function-name ${function_name} \
         --name PROD \
         --function-version ${function_version}
+
 else
 
   echo Updating lambda function in the cloud.
@@ -86,7 +97,7 @@ else
       --query Version)
 
   if test $? != 0; then
-    echo Something bad happened.  Maybe you need to remove the lambda function in the cloud and start again.
+    echo Something bad happened. Remove the lambdas in the cloud and try again.
     exit 1
   else
     echo Function updated successfully.
