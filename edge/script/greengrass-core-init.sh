@@ -312,7 +312,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": false,
+        "Pinned": true,
         "Timeout": 500
       }
     },
@@ -335,7 +335,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": false,
+        "Pinned": true,
         "Timeout": 500
       }
     },
@@ -428,7 +428,7 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Id":      "cloud-to-upload-handler",
       "Source":  "cloud",
       "Subject": "/unit_controller/image-upload",
-      "Target":  "${xilinx_video_inference_handler_arn}"
+      "Target":  "${xilinx_image_upload_handler_arn}"
     },
     {
       "Id":      "sensor-value-to-cloud",
