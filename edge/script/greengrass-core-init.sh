@@ -250,14 +250,16 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# Three lambda functions: 
+# All the lambda functions: 
 #   xilinx-hello-world
-#   xilinx-bitstream-deployer-handler
+#   xilinx-bitstream-deploy-handler
 #   xilinx-video-inference-handler
+#   xilinx-image-upload-handler
 # These functions MUST be deployed to AWS Lambda with Alias PROD prior to running this.
 xilinx_hello_world_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-hello-world:PROD
-xilinx_bitstream_deployer_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deployer-handler:PROD
+xilinx_bitstream_deploy_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deploy-handler:PROD
 xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inference-handler:PROD
+xilinx_image_upload_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-image-upload-handler:PROD
 
 # Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
@@ -292,6 +294,29 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       }
     },
     {
+      "Id": "xilinx_bitstream_deploy_handler",
+      "FunctionArn": "${xilinx_bitstream_deploy_handler_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
+        "Environment": {
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
+          },
+          "Variables": { 
+                "BOARD":"Ultra96"
+           }
+        },
+        "Executable": "python",
+        "Pinned": false,
+        "Timeout": 500
+      }
+    },
+    {
       "Id": "xilinx_video_inference_handler",
       "FunctionArn": "${xilinx_video_inference_handler_arn}",
       "FunctionConfiguration": {
@@ -310,13 +335,13 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": true,
+        "Pinned": false,
         "Timeout": 500
       }
     },
     {
-      "Id": "xilinx_bitstream_deployer_handler",
-      "FunctionArn": "${xilinx_bitstream_deployer_handler_arn}",
+      "Id": "xilinx_image_upload_handler",
+      "FunctionArn": "${xilinx_image_upload_handler_arn}",
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Environment": {
@@ -333,7 +358,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": false,
+        "Pinned": true,
         "Timeout": 500
       }
     }
@@ -370,58 +395,88 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "${xilinx_hello_world_arn}"
     },
     {
-      "Id":      "inference-handler-to-cloud",
-      "Source":  "${xilinx_video_inference_handler_arn}",
-      "Subject": "/generator/camera",
-      "Target":  "cloud"
-    },
-    {
-      "Id":      "cloud-to-inference-handler",
-      "Source":  "cloud",
-      "Subject": "/generator/camera",
-      "Target":  "${xilinx_video_inference_handler_arn}"
-    },
-    {
       "Id":      "deployer-handler-to-cloud",
-      "Source":  "${xilinx_bitstream_deployer_handler_arn}",
-      "Subject": "/generator/model",
+      "Source":  "${xilinx_bitstream_deploy_handler_arn}",
+      "Subject": "/unit-controller/bitstream-deploy",
       "Target":  "cloud"
     },
     {
       "Id":      "cloud-to-deployer-handler",
       "Source":  "cloud",
-      "Subject": "/generator/model",
-      "Target":  "${xilinx_bitstream_deployer_handler_arn}"
+      "Subject": "/unit-controller/bitstream-deploy",
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
     },
     {
-      "Id":      "greengrass-device-to-cloud",
-      "Source":  "${thing_afr_arn}",
-      "Subject": "/generator/sensingdata",
+      "Id":      "inference-handler-to-cloud",
+      "Source":  "${xilinx_video_inference_handler_arn}",
+      "Subject": "/unit_controller/video-inference",
       "Target":  "cloud"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deployer-delta",
-      "Source":  "GGShadowService",
-      "Subject": "\$aws/things/${thing_agg}/shadow/update/delta",
-      "Target":  "${xilinx_bitstream_deployer_handler_arn}"
+      "Id":      "cloud-to-inference-handler",
+      "Source":  "cloud",
+      "Subject": "/unit_controller/video-inference",
+      "Target":  "${xilinx_video_inference_handler_arn}"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deployer-update",
-      "Source":  "${xilinx_bitstream_deployer_handler_arn}",
+      "Id":      "upload-handler-to-cloud",
+      "Source":  "${xilinx_image_upload_handler_arn}",
+      "Subject": "/unit_controller/image-upload",
+      "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-upload-handler",
+      "Source":  "cloud",
+      "Subject": "/unit_controller/image-upload",
+      "Target":  "${xilinx_video_inference_handler_arn}"
+    },
+    {
+      "Id":      "sensor-value-to-cloud",
+      "Source":  "${thing_afr_arn}",
+      "Subject": "/remote_io_module/sensor_value",
+      "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-sensor-value",
+      "Source":  "cloud",
+      "Subject": "/remote_io_module/sensor_value",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "sensor-status-to-cloud",
+      "Source":  "${thing_afr_arn}",
+      "Subject": "/remote_io_module/sensor_status",
+      "Target":  "cloud"
+    },
+    {
+      "Id":      "cloud-to-sensor-status",
+      "Source":  "cloud",
+      "Subject": "/remote_io_module/sensor_status",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "core-shadow-to-bitstream-deploy-delta",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update/delta",
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
+    },
+    {
+      "Id":      "core-shadow-to-bitstream-deploy-update",
+      "Source":  "${xilinx_bitstream_deploy_handler_arn}",
       "Subject": "\$aws/things/${thing_agg}/shadow/update",
       "Target":  "GGShadowService"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deployer-accepted",
+      "Id":      "core-shadow-to-bitstream-deploy-accepted",
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_agg}/shadow/update/accepted",
-      "Target":  "${xilinx_bitstream_deployer_handler_arn}"
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deployer-rejected",
+      "Id":      "core-shadow-to-bitstream-deploy-rejected",
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_agg}/shadow/update/rejected",
-      "Target":  "${xilinx_bitstream_deployer_handler_arn}"
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
     }
   ]
 }
