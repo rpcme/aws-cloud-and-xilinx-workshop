@@ -375,13 +375,13 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
     {
       "Id":      "deployer-handler-to-cloud",
       "Source":  "${xilinx_bitstream_deployer_handler_arn}",
-      "Subject": "/generator/camera",
+      "Subject": "/generator/model",
       "Target":  "cloud"
     },
     {
       "Id":      "cloud-to-deployer-handler",
       "Source":  "cloud",
-      "Subject": "/generator/camera",
+      "Subject": "/generator/model",
       "Target":  "${xilinx_bitstream_deployer_handler_arn}"
     },
     {
