@@ -6,27 +6,21 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 
 In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` and ```$WORKSHOP_HOME/edge/auth-gateway-ultra96```.
 
-1. Navigate to the directory containing the scripts for deploying cloud objects.
+1. Ensure that the USB-to-SD Card adapter is plugged into the USB port of the Ultra96 board with the MicroZed SD-Card inserted.
+
+2. Navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
    cd $WORKSHOP_HOME/cloud/script
    ```
-2. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
+3. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
 	```bash
 	./deploy-awsiot-objects.sh <your-group-prefix>
 	```
 
-   When the script completes, the keys and certificates will be in the directories specified above. 
+   When the script completes, the keys and certificates will be in the directories specified above.  The script will also copy the Zynq 7K credential files directly to the MicroZed SD card.
    Note that your AWS Greengrass group prefix does not have to be the same as your unique prefix used in S3 deployment.
-
-3. Using the RNDIS adapter of Ultra96, copy some files from the ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` directory to your laptop. In a psftp session, you would:
-    1. open xilinx@192.168.1.3  # Enter *xilinx* for password
-    2. lcd c:\temp
-    3. cd aws-cloud-and-xilinx-workshop/edge/auth-node-zynq7k
-    4. get node-zynq7k.crt.pem
-    5. get node-zynq7k.key.prv.pem
-    5. quit
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
