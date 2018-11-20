@@ -148,7 +148,7 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
             f_close(&fil);
             xil_printf("ReadBrokerInfo ERROR: File '%s': '%s' missing/too long: maxlen %d\r\n",
                 pcFileName,
-                pBL->pcName
+                pBL->pcName,
                 pBL->uMaxLength
                 );
             return pdFALSE;
