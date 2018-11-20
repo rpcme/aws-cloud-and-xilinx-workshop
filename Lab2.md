@@ -68,7 +68,7 @@ so that your Ultra96 can be used as a greengrass core.
    functions so that we do not need to re-create the AWS Greengrass group.
    
 	```bash
-	./make-and-deploy-lambda.sh xilinx-bitstream-deployer-handler
+	./make-and-deploy-lambda.sh xilinx-bitstream-deploy-handler
 	./make-and-deploy-lambda.sh xilinx-image-upload-handler
 	./make-and-deploy-lambda.sh xilinx-video-inference-handler
 	```
