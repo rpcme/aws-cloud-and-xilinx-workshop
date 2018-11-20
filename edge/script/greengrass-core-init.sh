@@ -52,7 +52,7 @@ service_role_arn=$(aws greengrass-pp get-service-role-for-account --output text 
                        --query RoleArn)
 
 if test -z ${service_role_arn}; then
-  echo Service role for AWS Greengrass for this region not found.  Locating.
+  echo Service role attachment for AWS Greengrass not found.  Locating existing role definition.
   service_role_arn=$(aws iam get-role --output text \
                              --role-name Greengrass_ServiceRole \
                              --query Role.Arn)
@@ -81,11 +81,14 @@ EOF
                      --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
                      --query Role.Arn)
 
+    echo Attaching AWSGreengrassResourceAccessRolePolicy to Role.
     policy_arn=arn:aws:iam::aws:policy/service-role/AWSGreengrassResourceAccessRolePolicy
     aws iam attach-role-policy --role-name Greengrass_ServiceRole --policy-arn ${policy_arn}
 
+    echo Associating Service role to the Account
     aws greengrass-pp associate-service-role-to-account \
         --role-arn ${agg_sr_arn}
+
   else
     aws greengrass-pp associate-service-role-to-account \
         --role-arn ${service_role_arn}
