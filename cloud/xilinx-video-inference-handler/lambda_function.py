@@ -33,7 +33,7 @@ def run_pydeephi_yolo():
             num_seconds = int(f.readline())
             threshold = int(f.readline())
     _ = subprocess.check_output(
-        'cd {0} & sudo /usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
+        'cd {0} && /usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
             sync_folder_path, num_seconds, threshold), shell=True)
 
 
