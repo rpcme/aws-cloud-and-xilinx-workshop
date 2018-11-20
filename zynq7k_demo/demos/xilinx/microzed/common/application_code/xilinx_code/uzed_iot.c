@@ -71,7 +71,7 @@
 /**
  * @brief If set to 1, use GreenGrass instead of raw MQTT
  */
-#define UZED_USE_GG 1
+#define UZED_USE_GG 0
 
 //////////////////// END USER PARAMETERS ////////////////////
 
