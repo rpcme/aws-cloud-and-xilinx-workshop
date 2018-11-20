@@ -54,7 +54,7 @@ service_role_arn=$(aws greengrass-pp get-service-role-for-account --output text 
 if test -z ${service_role_arn}; then
   echo Service role for AWS Greengrass for this region not found.  Locating.
   service_role_arn=$(aws iam get-role --output text \
-                             --role-name GreengrassServiceRole \
+                             --role-name Greengrass_ServiceRole \
                              --query Role.Arn)
   if test -z ${service_role_arn}; then
     echo Service role not found.  Creating.
@@ -77,9 +77,12 @@ EOF
     echo Creating the service role.
     agg_sr_arn=$(aws iam create-role --output text \
                      --path /service-role/ \
-                     --role-name GreengrassServiceRole \
+                     --role-name Greengrass_ServiceRole \
                      --assume-role-policy-document file://${d_agg_config}/agg-service-role.json \
                      --query Role.Arn)
+
+    policy_arn=arn:aws:iam::aws:policy/service-role/AWSGreengrassResourceAccessRolePolicy
+    aws iam attach-role-policy --role-name Greengrass_ServiceRole --policy-arn ${policy_arn}
 
     aws greengrass-pp associate-service-role-to-account \
         --role-arn ${agg_sr_arn}
@@ -135,7 +138,9 @@ EOF
       --policy-name ${role_policy_agg_name}                                   \
       --policy-document file://${d_agg_config}/core-role-policy.json
 fi
-agg_role=$(aws iam get-role --output text --role-name ${role_agg_name} --query Role.Arn)
+
+agg_role=$(aws iam get-role --output text \
+               --role-name ${role_agg_name} --query Role.Arn)
 
 # Create the core definition with initial version
 cat <<EOF > ${d_agg_config}/core-definition-init.json
@@ -250,7 +255,7 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# Three lambda functions: 
+# Three lambda functions:
 #   xilinx-hello-world
 #   xilinx-bitstream-deployer-handler
 #   xilinx-video-inference-handler
@@ -282,7 +287,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Gid": 0
             }
           },
-          "Variables": { 
+          "Variables": {
                 "BOARD":"Ultra96"
            }
         },
@@ -305,7 +310,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Gid": 0
             }
           },
-          "Variables": { 
+          "Variables": {
                 "BOARD":"Ultra96"
            }
         },
@@ -328,7 +333,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Gid": 0
             }
           },
-          "Variables": { 
+          "Variables": {
                 "BOARD":"Ultra96"
            }
         },
