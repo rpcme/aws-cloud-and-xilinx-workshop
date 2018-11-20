@@ -11,6 +11,7 @@ bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
 local_path=/home/xilinx/${bucket_name}
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
+             --create-bucket-configuration '{ "LocationConstraint": "us-west-2" }' \
              --bucket "${bucket_name}" \
              --query Location \
              --create-bucket-configuration LocationConstraint=eu-west-1)

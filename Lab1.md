@@ -101,7 +101,7 @@ In this section, you will clone the workshop Git repository.  The Git repository
 
    ```bash
    git clone https://github.com/rpcme/aws-cloud-and-xilinx-workshop
-   export WORKSHOP_HOME=$(pwd)/aws-cloud-and-xilinx-workshop
+   export WORKSHOP_HOME=$HOME/aws-cloud-and-xilinx-workshop
    cd $WORKSHOP_HOME
    ```
 You're done! Let's move to the next section.
@@ -121,32 +121,13 @@ For more information or details on configuration, visit the [Configuring the AWS
 1. Your AWS Access Key ID
 2. Your AWS Secret Access Key
 3. Default region name - use *eu-west-1*
-4. Default output format
+4. Default output format - use *json*
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
 The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
 This is very broad, and narrower options might succeed. 
-
-To make sure greengrass runs properly, you also need to associate the 
-*AWSGreengrassResourceAccessRolePolicy* to your account:
-
-1. Open up your IAM service and create a role called `greengrass_service_role`.
-
-2. Attach the *AWSGreengrassResourceAccessRolePolicy* to the role. The result looks like the following:
-
-	![alt text](images/IAM_Role.PNG "IAM Role")
-
-3. Copy the 'Role ARN' field.
-
-4. Use the following command in your terminal
-
-    ```bash
-    aws greengrass associate-service-role-to-account --role-arn <your-copied-ARN>
-    ```
-    
-   If this is successful, you will see a confirmation from the terminal that the role is associated to the account.
 
 
 ### Deploy AWS Cloud Artifacts
@@ -185,7 +166,9 @@ To find your endpoint address:
 3. Ensure your *Custom endpoint* is *Enabled*
 4. Copy to the clipboard the contents of the *EndPoint* box in the *Custom endpoint* section
 5. Create and open a text file on your laptop in *C:\temp* called *node-zynq7k.broker.txt*. 
-6. Paste your clipboard into this file and save it
+6. Paste your clipboard into this file on the first line
+7. The second line should contain your GreenGrass group id
+8. Save this file
 
 
 ## Outcomes
