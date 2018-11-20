@@ -121,7 +121,7 @@ For more information or details on configuration, visit the [Configuring the AWS
 1. Your AWS Access Key ID
 2. Your AWS Secret Access Key
 3. Default region name - use *eu-west-1*
-4. Default output format
+4. Default output format - use *json*
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
@@ -166,7 +166,9 @@ To find your endpoint address:
 3. Ensure your *Custom endpoint* is *Enabled*
 4. Copy to the clipboard the contents of the *EndPoint* box in the *Custom endpoint* section
 5. Create and open a text file on your laptop in *C:\temp* called *node-zynq7k.broker.txt*. 
-6. Paste your clipboard into this file and save it
+6. Paste your clipboard into this file on the first line
+7. The second line should contain your GreenGrass group id
+8. Save this file
 
 
 ## Outcomes
