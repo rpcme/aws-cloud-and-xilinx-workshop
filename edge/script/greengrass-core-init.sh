@@ -400,37 +400,37 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
     {
       "Id":      "deployer-handler-to-cloud",
       "Source":  "${xilinx_bitstream_deploy_handler_arn}",
-      "Subject": "/unit-controller/bitstream-deploy",
+      "Subject": "/unit_controller/bitstream_deploy",
       "Target":  "cloud"
     },
     {
       "Id":      "cloud-to-deployer-handler",
       "Source":  "cloud",
-      "Subject": "/unit-controller/bitstream-deploy",
+      "Subject": "/unit_controller/bitstream_deploy",
       "Target":  "${xilinx_bitstream_deploy_handler_arn}"
     },
     {
       "Id":      "inference-handler-to-cloud",
       "Source":  "${xilinx_video_inference_handler_arn}",
-      "Subject": "/unit_controller/video-inference",
+      "Subject": "/unit_controller/video_inference",
       "Target":  "cloud"
     },
     {
       "Id":      "cloud-to-inference-handler",
       "Source":  "cloud",
-      "Subject": "/unit_controller/video-inference",
+      "Subject": "/unit_controller/video_inference",
       "Target":  "${xilinx_video_inference_handler_arn}"
     },
     {
       "Id":      "upload-handler-to-cloud",
       "Source":  "${xilinx_image_upload_handler_arn}",
-      "Subject": "/unit_controller/image-upload",
+      "Subject": "/unit_controller/image_upload",
       "Target":  "cloud"
     },
     {
       "Id":      "cloud-to-upload-handler",
       "Source":  "cloud",
-      "Subject": "/unit_controller/image-upload",
+      "Subject": "/unit_controller/image_upload",
       "Target":  "${xilinx_image_upload_handler_arn}"
     },
     {

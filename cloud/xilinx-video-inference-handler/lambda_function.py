@@ -20,7 +20,7 @@ client = greengrasssdk.client('iot-data')
 bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
-topic = "/unit_controller/video-inference"
+topic = "/unit_controller/video_inference"
 parameters = 'parameters.txt'
 
 

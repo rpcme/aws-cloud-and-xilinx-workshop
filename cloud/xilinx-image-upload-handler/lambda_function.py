@@ -27,7 +27,7 @@ s3 = boto3.resource('s3')
 bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
-topic = "/unit_controller/image-upload"
+topic = "/unit_controller/image_upload"
 parameters = 'parameters.txt'
 
 

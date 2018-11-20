@@ -23,7 +23,7 @@ s3 = boto3.resource('s3')
 # Assume there is only 1 folder with suffix `-aws-cloud-and-xilinx-workshop`
 bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
 bit_folder_path = "/home/xilinx/download"
-topic = "/unit_controller/bitstream-deploy"
+topic = "/unit_controller/bitstream_deploy"
 bitstream = 'gstreamer_deephi.bit'
 parameters = 'parameters.txt'
 
@@ -49,8 +49,6 @@ def download_from_cloud():
     return
 
 
-download_from_cloud()
-
-
 def lambda_handler(event, context):
+    download_from_cloud()
     return
