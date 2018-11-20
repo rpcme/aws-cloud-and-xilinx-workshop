@@ -99,7 +99,10 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
 
 	Res = f_open(&fil, pcFileName, FA_READ);
 	if (Res) {
-		xil_printf("ERROR: Unable to open file '%s' Res %d\r\n", pcFileName, Res);
+        for(;;) {
+            xil_printf("ERROR: Unable to open file '%s' Res %d\r\n", pcFileName, Res);
+            sleep(1);
+        }
 		return pdFALSE;
 	}
 
@@ -122,7 +125,10 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
                     Res = f_read(&fil, &c, 1, &N);
                     if((1 != N) || (Res != 0)) {
                         f_close(&fil);
-                        xil_printf("ERROR: Read from file %s failed (%d)\r\n", pcFileName, Res);
+                        for(;;) {
+                            xil_printf("ERROR: Read from file %s failed (%d)\r\n", pcFileName, Res);
+                            sleep(1);
+                        }
                         return pdFALSE;
                     }
                     iChar = (int)c & 0xff;
@@ -155,12 +161,15 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
         }
         if(((0 == uLength) && (pBL->uMaxLength > 0)) || (uLength > pBL->uMaxLength)) {
             f_close(&fil);
-            xil_printf("ERROR: File '%s': '%s' %s: maxlen %u\r\n",
-                pcFileName,
-                pBL->pcName,
-                (0 == uLength) ? "missing" : "too long",
-                pBL->uMaxLength
-                );
+            for(;;) {
+                xil_printf("ERROR: File '%s': '%s' %s: maxlen %u\r\n",
+                    pcFileName,
+                    pBL->pcName,
+                    (0 == uLength) ? "missing" : "too long",
+                    pBL->uMaxLength
+                    );
+                sleep(1);
+            }
             return pdFALSE;
         }
         pBL->pcDst[pBL->uMaxLength] = 0;
