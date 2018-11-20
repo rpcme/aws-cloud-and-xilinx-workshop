@@ -606,7 +606,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
      * is set by mqttconfigMAX_BROKERS. */
     if( eMQTTAgentSuccess == MQTT_AGENT_Create( &pSystem->xMQTTHandle ) ) {
 #if UZED_USE_GG
-        configPRINTF( ( "Attempting automated selection of Greengrass device\r\n" ) );
+        configPRINTF( ( "Attempting automated selection of Greengrass device using group '%s'\r\n", clientcredentialGG_GROUP_NAME ) );
 
         memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
         if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
