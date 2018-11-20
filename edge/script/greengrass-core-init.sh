@@ -366,7 +366,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
       }
     },
     {
-      "Id": "53eb2677-cca1-46bf-9cc0-2e9029555662"
+      "Id": "53eb2677-cca1-46bf-9cc0-2e9029555662",
       "functionArn": "arn:aws:lambda:::function:GGIPDetector:1",
       "FunctionConfiguration": {
         "MemorySize": 32768,
