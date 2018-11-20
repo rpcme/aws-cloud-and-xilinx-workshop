@@ -39,6 +39,9 @@ const char clientcredentialMQTT_BROKER_ENDPOINT[clientcredentialMQTT_BROKER_ENDP
 #define clientcredentialGG_GROUP_NAMELEN	255
 const char clientcredentialGG_GROUP[clientcredentialGG_GROUP_NAMELEN+1];
 
+#define rest_NAMELEN	0
+char rest[rest_NAMELEN+1];
+
 /*-----------------------------------------------------------*/
 
 /**
@@ -63,7 +66,7 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
     char c;
     int iChar;
     BaseType_t SkipLeadingNewlines;
-    BaseType_t SkipNextRead = pdFALSE;
+    BaseType_t SkipNextRead;
     int iBrokerLine;
     typedef struct BrokerLine {
         char* pcDst;
@@ -82,6 +85,11 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
             "GroupName"
         },
         {
+            (char*)&rest[0],
+            rest_NAMELEN,
+            "TrailingData"
+        },
+        {
             0,
             0,
             0
@@ -91,12 +99,13 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
 
 	Res = f_open(&fil, pcFileName, FA_READ);
 	if (Res) {
-		xil_printf("ReadBrokerInfo ERROR: Unable to open file '%s' Res %d\r\n", pcFileName, Res);
+		xil_printf("ERROR: Unable to open file '%s' Res %d\r\n", pcFileName, Res);
 		return pdFALSE;
 	}
 
 	uFileBytesLeft = fil.fsize;
     SkipNextRead = pdFALSE;
+    rest[0] = 0;
 
     for(pBL = pBrokerLines; pBL->pcDst; pBL++) {
         /*
@@ -113,14 +122,15 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
                     Res = f_read(&fil, &c, 1, &N);
                     if((1 != N) || (Res != 0)) {
                         f_close(&fil);
-                        xil_printf("ReadBrokerInfo ERROR: Read from file %s failed (%d)\r\n", pcFileName, Res);
+                        xil_printf("ERROR: Read from file %s failed (%d)\r\n", pcFileName, Res);
                         return pdFALSE;
                     }
-                    iChar = c;
+                    iChar = (int)c & 0xff;
                 } else {
                     iChar = CHAR_EOF;
                 }
             }
+            SkipNextRead = pdFALSE;
 
             if(SkipLeadingNewlines) {
                 if(CHAR_EOF == iChar) {
@@ -135,7 +145,6 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
             } else {
                 if((CHAR_EOF == iChar) || (iChar < 32)) {
                     SkipLeadingNewlines = pdTRUE;
-                    SkipNextRead = pdFALSE;
                     *pDst = 0;
                     break;
                 } else {
@@ -144,11 +153,12 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
                 }
             }
         }
-        if((0 == uLength) || (uLength >= pBL->uMaxLength)) {
+        if(((0 == uLength) && (pBL->uMaxLength > 0)) || (uLength > pBL->uMaxLength)) {
             f_close(&fil);
-            xil_printf("ReadBrokerInfo ERROR: File '%s': '%s' missing/too long: maxlen %d\r\n",
+            xil_printf("ERROR: File '%s': '%s' %s: maxlen %u\r\n",
                 pcFileName,
                 pBL->pcName,
+                (0 == uLength) ? "missing" : "too long",
                 pBL->uMaxLength
                 );
             return pdFALSE;
