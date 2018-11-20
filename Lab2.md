@@ -13,7 +13,7 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 4. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
-   cd $WORKSHOP_HOME/cloud/script
+   cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
 5. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
 
@@ -32,13 +32,13 @@ so that your Ultra96 can be used as a greengrass core.
 1. Copy the private key and certificate to AWS Greengrass.
 
    ```bash
-   sudo cp $WORKSHOP_HOME/edge/auth-*gateway-ultra96/*pem /greengrass/certs/
+   sudo cp $HOME/aws-cloud-and-xilinx-workshop/edge/auth-*gateway-ultra96/*pem /greengrass/certs/
    ```
 
 2. Copy the AWS Greengrass configuration file ```config.json``` to the AWS Greengrass installation.
 
    ```bash
-   sudo cp $WORKSHOP_HOME/edge/auth-*gateway-ultra96/config.json /greengrass/config/
+   sudo cp $HOME/aws-cloud-and-xilinx-workshop/edge/auth-*gateway-ultra96/config.json /greengrass/config/
    ```
 
 3. With the certificates and configuration file in place,  we can start 
@@ -52,7 +52,7 @@ so that your Ultra96 can be used as a greengrass core.
 4. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
 
 	```bash
-	cd $WORKSHOP_HOME/cloud/script
+	cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
 	./make-and-deploy-lambda.sh xilinx-hello-world
 	```
 
@@ -68,7 +68,7 @@ so that your Ultra96 can be used as a greengrass core.
    functions so that we do not need to re-create the AWS Greengrass group.
    
 	```bash
-	./make-and-deploy-lambda.sh xilinx-bitstream-deploy-handler
+	./make-and-deploy-lambda.sh xilinx-bitstream-deployer-handler
 	./make-and-deploy-lambda.sh xilinx-image-upload-handler
 	./make-and-deploy-lambda.sh xilinx-video-inference-handler
 	```
@@ -78,7 +78,7 @@ so that your Ultra96 can be used as a greengrass core.
    has been automated to reduce the amount of time required for this procedure.
 
 	```bash
-	cd $WORKSHOP_HOME/edge/script
+	cd $HOME/aws-cloud-and-xilinx-workshop/edge/script
 	./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
 	```
    Based on the previous lab, your s3 bucket name should have a format of `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`.
@@ -88,7 +88,7 @@ so that your Ultra96 can be used as a greengrass core.
 	Run these commands in the Ultra96 terminal window.
 
 	```bash
-	cd $WORKSHOP_HOME/cloud/script
+	cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
 	./deploy-greengrass-group.sh <your-group-prefix>
 	```
 
