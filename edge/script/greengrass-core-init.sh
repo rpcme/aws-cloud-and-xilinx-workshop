@@ -253,7 +253,7 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# All the lambda functions: 
+# All the lambda functions:
 #   xilinx-hello-world
 #   xilinx-bitstream-deploy-handler
 #   xilinx-video-inference-handler
@@ -310,7 +310,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
               "Gid": 0
             }
           },
-          "Variables": { 
+          "Variables": {
                 "BOARD":"Ultra96"
            }
         },
@@ -364,7 +364,16 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "Pinned": true,
         "Timeout": 500
       }
-    }
+    },
+    {
+      "Id": "53eb2677-cca1-46bf-9cc0-2e9029555662"
+      "functionArn": "arn:aws:lambda:::function:GGIPDetector:1",
+      "FunctionConfiguration": {
+        "MemorySize": 32768,
+        "Pinned": true,
+        "Timeout": 3
+      },
+    },
   ]
 }
 EOF
