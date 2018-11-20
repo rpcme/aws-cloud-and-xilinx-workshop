@@ -97,12 +97,11 @@ In this section, you will clone the workshop Git repository.  The Git repository
    ```bash
    cd $HOME
    ```
-3. Clone the repository by running the following command, and set a shell variable for the directory to make navigation simpler.
+3. Clone the repository by running the following command.
 
    ```bash
    git clone https://github.com/rpcme/aws-cloud-and-xilinx-workshop
-   export WORKSHOP_HOME=$HOME/aws-cloud-and-xilinx-workshop
-   cd $WORKSHOP_HOME
+   cd aws-cloud-and-xilinx-workshop
    ```
 You're done! Let's move to the next section.
 
@@ -137,7 +136,7 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 1. Navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
-   cd $WORKSHOP_HOME/cloud/script
+   cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
 2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts 
 such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the 
