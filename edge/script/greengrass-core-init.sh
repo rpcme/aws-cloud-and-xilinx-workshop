@@ -24,23 +24,23 @@ d_agg_config=$(dirname $0)/../ggc-config
 if test ! -d ${d_agg_config}; then mkdir ${d_agg_config}; fi
 
 # find the thing arn
-echo Querying thingArn for Greengrass
+echo Querying thingArn for Greengrass.
 thing_agg_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_agg} \
                     --query thingArn)
 
-echo Querying thingArn for Amazon FreeRTOS
+echo Querying thingArn for Amazon FreeRTOS.
 thing_afr_arn=$(aws iot describe-thing --output text       \
                     --thing-name ${thing_afr} \
                     --query thingArn)
 
 # find the certificate arn the thing is attached to.
-echo Querying principal for Greengrass
+echo Querying principal for Greengrass.
 cert_agg_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_agg} \
                    --query principals[0])
 
-echo Querying principal for Amazon FreeRTOS
+echo Querying principal for Amazon FreeRTOS.
 cert_afr_arn=$(aws iot list-thing-principals --output text \
                    --thing-name ${thing_afr} \
                    --query principals[0])
@@ -88,6 +88,7 @@ EOF
         --role-arn ${service_role_arn}
   fi
 fi
+
 # Create the role for the Greengrass group.  This enables TES for the S3 bucket
 # so we can copy the images to the cloud and download bitstream from the cloud.
 role_agg_name=role-greengrass-group-${thing_agg}
@@ -312,7 +313,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": true,
+        "Pinned": false,
         "Timeout": 500
       }
     },
@@ -335,7 +336,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": true,
+        "Pinned": false,
         "Timeout": 500
       }
     },

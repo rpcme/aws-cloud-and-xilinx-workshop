@@ -13,7 +13,6 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 client = greengrasssdk.client('iot-data')
-s3 = boto3.resource('s3')
 
 
 # This is where the video inference results are stored
