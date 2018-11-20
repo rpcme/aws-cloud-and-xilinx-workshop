@@ -19,7 +19,7 @@ In such case, only two of the six definitions will change, and then the Greengra
 The MicroZed IIoT kit has three sensors availble through the FPGA. The sensors and their interfaces are:
 
   * Maxim MAX31855 - Thermocouple & IC temperature sensor - SPI
-  * ST LPS25HB - Pressure & IC temperature sensor - I2C
+  * ST LPS22HB - Pressure & IC temperature sensor - I2C
   * ST HTS221 - Humidity & IC temperature sensor - I2C
 
 The reference Amazon FreeRTOS image is pre-programmed to poll these interfaces at a fixed rate and send them to AWS Greengrass running on the Ultra96 device.

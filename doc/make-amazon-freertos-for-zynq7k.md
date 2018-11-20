@@ -38,24 +38,17 @@ These are the steps to build the MicroZed code for the workshop:
    ![alt text](images/xsdk_import_project3.jpeg "")
 
 	Click Finish.
-	
-9. Edit the file "aws_demos/src/application_code/common_demos/inclued/aws_clientcredential.h" and edit the initializations based on your AWS account:
-    - clientcredentialMQTT_BROKER_ENDPOINT
-    - clientcredentialIOT_THING_NAME
 
+9. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings. Click on the Console tab so you know when the build is done.
 
-Remember to save the file when you are done
-
-10. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings. Click on the Console tab so you know when the build is done.
-
-11. Highlight the project 'aws_demos' by left-clicking it once. Right click on it, and select 'Create Boot Image'
+10. Highlight the project 'aws_demos' by left-clicking it once. Right click on it, and select 'Create Boot Image'
 
    ![alt text](images/xsdk_create_boot_image.jpeg "")
 
-12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
+11. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
    ![alt text](images/xsdk_create_boot_image_menu.jpeg "")
    
    IMPORTANT: Click OK if the following popup message appears:
    ![alt text](images/xsdk_create_boot_image_override.jpeg "")
 
-13. Copy BOOT.BIN from the Output path to your SD card.
+12. Copy BOOT.BIN from the Output path to your SD card.

@@ -45,7 +45,15 @@ so that your Ultra96 can be used as a greengrass core.
    sudo cp $WORKSHOP_HOME/edge/auth-*gateway-ultra96/config.json /greengrass/config/
    ```
 
-3. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
+3. With the certificates and configuration file in place,  we can start 
+   the AWS Greengrass core service. Run the following commands in the 
+   Ultra96 terminal window.
+
+	```bash
+	sudo /greengrass/ggc/core/greengrassd start
+	```
+
+4. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
 
 	```bash
 	cd $WORKSHOP_HOME/cloud/script
@@ -60,30 +68,24 @@ so that your Ultra96 can be used as a greengrass core.
 	- Applies a version number to the function
 	- Creates an alias for the function
 
-4. Although in this lab we are only using 1 lambda function, let's repeat this step for all the lambda
+5. Although in this lab we are only using one lambda function, let's repeat this step for all the lambda
    functions so that we do not need to re-create the AWS Greengrass group.
    
 	```bash
+	./make-and-deploy-lambda.sh xilinx-bitstream-deploy-handler
+	./make-and-deploy-lambda.sh xilinx-image-upload-handler
 	./make-and-deploy-lambda.sh xilinx-video-inference-handler
-	./make-and-deploy-lambda.sh xilinx-bitstream-deployer-handler
 	```
-   Again, these 2 lambdas will be used in later labs.
+   Again, these lambdas will be used in later labs.
 
-5. Make the initial AWS Greengrass group configuration.  The group creation has been automated to reduce the amount of time required for this procedure.
+6. Make the initial AWS Greengrass group configuration. The group creation 
+   has been automated to reduce the amount of time required for this procedure.
 
 	```bash
 	cd $WORKSHOP_HOME/edge/script
 	./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
 	```
    Based on the previous lab, your s3 bucket name should have a format of `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`.
-
-6. Start AWS Greengrass.
-
-	Run these commands in the Ultra96 terminal window.
-
-	```bash
-	sudo /greengrass/ggc/core/greengrassd start
-	```
 
 7. Perform the initial deployment of AWS Greengrass.
 

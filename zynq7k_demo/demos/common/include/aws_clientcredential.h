@@ -38,6 +38,7 @@
  * MQTT Broker endpoint.
  */
 extern const char clientcredentialMQTT_BROKER_ENDPOINT[];
+extern const char clientcredentialGG_GROUP[];
 
 /* Use of a "define" and not a "static const" here to be able to
  * use pre-compile concatenation on the string. */
