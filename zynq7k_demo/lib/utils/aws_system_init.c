@@ -33,59 +33,130 @@ extern BaseType_t BUFFERPOOL_Init( void );
 extern BaseType_t MQTT_AGENT_Init( void );
 extern BaseType_t SOCKETS_Init( void );
 
-#define clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN	127
+#define clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN	255
 const char clientcredentialMQTT_BROKER_ENDPOINT[clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN+1];
+
+#define clientcredentialGG_GROUP_NAMELEN	255
+const char clientcredentialGG_GROUP[clientcredentialGG_GROUP_NAMELEN+1];
 
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Reads a file containing broker id from local storage.
+ * @brief Reads a file containing broker id and group id from local storage.
+ * The two pieces of information are on separate lines
+ * Any sequence of non-printable characters is considered a separator
  *
  * @param[in]  pcFileName    The name of the file to be read.
- * @param[out] pucData     Buffer for file data.
- * @param[out] ulDataSize  Size (in bytes) of data located in file and buffer size
  *
  * @return pdTRUE if data was retrieved successfully from file,
  * pdFALSE otherwise.
  */
-BaseType_t ReadBrokerId( const char * pcFileName,
-                                uint8_t * pucData,
-                                uint32_t ulDataSize )
+static BaseType_t ReadBrokerInfo( const char * pcFileName)
 {
 	FIL fil;
 	FRESULT Res;
-	uint32_t n;
+	uint32_t uFileBytesLeft;
 	UINT N;
+    uint32_t uLength;
+    char* pDst;
+    const int CHAR_EOF = -1;
+    char c;
+    int iChar;
+    BaseType_t SkipLeadingNewlines;
+    BaseType_t SkipNextRead = pdFALSE;
+    int iBrokerLine;
+    typedef struct BrokerLine {
+        char* pcDst;
+        uint32_t uMaxLength;
+        char* pcName;
+    } BrokerLine;
+    BrokerLine pBrokerLines[] = {
+        {
+            (char*)&clientcredentialMQTT_BROKER_ENDPOINT[0],
+            clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN,
+            "BrokerEndpoint",
+        },
+        {
+            (char*)&clientcredentialGG_GROUP[0],
+            clientcredentialGG_GROUP_NAMELEN,
+            "GroupName"
+        },
+        {
+            0,
+            0,
+            0
+        }
+    };
+    BrokerLine* pBL;
 
 	Res = f_open(&fil, pcFileName, FA_READ);
 	if (Res) {
-		xil_printf("ReadBrokerId ERROR: Unable to open file %s  Res %d\r\n", pcFileName, Res);
+		xil_printf("ReadBrokerInfo ERROR: Unable to open file '%s' Res %d\r\n", pcFileName, Res);
 		return pdFALSE;
 	}
 
-	n = fil.fsize;
-	if(n >= ulDataSize) {
-		f_close(&fil);
-		xil_printf("ReadBrokerId ERROR: File %s Size 0x%08x max 0x%08x\r\n", pcFileName, n, ulDataSize );
-		return pdFALSE;
-	}
+	uFileBytesLeft = fil.fsize;
+    SkipNextRead = pdFALSE;
 
-	Res = f_read(&fil, pucData, n, &N);
-	if ((n != N) || (Res != 0)) {
-		f_close(&fil);
-		xil_printf("ReadBrokerId ERROR: Read from file %s failed: Res %d\r\n", pcFileName, Res);
-		return pdFALSE;
-	}
+    for(pBL = pBrokerLines; pBL->pcDst; pBL++) {
+        /*
+         * Each loop parses newline* valid*
+         */
+        for(
+                SkipLeadingNewlines = pdTRUE, pDst = pBL->pcDst, pBL->pcDst[0] = 0, uLength = 0;
+                uLength < pBL->uMaxLength;
+                ) {
+            if(!SkipNextRead) {
+                if(uFileBytesLeft >= 1) {
+                    uFileBytesLeft--;
+                    /* Read should never hit EOF as we don't read more than fil.fsize bytes */
+                    Res = f_read(&fil, &c, 1, &N);
+                    if((1 != N) || (Res != 0)) {
+                        f_close(&fil);
+                        xil_printf("ReadBrokerInfo ERROR: Read from file %s failed (%d)\r\n", pcFileName, Res);
+                        return pdFALSE;
+                    }
+                    iChar = c;
+                } else {
+                    iChar = CHAR_EOF;
+                }
+            }
+
+            if(SkipLeadingNewlines) {
+                if(CHAR_EOF == iChar) {
+                    break;
+                } else if(iChar < 32) {
+                    /* Keep looking */
+                    ;
+                } else {
+                    SkipLeadingNewlines = pdFALSE;
+                    SkipNextRead = pdTRUE;
+                }
+            } else {
+                if((CHAR_EOF == iChar) || (iChar < 32)) {
+                    SkipLeadingNewlines = pdTRUE;
+                    SkipNextRead = pdFALSE;
+                    *pDst = 0;
+                    break;
+                } else {
+                    *pDst++ = iChar;
+                    uLength++;
+                }
+            }
+        }
+        if((0 == uLength) || (uLength >= pBL->uMaxLength)) {
+            f_close(&fil);
+            xil_printf("ReadBrokerInfo ERROR: File '%s': '%s' missing/too long: maxlen %d\r\n",
+                pcFileName,
+                pBL->pcName
+                pBL->uMaxLength
+                );
+            return pdFALSE;
+        }
+        pBL->pcDst[pBL->uMaxLength] = 0;
+    }
 
 	f_close(&fil);
-
-	pucData[n] = 0;
-	for(uint32_t i = 0; i < n; i++) {
-		if(pucData[i] < 32) {
-			pucData[i] = 0;
-			break;
-		}
-	}
 
 	return pdTRUE;
 }
@@ -113,9 +184,7 @@ BaseType_t SYSTEM_Init()
 
     if(xResult == pdPASS )
     {
-    	xResult = ReadBrokerId( pkcs11configFILE_NAME_BROKER_ID,
-						(uint8_t*)clientcredentialMQTT_BROKER_ENDPOINT,
-						clientcredentialMQTT_BROKER_ENDPOINT_NAMELEN );
+    	xResult = ReadBrokerInfo(pkcs11configFILE_NAME_BROKER_ID);
     }
 
     return xResult;
