@@ -49,6 +49,8 @@ def download_from_cloud():
     return
 
 
+download_from_cloud()
+
+
 def lambda_handler(event, context):
-    download_from_cloud()
     return

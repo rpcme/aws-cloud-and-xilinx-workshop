@@ -37,12 +37,12 @@ def run_pydeephi_yolo():
             sync_folder_path, num_seconds, threshold), shell=True)
 
 
+payload = {'message': 'starting video inference'}
+client.publish(topic=topic, payload=json.dumps(payload))
+run_pydeephi_yolo()
+payload = {'message': 'stopped video inference'}
+client.publish(topic=topic, payload=json.dumps(payload))
+
+
 def lambda_handler(event, context):
-    payload = {'message': 'starting video inference'}
-    client.publish(topic=topic, payload=json.dumps(payload))
-
-    run_pydeephi_yolo()
-
-    payload = {'message': 'stopped video inference'}
-    client.publish(topic=topic, payload=json.dumps(payload))
     return
