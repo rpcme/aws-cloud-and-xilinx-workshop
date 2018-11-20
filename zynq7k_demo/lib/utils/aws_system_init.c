@@ -25,6 +25,7 @@
 #include "FreeRTOS.h"
 #include "aws_system_init.h"
 #include "ff.h"
+#include "sleep.h"
 #include "xil_printf.h"
 #include "aws_pkcs11_config.h"
 
@@ -67,7 +68,6 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
     int iChar;
     BaseType_t SkipLeadingNewlines;
     BaseType_t SkipNextRead;
-    int iBrokerLine;
     typedef struct BrokerLine {
         char* pcDst;
         uint32_t uMaxLength;
