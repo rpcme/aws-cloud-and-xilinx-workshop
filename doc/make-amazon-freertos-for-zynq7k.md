@@ -13,7 +13,7 @@ These are the steps to build the MicroZed code for the workshop:
 
    ![alt text](images/xsdk_disable_build_automatically.jpeg "")
 
-5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New
+5. Open ‘Window -> Preferences -> Run/Debug -> String Substitution’ and click New...
 
    ![alt text](images/xsdk_string_subst.jpeg "")
 
@@ -27,7 +27,7 @@ These are the steps to build the MicroZed code for the workshop:
 
 8. Import pre-defined projects into workspace – the root directory should be ```AFR_HOME```.
 
-   File -> Import... -> Existing Projects into Workspace -> Next -> Select Root Directory
+   File -> Import... -> General -> Existing Projects into Workspace -> Next -> Select Root Directory -> Browse...
    DOUBLE CHECK THE ROOT DIRECTORY AFTER SETTING IT AS IT MAY END UP SELECTING A SUBDIRECTORY. MANUALLY EDIT IF NECESSARY.
    Make sure to select all projects except 'aws_tests' which is not used in this workshop.
    
@@ -38,18 +38,17 @@ These are the steps to build the MicroZed code for the workshop:
    ![alt text](images/xsdk_import_project3.jpeg "")
 
 	Click Finish.
-	
-9. Edit the file "aws_demos/src/application_code/common_demos/inclued/aws_credential.h" and edit the initializations based on your AWS account:
-    - clientcredentialMQTT_BROKER_ENDPOINT
-    - clientcredentialIOT_THING_NAME
 
-10. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings
+9. Enable ```Project -> Build automatically``` and everything will build, albeit with warnings. Click on the Console tab so you know when the build is done.
 
-11. Highlight the project 'aws_demo' by left-clicking it once. Right click on it, and select 'Create Boot Image'
+10. Highlight the project 'aws_demos' by left-clicking it once. Right click on it, and select 'Create Boot Image'
 
    ![alt text](images/xsdk_create_boot_image.jpeg "")
 
-12. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
+11. A menu will pop up, prefilled with files to include. Note the 'Output Path'. Click 'Create Image'.
    ![alt text](images/xsdk_create_boot_image_menu.jpeg "")
+   
+   IMPORTANT: Click OK if the following popup message appears:
+   ![alt text](images/xsdk_create_boot_image_override.jpeg "")
 
-13. Copy BOOT.BIN from the Output path to your SD card.
+12. Copy BOOT.BIN from the Output path to your SD card.

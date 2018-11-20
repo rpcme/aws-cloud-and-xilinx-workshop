@@ -100,8 +100,9 @@ int mbedtls_ctr_drbg_seed_entropy_len(
     }
 
     if( ( ret = mbedtls_ctr_drbg_reseed( ctx, custom, len ) ) != 0 )
+    {
         return( ret );
-
+    }
     return( 0 );
 }
 

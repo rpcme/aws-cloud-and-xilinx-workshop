@@ -1,4 +1,4 @@
-# Lab 5: Bring Back Data
+# Lab 5: Deriving Machine Learning Inference Value
 
 In this lab, you will make use of the AWS Lambda function we deployed in Lab 4 to to send a Machine Learning based "person activity" alert from the remote asset unit controller USB camera to the AWS Cloud along with a still frame video capture of the image.
 

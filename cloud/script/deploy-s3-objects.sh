@@ -2,10 +2,13 @@
 
 prefix=$1
 if test -z "${prefix}"; then
-  echo you need to provide a bucket prefix as first argument.
+  echo ERROR: first argument must be the bucket prefix.
+  exit 1
 fi
 
+bitstream=/usr/local/lib/python3.6/dist-packages/pydeephi/boards/Ultra96/gstreamer_deephi.bit
 bucket_name=${prefix}-aws-cloud-and-xilinx-workshop
+local_path=/home/xilinx/${bucket_name}
 bucket_policy_location=./bucket-policy.json
 bucket=$(aws s3api create-bucket --output text \
              --create-bucket-configuration '{ "LocationConstraint": "us-west-2" }' \
@@ -39,3 +42,14 @@ EOF
 echo Constraining bucket access to this specific device
 
 aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_policy_location}
+
+
+echo Upload files to S3 bucket
+mkdir -p ${local_path}
+cp -f ${bitstream} ${local_path}
+cat <<EOF > ${local_path}/parameters.txt
+5
+2
+EOF
+aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
+mkdir -p /home/xilinx/download

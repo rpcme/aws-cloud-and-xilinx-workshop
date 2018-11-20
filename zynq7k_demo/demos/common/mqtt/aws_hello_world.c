@@ -76,6 +76,8 @@
 /* Demo includes. */
 #include "aws_demo_config.h"
 #include "aws_hello_world.h"
+#include "aws_system_init.h"
+#include "aws_pkcs11_config.h"
 
 #define GPIO_DEVICE_ID		XPAR_XGPIOPS_0_DEVICE_ID
 #include "xparameters.h"
@@ -210,6 +212,8 @@ static BaseType_t prvCreateClientAndConnectToBroker( void )
     /* Check this function has not already been executed. */
     configASSERT( xMQTTHandle == NULL );
 
+    configPRINTF( ( "MQTT echo broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
+
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
@@ -223,7 +227,7 @@ static BaseType_t prvCreateClientAndConnectToBroker( void )
         xConnectParameters.usClientIdLength = ( uint16_t ) strlen( ( const char * ) echoCLIENT_ID );
 
         /* Connect to the broker. */
-        configPRINTF( ( "MQTT echo attempting to connect to %s.\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
+        configPRINTF( ( "MQTT echo attempting to connect to '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
         xReturned = MQTT_AGENT_Connect( xMQTTHandle,
                                         &xConnectParameters,
                                         democonfigMQTT_ECHO_TLS_NEGOTIATION_TIMEOUT );
@@ -303,7 +307,7 @@ static void prvPublishShadowMessage( BaseType_t xMessageNumber )
 
     /* Setup the publish parameters. */
     memset( &( xPublishParameters ), 0x00, sizeof( xPublishParameters ) );
-    xPublishParameters.pucTopic = "$aws/things/Ultra96-Client/shadow/update";
+    xPublishParameters.pucTopic = (const uint8_t*)"$aws/things/Ultra96-Client/shadow/update";
     xPublishParameters.pvData = cDataBuffer;
     xPublishParameters.usTopicLength = ( uint16_t ) strlen( ( const char * ) "$aws/things/Ultra96-Client/shadow/update" );
     xPublishParameters.ulDataLength = ( uint32_t ) strlen( cDataBuffer );
@@ -486,7 +490,7 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
 {
     BaseType_t x, xReturned;
     const TickType_t xFiveSeconds = pdMS_TO_TICKS( 2000UL );
-    const BaseType_t xIterationsInAMinute = 60 / 5;
+//    const BaseType_t xIterationsInAMinute = 60 / 5;
     TaskHandle_t xEchoingTask = NULL;
 
     /* Avoid compiler warnings about unused parameters. */
@@ -581,12 +585,12 @@ void vStartMQTTEchoDemo( void )
 	Output_Pin = 47;
 	ConfigPtr = XGpioPs_LookupConfig(GPIO_DEVICE_ID);
 	if (ConfigPtr == NULL) {
-		return XST_FAILURE;
+		return;
 	}
 	XGpioPs_CfgInitialize(&Gpio, ConfigPtr, ConfigPtr->BaseAddr);
 	Status = XGpioPs_SelfTest(&Gpio);
 	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
+		return;
 	}
 
 	XGpioPs_SetDirectionPin(&Gpio, Output_Pin, 1);

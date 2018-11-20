@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS MQTT Echo Demo V1.2.6
+ * Amazon FreeRTOS MQTT UZed Demo V1.0
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -39,7 +39,7 @@
 
 //////////////////// USER PARAMETERS ////////////////////
 /* Sampling period, in ms. Two messages per period: pressure and temperature */
-#define SAMPLING_PERIOD_MS		500
+#define SAMPLING_PERIOD_MS		5000
 
 /* Timeout used when establishing a connection, which required TLS
 * negotiation. */
@@ -62,6 +62,16 @@
  * @brief A block time of 0 simply means "don't block".
  */
 #define UZedDONT_BLOCK         ( ( TickType_t ) 0 )
+
+/**
+ * @brief If set to 1, LEDs are used for status. Do not turn on other tasks such as echo which also use leds
+ */
+#define UZED_USE_LED 0
+
+/**
+ * @brief If set to 1, use GreenGrass instead of raw MQTT
+ */
+#define UZED_USE_GG 0
 
 //////////////////// END USER PARAMETERS ////////////////////
 
@@ -86,6 +96,8 @@
 
 /* Credentials includes. */
 #include "aws_clientcredential.h"
+#include "aws_system_init.h"
+#include "aws_pkcs11_config.h"
 
 /* Demo includes. */
 #include "aws_demo_config.h"
@@ -93,12 +105,23 @@
 #include "xparameters.h"
 #include "xstatus.h"
 #include "xiic.h"
+#if UZED_USE_LED
 #include "xgpiops.h"
+#endif
 #include "xspi_l.h"
 #include "uzed_iot.h"
+#if UZED_USE_GG
+#include "aws_ggd_config.h"
+#include "aws_ggd_config_defaults.h"
+#include "aws_greengrass_discovery.h"
+#endif
 
 /*-----------------------------------------------------------*/
 // System parameters for the MicroZed IOT kit
+
+#if UZED_USE_GG
+#define GG_DISCOVERY_FILE_SIZE    2500
+#endif
 
 /**
  * @brief This is the LPS25HB on the Arduino shield board
@@ -109,48 +132,62 @@
  */
 #define HYGROMETER_SLAVE_ADDRESS	0x5F
 
+#if UZED_USE_LED
 /**
  * @brief LED pin represents connection state
  */
 #define LED_PIN	47
+#endif
 
 /**
  * @brief Barometer register defines
  */
-#define BAROMETER_REG_REF_P_XL			0x08
-#define BAROMETER_REG_REF_P_L			0x09
-#define BAROMETER_REG_REF_P_H			0x0A
+#define BAROMETER_REG_REF_P_XL			0x15
+#define BAROMETER_REG_REF_P_L			0x16
+#define BAROMETER_REG_REF_P_H			0x17
 #define BAROMETER_REG_WHO_AM_I			0x0F
-#define BAROMETER_REG_RES_CONF			0x10
+#define BAROMETER_REG_RES_CONF			0x1A
 
-#define BAROMETER_REG_CTRL_REG1			0x20
-#define BAROMETER_BFLD_PD				(1<<7)
+#define BAROMETER_REG_CTRL_REG1			0x10
+#define BAROMETER_BFLD_PD				(0<<7)
+#define BAROMETER_ODR_2					(0<<6)
+#define BAROMETER_ODR_1					(0<<5)
+#define BAROMETER_ODR_0					(0<<4)
+#define BAROMETER_ENABLE_LPFP				(0<<3)
+#define BAROMETER_LPFP_CFG				(0<<2)
+#define BAROMETER_BDU					(0<<1)
+#define BAROMETER_SIM					(0<<0)
 
-#define BAROMETER_REG_CTRL_REG2			0x21
+
+#define BAROMETER_REG_CTRL_REG2			0x11
 #define BAROMETER_BFLD_BOOT				(1<<7)
-#define BAROMETER_BFLD_SWRESET			(1<<2)
-#define BAROMETER_BFLD_ONE_SHOT			(1<<0)
+#define BAROMETER_FIFO_ENABLE				(0<<6)
+#define BAROMETER_STOP_ON_FTH				(0<<5)
+#define BAROMETER_IF_ADD_INC				(1<<4)
+#define BAROMETER_I2C_DIS				(0<<3)
+#define BAROMETER_BFLD_SWRESET				(1<<2)
+#define BAROMETER_BFLD_ZEROBIT                          (0<<1)
+#define BAROMETER_BFLD_ONE_SHOT				(1<<0)
 
-#define BAROMETER_REG_CTRL_REG3			0x22
-#define BAROMETER_REG_CTRL_REG4			0x23
-#define BAROMETER_REG_INTERRUPT_CFG		0x24
+#define BAROMETER_REG_CTRL_REG3			0x12
+#define BAROMETER_REG_INTERRUPT_CFG		0x0B
 #define BAROMETER_REG_INT_SOURCE		0x25
 
 #define BAROMETER_REG_STATUS_REG		0x27
-#define BAROMETER_BFLD_P_DA				(1<<1)
-#define BAROMETER_BFLD_T_DA				(1<<0)
+#define BAROMETER_BFLD_P_DA				(1<<0)
+#define BAROMETER_BFLD_T_DA				(1<<1)
 
 #define BAROMETER_REG_PRESS_OUT_XL		0x28
 #define BAROMETER_REG_PRESS_OUT_L		0x29
 #define BAROMETER_REG_PRESS_OUT_H		0x2A
 #define BAROMETER_REG_TEMP_OUT_L		0x2B
 #define BAROMETER_REG_TEMP_OUT_H		0x2C
-#define BAROMETER_REG_FIFO_CTRL			0x2E
-#define BAROMETER_REG_FIFO_STATUS		0x2F
-#define BAROMETER_REG_THS_P_L			0x30
-#define BAROMETER_REG_THS_P_H			0x31
-#define BAROMETER_REG_RPDS_L			0x39
-#define BAROMETER_REG_RPDS_H			0x3A
+#define BAROMETER_REG_FIFO_CTRL			0x14
+#define BAROMETER_REG_FIFO_STATUS		0x26
+#define BAROMETER_REG_THS_P_L			0x0C
+#define BAROMETER_REG_THS_P_H			0x0D
+#define BAROMETER_REG_RPDS_L			0x18
+#define BAROMETER_REG_RPDS_H			0x19
 
 /**
  * @brief Hygrometer register defines
@@ -274,9 +311,15 @@ typedef struct TopicInfo {
  */
 typedef struct System {
 	XIic 	iic;
+#if UZED_USE_LED
 	XGpioPs gpio;
+#endif
 
 	MQTTAgentHandle_t xMQTTHandle;
+#if UZED_USE_GG
+    GGD_HostAddressData_t xHostAddressData;
+    char pcJSONFile[ GG_DISCOVERY_FILE_SIZE ];
+#endif
 
 	u8 pbHygrometerCalibration[16];
 
@@ -507,6 +550,7 @@ static void StopHere(void)
 
 static void BlinkLed(System* pSystem,BaseType_t xCount, BaseType_t xFinalOn)
 {
+#if UZED_USE_LED
 	BaseType_t x;
 	const TickType_t xHalfSecond = MS_TO_TICKS( 500 );
 
@@ -523,6 +567,7 @@ static void BlinkLed(System* pSystem,BaseType_t xCount, BaseType_t xFinalOn)
 	if(xFinalOn) {
 		XGpioPs_WritePin(&pSystem->gpio, LED_PIN, 1);
 	}
+#endif
 }
 
 /*-----------------------------------------------------------*/
@@ -553,47 +598,69 @@ static const TopicInfo* GetTopicInfo(TOPIC eTopic)
 
 static void prvCreateClientAndConnectToBroker( System* pSystem )
 {
-    MQTTAgentConnectParams_t xConnectParameters =
-    {
-        clientcredentialMQTT_BROKER_ENDPOINT, /* The URL of the MQTT broker to connect to. */
-        democonfigMQTT_AGENT_CONNECT_FLAGS,   /* Connection flags. */
-        pdFALSE,                              /* Deprecated. */
-        clientcredentialMQTT_BROKER_PORT,     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
-        UZedCLIENT_ID,                        /* Client Identifier of the MQTT client. It should be unique per broker. */
-        0,                                    /* The length of the client Id, filled in later as not const. */
-        pdFALSE,                              /* Deprecated. */
-        NULL,                                 /* User data supplied to the callback. Can be NULL. */
-        NULL,                                 /* Callback used to report various events. Can be NULL. */
-        NULL,                                 /* Certificate used for secure connection. Can be NULL. */
-        0                                     /* Size of certificate used for secure connection. */
-    };
+    MQTTAgentConnectParams_t xConnectParameters;
 
+    configPRINTF( ( "MQTT UZed broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
     if( eMQTTAgentSuccess == MQTT_AGENT_Create( &pSystem->xMQTTHandle ) ) {
-        /* Fill in the MQTTAgentConnectParams_t member that is not const,
-         * and therefore could not be set in the initializer (where
-         * xConnectParameters is declared in this function). */
-        xConnectParameters.usClientIdLength = ( uint16_t ) strlen( ( const char * ) UZedCLIENT_ID );
+#if UZED_USE_GG
+        configPRINTF( ( "Attempting automated selection of Greengrass device using group '%s'\r\n", clientcredentialGG_GROUP) );
 
-        /* Connect to the broker. */
-        configPRINTF( ( "INFO: MQTT UZed attempting to connect to %s.\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
-
-        if( eMQTTAgentSuccess ==
-        		MQTT_AGENT_Connect( pSystem->xMQTTHandle, &xConnectParameters, democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT ) ) {
-            configPRINTF( ( "SUCCESS: MQTT UZed connected.\r\n" ) );
-            pSystem->rc = XST_SUCCESS;
+        memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
+        if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
+            xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
+            xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
+            xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
+            xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;
+            xConnectParameters.pucClientId = (const uint8_t*)clientcredentialIOT_THING_NAME;
+            xConnectParameters.usClientIdLength = (uint16_t)strlen(clientcredentialIOT_THING_NAME);
+            xConnectParameters.xSecuredConnection = pdTRUE; /* Deprecated. */
+            xConnectParameters.pvUserData = NULL;
+            xConnectParameters.pxCallback = NULL;
+            xConnectParameters.pcCertificate = pSystem->xHostAddressData.pcCertificate;
+            xConnectParameters.ulCertificateSize = pSystem->xHostAddressData.ulCertificateSize;
         } else {
-            /* Could not connect, so delete the MQTT client. */
-            ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
-            configPRINTF( ( "ERROR:  MQTT UZed failed to connect\r\n" ) );
+            xConnectParameters.pcURL = 0;
             pSystem->rc = XST_FAILURE;
-        	pSystem->pcErr = "Could not connect to MQTT Agent";
+            pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate";
             pSystem->xMQTTHandle = NULL;
         }
+#else
+        /* Connect to the broker. */
+        xConnectParameters.pcURL = clientcredentialMQTT_BROKER_ENDPOINT; /* The URL of the MQTT broker to connect to. */
+        xConnectParameters.xFlags = democonfigMQTT_AGENT_CONNECT_FLAGS;   /* Connection flags. */
+        xConnectParameters.xURLIsIPAddress = pdFALSE;                              /* Deprecated. */
+        xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;     /* Port number on which the MQTT broker is listening. Can be overridden by ALPN connection flag. */
+        xConnectParameters.pucClientId = UZedCLIENT_ID;                        /* Client Identifier of the MQTT client. It should be unique per broker. */
+        xConnectParameters.usClientIdLength = (uint16_t)strlen((const char*)UZedCLIENT_ID);
+        xConnectParameters.xSecuredConnection = pdFALSE;                              /* Deprecated. */
+        xConnectParameters.pvUserData = NULL;                                 /* User data supplied to the callback. Can be NULL. */
+        xConnectParameters.pxCallback = NULL;                                 /* Callback used to report various events. Can be NULL. */
+        xConnectParameters.pcCertificate = NULL;                                 /* Certificate used for secure connection. Can be NULL. */
+        xConnectParameters.ulCertificateSize = 0;                                     /* Size of certificate used for secure connection. */
+#endif
+
+        if(xConnectParameters.pcURL) {
+            configPRINTF( ( "INFO: UZed attempting to connect to %s.\r\n", xConnectParameters.pcURL ) );
+            if(eMQTTAgentSuccess == MQTT_AGENT_Connect(
+                    pSystem->xMQTTHandle,
+                    &xConnectParameters,
+                    democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT
+                    )
+                ) {
+                configPRINTF( ( "SUCCESS: MQTT UZed connected.\r\n" ) );
+                pSystem->rc = XST_SUCCESS;
+            } else {
+                /* Could not connect, so delete the MQTT client. */
+                ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Could not connect to MQTT Agent";
+                pSystem->xMQTTHandle = NULL;
+            }
+        }
     } else {
-    	configPRINTF( ( "ERROR:  Could not create MQTT Agent\r\n" ) );
         pSystem->rc = XST_FAILURE;
     	pSystem->pcErr = "Could not create MQTT Agent";
     	pSystem->xMQTTHandle = NULL;
@@ -743,10 +810,11 @@ static void StartBarometer(System* pSystem)
 		ReadIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_WHO_AM_I,&b);
 		pSystem->pcErr = "ReadIicReg(WHO_AM_I) -> %08x";
 	});
+
 	MAY_DIE({
-		if(0xBD != b) {
+		if(0xB1 != b) {
 			pSystem->rc = b;
-			pSystem->pcErr = "BAROMETER_WHO_AM_I = %08x != BD";
+			pSystem->pcErr = "BAROMETER_WHO_AM_I = %08x != B1";
 		}
 	});
 
@@ -793,6 +861,59 @@ static void StartBarometer(System* pSystem)
 	}
 
 	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_BFLD_ZEROBIT);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_ZEROBIT -> %08x";
+	});
+
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_FIFO_ENABLE);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_FIFO_ENABLE -> %08x";
+	});
+
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_STOP_ON_FTH);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_STOP_ON_FTH -> %08x";
+	});
+	
+
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_IF_ADD_INC);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_IF_ADD_INC -> %08x";
+	});
+
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2, BAROMETER_I2C_DIS);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_I2C_DIS) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_2);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_2) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_1);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_1) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_0);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_0) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ENABLE_LPFP);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ENABLE_LPFP) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_LPFP_CFG);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_LPFP_CFG) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_BDU);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BDU) -> %08x";
+	});
+	MAY_DIE({
+		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_SIM);
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_SIM) -> %08x";
+	});
+	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_BFLD_PD);
 		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BFLD_PD) -> %08x";
 	});
@@ -816,6 +937,8 @@ static void SampleBarometer(System* pSystem)
 	u8 pbBuf[6];
 	s32 sqTmp;
 	float f;
+ 	u8 count=0;
+
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
 	pSystem->eTopic = TOPIC_BAROMETER_STATUS;
@@ -862,6 +985,36 @@ static void SampleBarometer(System* pSystem)
 		}
 	});
 
+	for(count=1; count<6;count++)
+		pbBuf[count]=0;
+
+
+        MAY_DIE({
+            ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_XL,&pbBuf[1]);
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_XL) -> %08x";
+        });
+
+        MAY_DIE({
+            ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_L,&pbBuf[2]);
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_L) -> %08x";
+        });
+
+        MAY_DIE({
+            ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_H,&pbBuf[3]);
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_H) -> %08x";
+        });
+
+        MAY_DIE({
+            ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_TEMP_OUT_L,&pbBuf[4]);
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_TEMP_OUT_L) -> %08x";
+        });
+
+        MAY_DIE({
+            ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_TEMP_OUT_H,&pbBuf[5]);
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_TEMP_OUT_H) -> %08x";
+        });
+		
+
 	// See ST TN1228
 	sqTmp = 0
 			| ((u32)pbBuf[1] << 0)	// xl
@@ -873,6 +1026,10 @@ static void SampleBarometer(System* pSystem)
 	}
 	f = (float)sqTmp / 4096.0F;
 	prvPublishTopic(pSystem, TOPIC_BAROMETER_PRESSURE, "%.2f hPa", f);
+	configPRINTF(("pbBuf[1]= %0x \r\n", pbBuf[1]));
+	configPRINTF(("pbBuf[2]= %0x \r\n", pbBuf[2]));
+	configPRINTF(("pbBuf[3]= %0x \r\n", pbBuf[3]));
+	configPRINTF(("sqTmp=%ld \r\n", sqTmp));
 
 	sqTmp = 0
 			| ((u32)pbBuf[4] << 0)	// l
@@ -881,8 +1038,11 @@ static void SampleBarometer(System* pSystem)
 	if(sqTmp & 0x00008000) {
 		sqTmp |= 0xFFFF8000;
 	}
-	f = 42.5F + (float)sqTmp/480.0;
+	f = (float)sqTmp/100.0;
 	prvPublishTopic(pSystem, TOPIC_BAROMETER_TEMPERATURE, "%.2f C", f);
+	configPRINTF(("pbBuf[4]= %0x \r\n", pbBuf[4]));
+	configPRINTF(("pbBuf[5]= %0x \r\n", pbBuf[5]));
+	configPRINTF(("sqTmp= %ld \r\n", sqTmp));
 
 L_DIE:
 	return;
@@ -894,6 +1054,7 @@ static void StartHygrometer(System* pSystem)
 {
 	u8 b;
 	int iTimeout;
+	u8 count=0;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
 	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
@@ -939,6 +1100,11 @@ static void StartHygrometer(System* pSystem)
 		pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_CALIB_0) -> %08x";
 	});
 
+
+	for(count=0; count<16; count++)
+		configPRINTF(("pbHygrometerCalibration[%u]=%u\r\n", count, pSystem->pbHygrometerCalibration[count]));  
+
+
 	/*
 	 * Power up device
 	 */
@@ -964,7 +1130,15 @@ static void SampleHygrometer(System* pSystem)
 	BaseType_t xTimeout;
 	u8 b;
 	u8 pbBuf[5];
-	float f;
+	int	H0_T0_out, H1_T0_out, H_T_out;
+	int H0_rh, H1_rh;
+	u8	buffer[2];
+	int tmp=0;
+	u16 value=0;
+	int T0_out, T1_out, T_out, T0_degC_x8_u16, T1_degC_x8_u16;
+	int T0_degC, T1_degC;
+	u8 buff2[4], tmp5=0;
+	int tmp32=0;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
 	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
@@ -1017,11 +1191,192 @@ static void SampleHygrometer(System* pSystem)
 	 * Interpreting humidity and temperature readings in the HTS221 digital humidity sensor
 	 */
 
-	f = 100.0F;
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_RELATIVE_HUMIDITY, "%.2f %%rH", f);
+	buffer[0]=0;
+    buffer[1]=0;
 
-	f = 1000.0F;
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE, "%.2f C", f);
+	/* 1. Read H0_rH and H1_rH coefficients */
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_rH_x2 , &buffer[0]);
+		pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_H0_rH_x2)  -> %08x";
+	});
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_rH_x2, &buffer[1]);
+		pSystem->pcErr = "HYGROMETER_REG_H1_rH_x2 -> %08x";
+	});
+
+	H0_rh = buffer[0]>>1;
+	H1_rh = buffer[1]>>1;
+
+	configPRINTF(("HYGROMETER H0_rh=%d \r\n", H0_rh));
+	configPRINTF(("HYGROMETER H1_rh=%d \r\n", H1_rh));
+
+
+	buffer[0]=0; buffer[1]=0;
+	/*2. Read H0_T0_OUT */ 
+
+	MAY_DIE({
+		 ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_T0_OUT_LSB, &buffer[0]);
+		 pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_H0_T0_OUT_LSB) -> %08x";
+	});
+	MAY_DIE({
+		 ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_T0_OUT_MSB, &buffer[1]);
+		 pSystem->pcErr = "HYGROMETER_REG_H0_T0_OUT_MSB -> %08x";
+	});
+
+
+	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_LSB = %x \r\n", buffer[0]));
+	configPRINTF(("HYGROMETER_REG_H0_T0_OUT_MSB = %x \r\n", buffer[1]));
+
+
+	H0_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
+	configPRINTF(("HYGROMETER H0_T0_out = %d \r\n", H0_T0_out));
+
+
+	buffer[0]=0; buffer[1]=0;
+	/*3. Read H1_T0_OUT  */
+
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_T0_OUT_LSB, &buffer[0]);
+		pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_H1_T0_OUT_LSB)  -> %08x";
+	});
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_T0_OUT_MSB, &buffer[1]);
+		pSystem->pcErr = "HYGROMETER_REG_H1_T0_OUT_MSB -> %08x";
+	});
+
+	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_LSB = %x \r\n", buffer[0]));
+	configPRINTF(("HYGROMETER_REG_H1_T0_OUT_MSB = %x \r\n", buffer[1]));
+
+	H1_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
+	configPRINTF(("HYGROMETER H1_T0_out = %d \r\n", H1_T0_out));
+
+
+	buffer[0]=0; buffer[1]=0;
+	/*4. Read H_T_OUT  */
+
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_HUMIDITY_OUT_L, &buffer[0]);
+		pSystem->pcErr = "ReadIicRegs( HYGROMETER_REG_HUMIDITY_OUT_L) -> %08x";
+	});
+	MAY_DIE({
+		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_HUMIDITY_OUT_H, &buffer[1]);
+		pSystem->pcErr = "ReadIicRegs HYGROMETER_REG_HUMIDITY_OUT_H -> %08x";
+	});
+
+
+	H_T_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
+	configPRINTF(( "HYGROMETER H_T_out = %d \r\n", H_T_out));
+
+	/*5. Compute the RH [%] value by linear interpolation */
+	value=0;
+	tmp = ((int)(H_T_out - H0_T0_out)) * ((int)(H1_rh - H0_rh));
+	value = (u16) ((tmp/(H1_T0_out - H0_T0_out))+ H0_rh) ;
+
+	configPRINTF(("HYGROMETER value =  %u \r\n", value));
+
+	/* Saturation condition*/
+	if(value>1000) value = 1000;
+
+	prvPublishTopic(pSystem, TOPIC_HYGROMETER_RELATIVE_HUMIDITY, "%u %%rH", value);
+
+
+
+        /**
+	* @brief Read HTS221 temperature output registers, and calculate temperature.
+	* @param Pointer to the returned temperature value that must be divided by 10 to get the value in ['C].
+	* @retval Error code [HTS221_OK, HTS221_ERROR].
+	*/
+	tmp5=0; value=0;
+	buff2[0]=0; buff2[1]=0; buff2[2]=0; buff2[3]=0;
+
+	/*1. Read from 0x32 & 0x33 registers the value of coefficients T0_degC_x8 and T1_degC_x8*/
+    MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_degC_x8, &buff2[0]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_degC_x8)  -> %08x";
+	});
+    MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_degC_x8, &buff2[1]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T1_degC_x8)  -> %08x";
+	});
+
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_degC_x8 = %u \r\n", buff2[0]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_degC_x8 = %u \r\n", buff2[1]));
+
+
+	/*2. Read from 0x35 register the value of the MSB bits of T1_degC and T0_degC */
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_T0_MSB, &tmp5);
+		pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T1_T0_MSB) -> %08x";
+	});
+
+	/*Calculate the T0_degC and T1_degC values*/
+	T0_degC_x8_u16 = (((u16)(tmp5 & 0x03)) << 8) | ((u16)buff2[0]);
+	T1_degC_x8_u16 = (((u16)(tmp5 & 0x0C)) << 6) | ((u16)buff2[1]);
+	T0_degC = T0_degC_x8_u16>>3;
+	T1_degC = T1_degC_x8_u16>>3;
+	
+	configPRINTF(("HYGROMETER  T0_degC = %d \r\n",  T0_degC));
+	configPRINTF(("HYGROMETER  T1_degC = %d \r\n",  T1_degC));
+
+
+	/*3. Read from 0x3C & 0x3D registers the value of T0_OUT*/
+	/*4. Read from 0x3E & 0x3F registers the value of T1_OUT*/
+	buff2[0]=0;
+    buff2[1]=0;
+    buff2[2]=0;
+    buff2[3]=0;
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_OUT_LSB, &buff2[0]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x";
+	});
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_OUT_MSB, &buff2[1]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x";
+	});
+
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_OUT_LSB, &buff2[2]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x";
+	});
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_OUT_MSB, &buff2[3]);
+        pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x";
+	});
+
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_LSB = %u \r\n", buff2[0]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T0_OUT_MSB = %u \r\n", buff2[1]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_LSB = %u \r\n", buff2[2]));
+	configPRINTF(("HYGROMETER HYGROMETER_REG_T1_OUT_MSB = %u \r\n", buff2[3]));
+
+
+	T0_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
+	T1_out = (((u16)buff2[3])<<8) | (u16)buff2[2];
+
+	configPRINTF(("HYGROMETER T0_out = %d \r\n", T0_out));
+	configPRINTF(("HYGROMETER T1_out = %d \r\n", T1_out));
+
+	/* 5.Read from 0x2A & 0x2B registers the value T_OUT (ADC_OUT).*/
+	buff2[0]=0; buff2[1]=0; buff2[2]=0; buff2[3]=0;
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_TEMP_OUT_L, &buff2[0]);
+        pSystem->pcErr = "ReadIicRegs( HYGROMETER_REG_TEMP_OUT_L) -> %08x";
+	});
+	MAY_DIE({
+        ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_TEMP_OUT_H, &buff2[1]);
+        pSystem->pcErr = "ReadIicRegs( HYGROMETER_REG_TEMP_OUT_H) -> %08x";
+	});
+
+	T_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
+
+	configPRINTF(("HYGROMETER T_out = %d \r\n", T_out));
+
+	/* 6. Compute the Temperature value by linear interpolation*/
+	value=0;
+
+	tmp32 = (( int)(T_out - T0_out)) * (( int)(T1_degC - T0_degC));
+	value = (tmp32 /(T1_out - T0_out)) + T0_degC;
+
+	prvPublishTopic(pSystem, TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE, "%u C", value);
 
 L_DIE:
 	return;
@@ -1050,7 +1405,6 @@ static void StartPLTempSensor(System* pSystem)
 	vTaskDelay(xOneMs); //usleep(100);
 
 	prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "PL Thermocouple started");
-
 }
 
 /**
@@ -1210,7 +1564,9 @@ static void SamplePLTempSensor(System* pSystem)
 static void StartSystem(System* pSystem)
 {
 	XIic_Config *pI2cConfig;
+#if UZED_USE_LED
 	XGpioPs_Config* pGpioConfig;
+#endif
 
     /*-----------------------------------------------------------------*/
 
@@ -1225,6 +1581,7 @@ static void StartSystem(System* pSystem)
 
     /*-----------------------------------------------------------------*/
 
+#if UZED_USE_LED
 	pGpioConfig = XGpioPs_LookupConfig(XPAR_PS7_GPIO_0_DEVICE_ID);
 	configASSERT(pGpioConfig != NULL);
 
@@ -1234,7 +1591,7 @@ static void StartSystem(System* pSystem)
 	});
 	XGpioPs_SetDirectionPin(&pSystem->gpio, LED_PIN, 1);
 	XGpioPs_SetOutputEnablePin(&pSystem->gpio, LED_PIN, 1);
-
+#endif
 	BlinkLed(pSystem, 5, pdFALSE);
 
     /*-----------------------------------------------------------------*/
@@ -1312,7 +1669,7 @@ static void StopSystem(System* pSystem)
 	BlinkLed(pSystem, 5, pdFALSE);
 
 	/* End the demo by deleting all created resources. */
-	configPRINTF( ( "MQTT barometer demo finished.\r\n" ) );
+	configPRINTF( ( "MQTT UZed sensor demo finished.\r\n" ) );
 	vTaskDelete( NULL ); /* Delete this task. */
 }
 
@@ -1356,9 +1713,9 @@ void vStartMQTTUZedIotDemo( void )
 {
     configPRINTF( ( "Creating MQTT UZed Task...\r\n" ) );
 
-    /* Create the task that publishes messages to the MQTT broker every five
-     * seconds.  This task, in turn, creates the task that echoes data received
-     * from the broker back to the broker. */
+    /*
+     * Create the task that publishes messages to the MQTT broker periodically
+     */
     ( void ) xTaskCreate( prvMQTTConnectAndPublishTask,        		/* The function that implements the demo task. */
                           "MQTTUZedIot",                       		/* The name to assign to the task being created. */
 						  democonfigMQTT_UZED_IOT_TASK_STACK_SIZE, 	/* The size, in WORDS (not bytes), of the stack to allocate for the task being created. */

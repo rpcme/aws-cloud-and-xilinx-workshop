@@ -23,7 +23,7 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
 6. Connect one microUSB cable to J7 of the Arduino Carrier Card and the USB hub.  This provides power to the boards.
 7. Connect one microUSB cable to J2 of the MicroZed SoM and the USB hub.  This provides the debug UART interface. Set COM port parameters to 115200,N,8,1.
- 
+
 ### Avnet Ultra96
 
 1. Ensure that the microSD is plugged in.
@@ -38,10 +38,10 @@ After the set-up the Ultra96 should look like the picture below.
 
 ![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
-### Power up your Devices
+### Power up your Hardware
 
 The MicroZed should power up automatically when you plug in the microUSB cable. Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
-The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated. 
+The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated.
 
 ### System Software Installation
 
@@ -50,7 +50,7 @@ No installation is required - you should see 'PYNQ-USB' mapped to a drive letter
 
 #### Serial Port Installation
 The MicroZed and the Ultra96 have one COM port each.
-(Windows 7) Open Device Manager to locate your COM ports.  Note the two COM port numbers. 
+(Windows 7) Open Device Manager to locate your COM ports.  Note the two COM port numbers.
 
 MicroZed uses a Silicon Labs CP2104 USB-to-UART Bridge. If the driver is not automatically detected by your OS, it can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers.
 
@@ -61,21 +61,24 @@ Ensure you have a serial port terminal emulator such as Putty installed. It can 
 #### RNDIS USB Ethernet Installation
 You should see an adapter in Control Panel\Network and Internet\Network Connections labeled 'RNDIS'. If you do not see it, you may need to enable RNDIS on your PC. See https://developer.toradex.com/knowledge-base/how-to-install-microsoft-rndis-driver-for-windows-7
 
-### Configuring and Deploying your Devices
+#### Install SFTP on your Laptop
+If you have installed Putty, its version of SFTP is called PSFTP. You can use this to transfer files between your laptop and the Ultra96 over the RNDIS adapter.
+
+### Configuring and Deploying your Hardware
 Ensure you do not have VPN software running for this workshop.
 
 Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
 
 Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
 
-Run the command 'ip a' to see all ethernet interfaces. You should see:
+Run the command `ip a` to see all ethernet interfaces. You should see:
 1. usb0 at 192.168.3.1/24
 2. eth0 at an address determined by your DHCP server behind the switch
 3. Other interfaces will not be used in this workshop
 
-Now run 'ping -c 3 www.xilinx.com' to verify internet connectivity.
+Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
-The Windows RNDIS adapter should be at the address 192.168.3.105/24.
+The Windows RNDIS adapter should be at the address 192.168.3.105/24; ultra96 will be at 192.168.3.1
 
 ## AWS Cloud Setup
 
@@ -98,14 +101,15 @@ In this section, you will clone the workshop Git repository.  The Git repository
 
    ```bash
    git clone https://github.com/rpcme/aws-cloud-and-xilinx-workshop
-   export WORKSHOP_HOME=$(pwd)/aws-cloud-and-xilinx-workshop
+   export WORKSHOP_HOME=$HOME/aws-cloud-and-xilinx-workshop
    cd $WORKSHOP_HOME
    ```
 You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI. The AWS CLI has already been installed for you.
+In this section, we will configure the AWS CLI on the Ultra96 board. 
+The AWS CLI has already been installed for you.
 
 Accept the default options presented by hitting ENTER each time.
 
@@ -117,12 +121,14 @@ For more information or details on configuration, visit the [Configuring the AWS
 1. Your AWS Access Key ID
 2. Your AWS Secret Access Key
 3. Default region name - use *eu-west-1*
-4. Default output format - use *json*
+4. Default output format
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
-The following scripts will succeed if your IAM user has the *IAMFullAccess* policy attached with no permission boundaries. This is very broad, and narrower options might succeed.
+The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
+This is very broad, and narrower options might succeed. 
+
 
 ### Deploy AWS Cloud Artifacts
 
@@ -133,15 +139,35 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    ```bash
    cd $WORKSHOP_HOME/cloud/script
    ```
-2. Run the script that triggers the Cloudformation deployment.  The script packages deployable artifacts such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.
+2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts 
+such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the 
+Cloudformation script from that S3 bucket.
 
 	```bash
-	./deploy-s3-objects.sh test1
+	./deploy-s3-objects.sh <your-unique-prefix>
 	```
 
 The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
 
-The above deployment will prepare an S3 bucket named `test1-aws-cloud-and-xilinx-workshop` for you. By calling `./deploy-s3-objects.sh <other-prefix>`, you can deploy more buckets.
+The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
+The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
+for your files to synchronize with the S3 bucket. You should be able to see a bitstream uploaded on your S3 bucket,
+while your local folder is empty. In later labs we will download this bitstream onto your board.
+
+Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
+of a certain name, you cannot have a bucket with that same name. 
+If you see *BucketAlreadyExists* error, try to rerun the script with another prefix.
+
+
+### Store your AWS IoT Endpoint address in a text file
+To find your endpoint address:
+1. Login to the AWS IoT console for the Region that you entered above when you ran 'aws configure'.
+2. Click on *Settings*
+3. Ensure your *Custom endpoint* is *Enabled*
+4. Copy to the clipboard the contents of the *EndPoint* box in the *Custom endpoint* section
+5. Create and open a text file on your laptop in *C:\temp* called *node-zynq7k.broker.txt*. 
+6. Paste your clipboard into this file and save it
+
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
@@ -152,6 +178,3 @@ In this lab, you installed prerequisites to your workstation and installed lab p
 [Next Lab](./Lab2.md)
 
 [Index](./README.md)
-
-
-
