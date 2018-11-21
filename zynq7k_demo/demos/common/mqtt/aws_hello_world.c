@@ -79,13 +79,7 @@
 #include "aws_system_init.h"
 #include "aws_pkcs11_config.h"
 
-#define GPIO_DEVICE_ID		XPAR_XGPIOPS_0_DEVICE_ID
 #include "xparameters.h"
-#include "xgpiops.h"
-static XGpioPs Gpio; /* The Instance of the GPIO Driver */
-static u32 Input_Pin; /* Switch button */
-static u32 Output_Pin; /* LED button */
-//static XScuGic Intc; /* The Instance of the Interrupt Controller Driver */
 
 /**
  * @brief MQTT client ID.
@@ -540,20 +534,6 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
         {
     		x++;
             prvPublishNextMessage( x );
-            if ( x % 2 == 0)
-            {
-            	configPRINTF(("Turning LED OFF\r\n"));
-            	XGpioPs_WritePin(&Gpio, Output_Pin, 0x0);
-            	configPRINTF(("Setting shadow on Ultra96 to OFF\r\n"));
-            	prvPublishShadowMessage( 0 );
-            }
-            else
-            {
-            	configPRINTF(("Turning LED ON\r\n"));
-            	XGpioPs_WritePin(&Gpio, Output_Pin, 0x1);
-            	configPRINTF(("Setting shadow on Ultra96 to ON\r\n"));
-            	prvPublishShadowMessage( 1 );
-            }
             /* Five seconds delay between publishes. */
             vTaskDelay( xFiveSeconds );
         }
@@ -573,29 +553,6 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
 void vStartMQTTEchoDemo( void )
 {
     configPRINTF( ( "Creating MQTT Echo Task...\r\n" ) );
-
-	XGpioPs_Config *ConfigPtr;
-	int Type_of_board;
-	int Status;
-
-	Type_of_board = XGetPlatform_Info();
-	configPRINTF(("Type of board: %d\r\n", Type_of_board));
-	Input_Pin = 14;
-//	Output_Pin = 10;
-	Output_Pin = 47;
-	ConfigPtr = XGpioPs_LookupConfig(GPIO_DEVICE_ID);
-	if (ConfigPtr == NULL) {
-		return;
-	}
-	XGpioPs_CfgInitialize(&Gpio, ConfigPtr, ConfigPtr->BaseAddr);
-	Status = XGpioPs_SelfTest(&Gpio);
-	if (Status != XST_SUCCESS) {
-		return;
-	}
-
-	XGpioPs_SetDirectionPin(&Gpio, Output_Pin, 1);
-	XGpioPs_SetOutputEnablePin(&Gpio, Output_Pin, 1);
-	XGpioPs_WritePin(&Gpio, Output_Pin, 0x0);
 
     /* Create the message buffer used to pass strings from the MQTT callback
      * function to the task that echoes the strings back to the broker.  The
