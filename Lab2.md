@@ -4,7 +4,7 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 
 ## Configure and Deploy AWS IoT Credentials
 
-In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$WORKSHOP_HOME/edge/auth-node-zynq7k``` and ```$WORKSHOP_HOME/edge/auth-gateway-ultra96```.
+In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-gateway-ultra96```.
 
 1. Ensure the the MiroZed board is powered off by unplugging the USB cables.
 2. Eject the MicroZed microSD card.
@@ -59,7 +59,7 @@ so that your Ultra96 can be used as a greengrass core.
 	You can see from its output that the script performs the following acts:
 
 	- Creates a Role for the function if the Role does not already exist
-	- Packages the code located in ```$WORKSHOP_HOME/cloud/xilinx-hello-world``` to a zip file
+	- Packages the code located in ```$HOME/aws-cloud-and-xilinx-workshop/cloud/xilinx-hello-world``` to a zip file
 	- Uploads the code to the AWS Lambda service
 	- Applies a version number to the function
 	- Creates an alias for the function
@@ -105,7 +105,7 @@ See picture below for expected response.
 
 ## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
 
-The MicroZed device boots Amazon FreeRTOS from a microSD card. Your card contains a pre-built file 'BOOT.bin'. In the previous step the script copied the security credentials files for a:FreeRTOS to the MicroZed microSD to link your hardware to your IoT account.  The credentials files ```$WORKSHOP_HOME/edge/auth-node-zynq7k/node-zynq7k.crt.pem``` and ```$WORKSHOP_HOME/edge/auth-node-zynq7k/node-zynq7k.key.prv.pem``` should be in the SD Card base directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
+The MicroZed device boots Amazon FreeRTOS from a microSD card. Your card contains a pre-built file 'BOOT.bin'. In the previous step the script copied the security credentials files for a:FreeRTOS to the MicroZed microSD to link your hardware to your IoT account.  The credentials files ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k/GGGROUP-node-zynq7k.crt.pem``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k/GGGROUP-node-zynq7k.key.prv.pem``` should be in the SD Card base directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
 
 1. Remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board and power the system.
 2. In the AWS IoT Console for your region, navigate to the **Test** tool listed in the left column.
