@@ -148,8 +148,8 @@ The Cloudformation deployment occurs asynchronously, so the script will immediat
 
 The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
 The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
-for your files to synchronize with the S3 bucket. You should be able to see a bitstream uploaded on your S3 bucket,
-while your local folder is empty. In later labs we will download this bitstream onto your board.
+for your files to synchronize with the S3 bucket. You should be able to see a FPGA bitstream uploaded on your S3 bucket,
+while your local folder is empty. In later labs we will download this FPGA bitstream onto your board.
 
 Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
 of a certain name, you cannot have a bucket with that same name. 
