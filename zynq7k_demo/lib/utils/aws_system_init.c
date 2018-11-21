@@ -22,6 +22,7 @@
  * http://aws.amazon.com/freertos
  * http://www.FreeRTOS.org
  */
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "aws_system_init.h"
 #include "ff.h"
@@ -43,6 +44,15 @@ const char clientcredentialGG_GROUP[clientcredentialGG_GROUP_NAMELEN+1];
 #define rest_NAMELEN	0
 char rest[rest_NAMELEN+1];
 
+#define FILE_NAMELEN    (clientcredentialGG_GROUP_NAMELEN + 1 + 32)
+const char pkcs11configFILE_NAME_CLIENT_CERTIFICATE[FILE_NAMELEN + 1];
+const char pkcs11configFILE_NAME_KEY[FILE_NAMELEN + 1];
+
+#define IOT_THING_NAMELEN (clientcredentialGG_GROUP_NAMELEN	+ 1 + 32)
+const char clientcredentialIOT_THING_NAME[IOT_THING_NAMELEN + 1];
+
+#define pkcs11configFILE_NAME_GG_CONFIG "ggconfig.txt"
+
 /*-----------------------------------------------------------*/
 
 /**
@@ -55,7 +65,7 @@ char rest[rest_NAMELEN+1];
  * @return pdTRUE if data was retrieved successfully from file,
  * pdFALSE otherwise.
  */
-static BaseType_t ReadBrokerInfo( const char * pcFileName)
+static BaseType_t ReadGreenGrassInfo( const char * pcFileName)
 {
 	FIL fil;
 	FRESULT Res;
@@ -177,6 +187,24 @@ static BaseType_t ReadBrokerInfo( const char * pcFileName)
 
 	f_close(&fil);
 
+    (void)snprintf(pkcs11configFILE_NAME_CLIENT_CERTIFICATE, FILE_NAMELEN + 1,
+        "%s-node-zynq7k.crt.pem",
+        clientcredentialGG_GROUP
+        );
+    pkcs11configFILE_NAME_CLIENT_CERTIFICATE[FILE_NAMELEN] = 0;
+
+    (void)snprintf(pkcs11configFILE_NAME_KEY, FILE_NAMELEN + 1,
+        "%s-node-zynq7k.key.prv.pem",
+        clientcredentialGG_GROUP
+        );
+    pkcs11configFILE_NAME_KEY[FILE_NAMELEN] = 0;
+
+    (void)snprintf(clientcredentialIOT_THING_NAME, IOT_THING_NAMELEN + 1,
+        "%s-node-zynq7k",
+        clientcredentialGG_GROUP
+        );
+    clientcredentialIOT_THING_NAME[IOT_THING_NAMELEN] = 0;
+
 	return pdTRUE;
 }
 
@@ -203,7 +231,7 @@ BaseType_t SYSTEM_Init()
 
     if(xResult == pdPASS )
     {
-    	xResult = ReadBrokerInfo(pkcs11configFILE_NAME_BROKER_ID);
+    	xResult = ReadGreenGrassInfo(pkcs11configFILE_NAME_GG_CONFIG);
     }
 
     return xResult;

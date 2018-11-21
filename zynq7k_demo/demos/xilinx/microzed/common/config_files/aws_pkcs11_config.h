@@ -37,9 +37,8 @@
  /**
  * @brief File storage location definitions.
  */
-#define pkcs11configFILE_NAME_CLIENT_CERTIFICATE    clientcredentialIOT_THING_NAME ".crt.pem"
-#define pkcs11configFILE_NAME_KEY                   clientcredentialIOT_THING_NAME ".key.prv.pem"
-#define pkcs11configFILE_NAME_BROKER_ID				clientcredentialIOT_THING_NAME ".broker.txt"
+extern const char pkcs11configFILE_NAME_CLIENT_CERTIFICATE[];
+extern const char pkcs11configFILE_NAME_KEY[];
 
 /* A non-standard version of C_INITIALIZE should be used by this port. */
 /* #define pkcs11configC_INITIALIZE_ALT */

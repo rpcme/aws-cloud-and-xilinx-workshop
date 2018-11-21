@@ -72,10 +72,14 @@
 /**
  * @brief HTTP command to retrieve JSON file from the Cloud.
  */
+#define ggdCLOUD_DISCOVERY_ADDRESS_BYTES    1023
+const char ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES + 1];
+#if 0
 #define ggdCLOUD_DISCOVERY_ADDRESS    \
     "GET /greengrass/discover/thing/" \
     clientcredentialIOT_THING_NAME    \
     " HTTP/1.1\r\n\r\n"
+#endif
 
 #define ggJSON_CONVERTION_RADIX    10
 
@@ -248,9 +252,14 @@ BaseType_t GGD_JSONRequestStart( Socket_t * pxSocket )
 
     if( xStatus == pdPASS )
     {
+        (void)snprintf(ggdCLOUD_DISCOVERY_ADDRESS,ggdCLOUD_DISCOVERY_ADDRESS_BYTES + 1,
+                "GET /greengrass/discover/thing/%s HTTP/1.1\r\n\r\n",
+                clientcredentialIOT_THING_NAME
+                );
+        ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES] = 0;
         /* Send HTTP request over secure connection (HTTPS) to get the GGC JSON file. */
         xStatus = GGD_SecureConnect_Send( ggdCLOUD_DISCOVERY_ADDRESS,
-                                          ( uint32_t ) sizeof( ggdCLOUD_DISCOVERY_ADDRESS ) - 1,
+                                          ( uint32_t ) strlen( ggdCLOUD_DISCOVERY_ADDRESS ),
                                           *pxSocket );
 
         if( xStatus == pdFAIL )

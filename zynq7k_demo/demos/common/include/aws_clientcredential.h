@@ -40,9 +40,11 @@
 extern const char clientcredentialMQTT_BROKER_ENDPOINT[];
 extern const char clientcredentialGG_GROUP[];
 
-/* Use of a "define" and not a "static const" here to be able to
- * use pre-compile concatenation on the string. */
-#define clientcredentialIOT_THING_NAME               "node-zynq7k"
+/*
+ * aws-xilinx workshop specific so attendees do not have to compile the code
+ * The thing name is adjusted based on the greengrass group they are configured for in aws_system_init.c
+ */
+extern const char clientcredentialIOT_THING_NAME[];
 
 /*
  * Port number the MQTT broker is using.
