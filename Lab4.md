@@ -102,7 +102,8 @@ persons are in view of the camera.
 that LED turn off.
 
 7. If there are people detected, you will see a number of files generated in 
-your current directory. These files are uploaded onto the S3 bucket, so
+`<your-unique-prefix>-aws-cloud-and-xilinx-workshop`. 
+These files will be uploaded onto the S3 bucket, so
 you will also see some messages on the topic "/unit_controller/image_upload".
 
    ![alt text](images/Publish_Image_Upload.PNG)
