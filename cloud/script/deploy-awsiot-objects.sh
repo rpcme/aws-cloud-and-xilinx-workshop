@@ -143,4 +143,14 @@ cat <<EOF > $dc_agg/config.json
 }
 EOF
 
+echo Constructing microSD for the MicroZED.
+$(dirname $0)/../../edge/script/amazon-freertos-init.sh ${prefix}
+if test $? != 0; then
+  echo ERROR: A problem occurred when writing the microSD card.
+  echo See the FAQ to fix the problem.
+  echo You may have not inserted the microSD card.  If so, just insert it
+  echo according to the workshop lab instruction and run the following command:
+  echo $(dirname $0)/../../edge/script/amazon-freertos-init.sh ${prefix}
+  exit 1
+fi
 echo Done!
