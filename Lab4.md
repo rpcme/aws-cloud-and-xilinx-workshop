@@ -84,7 +84,7 @@ should be able to see the following result:
 
    After this call, your `/home/xilinx/download` is no longer empty.
    This indicates the Ultra96 has received the ML configuration files 
-   ('*.bit' and '*.txt') from the AWS cloud. 
+   ('.bit' and '.txt') from the AWS cloud. 
    You can publish on this topic again, and you will get similar response 
    each time.
    
