@@ -53,11 +53,11 @@ The MicroZed implements checks around the sensor to identify error conditions an
 
 7. Plug the thermocouple module back in and you should see the Intelligent I/O module error LED shutoff and the health bit in the MQTT message for the MAX31855 clear.
 
-# Outcomes
+## Outcomes
 
 In this lab, you brought in live control sensor readings into the AWS cloud and saw them plotted on a dashboard using the MQTT communication mechamisms of a:FreeRTOS.  We then invoked a sensor health failure which caused the MicroZed device shadow to change to a failed state; which was automatically detected by the unit controller and AWS cloud to generate alerts.
 
-# Learning More About These Concepts
+## Learning More About These Concepts
 
 [Next Lab](./Lab4.md)
 

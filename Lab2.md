@@ -91,8 +91,14 @@ so that your Ultra96 can be used as a greengrass core.
 	cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
 	./deploy-greengrass-group.sh <your-group-prefix>
 	```
+   Afer a few seconds, you should be able to see the group has been deployed 
+   successfully.
 
-8. Go to the AWS IoT Console page and click on "Test".  Click on "Subscribe to a topic" and enter "hello/world". You should now see a MQTT response from the Ultra96 platform in the test window response.  See picture below for expected response.
+8. Go to the AWS IoT Console page and click on "Test". 
+Click on "Subscribe to a topic" and enter "hello/world". 
+Click on "Subscribe to topic" to confirm. 
+You should now see a MQTT response from the Ultra96 platform in the test window response.
+See picture below for expected response.
 
 ![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
 
@@ -110,11 +116,11 @@ The MicroZed device boots Amazon FreeRTOS from a microSD card. Your card contain
 
 	![alt text](images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
 
-# Outcomes
+## Outcomes
 
 In this lab we established basic "hello world" connectivity from an a:FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
 
-# Learning More About These Concepts
+## Learning More About These Concepts
 
 [Next Lab](./Lab3.md)
 
