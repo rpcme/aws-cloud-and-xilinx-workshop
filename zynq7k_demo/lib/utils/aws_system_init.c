@@ -187,23 +187,26 @@ static BaseType_t ReadGreenGrassInfo( const char * pcFileName)
 
 	f_close(&fil);
 
-    (void)snprintf(pkcs11configFILE_NAME_CLIENT_CERTIFICATE, FILE_NAMELEN + 1,
+    pDst = (char*)pkcs11configFILE_NAME_CLIENT_CERTIFICATE;
+    (void)snprintf(pDst, FILE_NAMELEN + 1,
         "%s-node-zynq7k.crt.pem",
         clientcredentialGG_GROUP
         );
-    pkcs11configFILE_NAME_CLIENT_CERTIFICATE[FILE_NAMELEN] = 0;
+    pDst[FILE_NAMELEN] = 0;
 
-    (void)snprintf(pkcs11configFILE_NAME_KEY, FILE_NAMELEN + 1,
+    pDst = (char*)pkcs11configFILE_NAME_KEY;
+    (void)snprintf(pDst, FILE_NAMELEN + 1,
         "%s-node-zynq7k.key.prv.pem",
         clientcredentialGG_GROUP
         );
-    pkcs11configFILE_NAME_KEY[FILE_NAMELEN] = 0;
+    pDst[FILE_NAMELEN] = 0;
 
-    (void)snprintf(clientcredentialIOT_THING_NAME, IOT_THING_NAMELEN + 1,
+    pDst = (char*)clientcredentialIOT_THING_NAME;
+    (void)snprintf(pDst, IOT_THING_NAMELEN + 1,
         "%s-node-zynq7k",
         clientcredentialGG_GROUP
         );
-    clientcredentialIOT_THING_NAME[IOT_THING_NAMELEN] = 0;
+    pDst[IOT_THING_NAMELEN] = 0;
 
 	return pdTRUE;
 }
