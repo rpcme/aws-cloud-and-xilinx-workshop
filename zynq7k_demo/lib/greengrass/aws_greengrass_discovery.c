@@ -73,13 +73,7 @@
  * @brief HTTP command to retrieve JSON file from the Cloud.
  */
 #define ggdCLOUD_DISCOVERY_ADDRESS_BYTES    1023
-const char ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES + 1];
-#if 0
-#define ggdCLOUD_DISCOVERY_ADDRESS    \
-    "GET /greengrass/discover/thing/" \
-    clientcredentialIOT_THING_NAME    \
-    " HTTP/1.1\r\n\r\n"
-#endif
+char ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES + 1];
 
 #define ggJSON_CONVERTION_RADIX    10
 
