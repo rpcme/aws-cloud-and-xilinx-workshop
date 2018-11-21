@@ -32,7 +32,7 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This provides three services to your PC:
     1. A debug UART interface
     2. A portable drive named 'PYNQ-USB' to navigate the Ultra96 file system
-    3. An RNDIS ethernet interface
+    3. An RNDIS (Ethernet over USB) interface
 
 After the set-up the Ultra96 should look like the picture below.
 
@@ -73,12 +73,12 @@ Open the terminal emulator for Ultra96. The username is 'xilinx' and the passwor
 
 Run the command `ip a` to see all ethernet interfaces. You should see:
 1. usb0 at 192.168.3.1/24
-2. eth0 at an address determined by your DHCP server behind the switch
+2. eth0 at an address determined by your DHCP server
 3. Other interfaces will not be used in this workshop
 
 Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
-The Windows RNDIS adapter should be at the address 192.168.3.105/24; ultra96 will be at 192.168.3.1
+The Windows RNDIS adapter should be at an address in the 192.168.3.X/24 space; ultra96 will be accessible at 192.168.3.1
 
 ## AWS Cloud Setup
 
