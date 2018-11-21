@@ -12,11 +12,10 @@ fi
 cd $(dirname $0)
 dc_afr=$(dirname $0)/../../edge/auth-${thing_afr}
 
-aws iot describe-endpoint --output text > $dc_afr/${thing_afr}.broker.txt
-echo ${prefix} >> ${dc_afr}/${thing_afr}.broker.txt
+aws iot describe-endpoint --output text > $dc_afr/ggconfig.txt
+echo ${prefix} >> ${dc_afr}/ggconfig.txt
 
 lsblk -lnp --output NAME,RM,FSTYPE,SIZE > /tmp/out
-
 
 while read -r line; do
   dev=$(echo $line   | tr -s ' ' ' ' | cut -f1 -d' ')
@@ -36,6 +35,6 @@ sudo mount $dev /media
 sudo cp $(dirname $0)/../sd_card/BOOT.bin /media
 sudo cp ${dc_afr}/${thing_afr}.crt.pem /media
 sudo cp ${dc_afr}/${thing_afr}.key.prv.pem /media
-sudo cp ${dc_afr}/${thing_afr}.broker.txt /media
+sudo cp ${dc_afr}/ggconfig.txt /media
 sudo umount /media
-
+echo microSD now unmounted. Remove and insert microSD to the MicroZED board.
