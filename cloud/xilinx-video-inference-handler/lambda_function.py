@@ -43,7 +43,7 @@ def run_pydeephi_yolo():
     logger.info("Parameter threshold: {}".format(threshold))
 
     ret = subprocess.check_call(
-            'cd {0} && strace /usr/local/bin/pydeephi_yolo.py {1} {2} 2> /tmp/{3}.txt'.format(
+            'cd {0} && PYTHONPATH=/usr/lib/python3.6 strace /usr/local/bin/pydeephi_yolo.py {1} {2} 2> /tmp/{3}.txt'.format(
             sync_folder_path, num_seconds, threshold, str(datetime.datetime.now().isoformat())), shell=True)
     logger.info("{}".format(ret))
 
