@@ -107,16 +107,14 @@ You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI on the Ultra96 board. The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target.
-The AWS CLI has already been installed for you.
+In this section, we will configure the AWS CLI on the Ultra96 board. The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. 
+The AWS CLI has already been installed on the Ultra96 for you.
 
-Accept the default options presented by hitting ENTER each time.
-
+Start the configuration as follows:
 ```bash
 aws configure
 ```
-
-For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. This step will ask for the following pieces of information:
+This step will ask for the following pieces of information:
 1. Your AWS Access Key ID
 2. Your AWS Secret Access Key
 3. Default region name - use *eu-west-1*
