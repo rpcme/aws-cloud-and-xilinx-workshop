@@ -17,6 +17,7 @@ echo ${prefix} >> ${dc_afr}/ggconfig.txt
 
 lsblk -lnp --output NAME,RM,FSTYPE,SIZE > /tmp/out
 
+found=0
 while read -r line; do
   dev=$(echo $line   | tr -s ' ' ' ' | cut -f1 -d' ')
   is_rm=$(echo $line | tr -s ' ' ' ' | cut -f2 -d' ')
@@ -24,9 +25,15 @@ while read -r line; do
   sz=$(echo $line    | tr -s ' ' ' ' | cut -f4 -d' ')
 
   if test "$is_rm" == 1 && test "$fs" == "vfat" && test "$sz" == "7.4G"; then
-     break
+    found=1
+    break
   fi
 done < /tmp/out
+
+if test "$found" == "0"; then
+  echo microSD not found. Check that it has been properly inserted.
+  exit 1
+fi
 
 echo Need to mount filesystem, enter password \'xilinx\' if requested.
 #right now, image doesn't have mkfs.vfat so... we hope
