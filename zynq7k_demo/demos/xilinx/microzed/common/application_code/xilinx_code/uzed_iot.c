@@ -102,14 +102,13 @@
 #include "xiic.h"
 #include "xgpiops.h"
 #include "xspi_l.h"
+#include "xemacps.h"
 #include "uzed_iot.h"
 #if UZED_USE_GG
 #include "aws_ggd_config.h"
 #include "aws_ggd_config_defaults.h"
 #include "aws_greengrass_discovery.h"
 #endif
-
-extern const char thingMacAddress[];
 
 /*-----------------------------------------------------------*/
 // System parameters for the MicroZed IOT kit
@@ -258,7 +257,7 @@ extern const char thingMacAddress[];
 	{ \
 	    code; \
 		if(pSystem->rc != XST_SUCCESS) { \
-			prvPublishTopic(pSystem,pSystem->eTopic,pSystem->pcErr,pSystem->rc,thingMacAddress); \
+			prvPublishTopic(pSystem,pSystem->eTopic,pSystem->pcErr,pSystem->rc,pSystem->pcIdentifier); \
 			StopHere(); \
 			goto L_DIE; \
 		} \
@@ -309,6 +308,7 @@ typedef struct ShadowErr {
 /**
  * @brief System handle contents
  */
+#define SYSTEM_IDENTIFIER_LENGTH    (6*3)   /* aa:bb:cc:dd:ee:ff<NUL> */
 typedef struct System {
 	XIic 	iic;
 	XGpioPs gpio;
@@ -325,6 +325,8 @@ typedef struct System {
 	const char* pcErr;
 	TOPIC eTopic;
 	ShadowErr ShadowError;
+
+    char pcIdentifier[SYSTEM_IDENTIFIER_LENGTH];
 } System;
 
 /*-----------------------------------------------------------*/
@@ -919,7 +921,7 @@ static void StartBarometer(System* pSystem)
 	});
 	vTaskDelay(xOneMs);
 
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_STATUS, "\"status\":\"Barometer started\",\"d\":\"%s\"",thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_BAROMETER_STATUS, "\"status\":\"Barometer started\",\"d\":\"%s\"",pSystem->pcIdentifier);
 
 L_DIE:
 	if(pSystem->rc != XST_SUCCESS) {
@@ -1029,7 +1031,7 @@ static void SampleBarometer(System* pSystem)
 		sqTmp |= 0xFF800000;
 	}
 	f = (float)sqTmp / 4096.0F;
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_PRESSURE, "{\"pressure\":%.2f,\"d\":\"%s\"}", f, thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_BAROMETER_PRESSURE, "{\"pressure\":%.2f,\"d\":\"%s\"}", f, pSystem->pcIdentifier);
 
 	sqTmp = 0
 			| ((u32)pbBuf[4] << 0)	// l
@@ -1040,7 +1042,7 @@ static void SampleBarometer(System* pSystem)
 	}
 	f = (float)sqTmp/100.0;
 
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_TEMPERATURE, "{\"barometer_temp\":%.2f,\"d\":\"%s\"}", f, thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_BAROMETER_TEMPERATURE, "{\"barometer_temp\":%.2f,\"d\":\"%s\"}", f, pSystem->pcIdentifier);
 
 L_DIE:
 	if(pSystem->rc != XST_SUCCESS) {
@@ -1112,7 +1114,7 @@ static void StartHygrometer(System* pSystem)
 	});
 	vTaskDelay(xOneMs);
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_STATUS, "{\"status\":\"Hygrometer started\",\"d\":\"%s\"}",thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_HYGROMETER_STATUS, "{\"status\":\"Hygrometer started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 
 L_DIE:
 	if(pSystem->rc != XST_SUCCESS) {
@@ -1259,7 +1261,7 @@ static void SampleHygrometer(System* pSystem)
 	/* Saturation condition*/
 	if(value>1000) value = 1000;
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_RELATIVE_HUMIDITY, "{\"relative_humidity\":%u,\"d\":\"%s\"}",value,thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_HYGROMETER_RELATIVE_HUMIDITY, "{\"relative_humidity\":%u,\"d\":\"%s\"}",value,pSystem->pcIdentifier);
 
         /**
 	* @brief Read HTS221 temperature output registers, and calculate temperature.
@@ -1337,7 +1339,7 @@ static void SampleHygrometer(System* pSystem)
 	tmp32 = (( int)(T_out - T0_out)) * (( int)(T1_degC - T0_degC));
 	value = (tmp32 /(T1_out - T0_out)) + T0_degC;
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE, "{\"hygrometer_temp\":%u,\"d\":\"%s\"}",value,thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE, "{\"hygrometer_temp\":%u,\"d\":\"%s\"}",value,pSystem->pcIdentifier);
 
 L_DIE:
 	if(pSystem->rc != XST_SUCCESS) {
@@ -1382,7 +1384,7 @@ static void StartPLTempSensor(System* pSystem)
 
 	vTaskDelay(xOneMs); //usleep(100);
 
-	prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"PL Thermocouple started\",\"d\":\"%s\"}",thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"PL Thermocouple started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 
 L_DIE:
 	if(pSystem->rc != XST_SUCCESS) {
@@ -1514,15 +1516,15 @@ L_DIE:
 	if(0) {
 		;
 	} else if(XST_SUCCESS != pSystem->rc) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"SPI Transaction failure\",\"d\":\"%s\"}",thingMacAddress);
+		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"SPI Transaction failure\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 	} else if(pqRxBuffer[3] & 0x1) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Open Circuit\",\"d\":\"%s\"}",thingMacAddress);
+		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Open Circuit\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 	} else if(pqRxBuffer[3] & 0x2) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to GND\",\"d\":\"%s\"}",thingMacAddress);
+		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to GND\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 	} else if(pqRxBuffer[3] & 0x4) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to VCC\",\"d\":\"%s\"}",thingMacAddress);
+		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to VCC\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 	} else if(pqRxBuffer[1] & 0x01) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Fault\",\"d\":\"%s\"}",thingMacAddress);
+		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Fault\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 	} else {
 		// Internal Temp
 		{
@@ -1535,7 +1537,7 @@ L_DIE:
 				sqTemporaryValue |= 0xFFFFF800;
 			}
 			fMAX31855_internal_temp = (float)sqTemporaryValue / 16.0f;
-			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_BOARD_TEMPERATURE, "{\"thermocouple_boardtemp\":%.1f,\"d\":\"%s\"}",fMAX31855_internal_temp,thingMacAddress);
+			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_BOARD_TEMPERATURE, "{\"thermocouple_boardtemp\":%.1f,\"d\":\"%s\"}",fMAX31855_internal_temp,pSystem->pcIdentifier);
 		}
 
 		// Thermocouple Temp
@@ -1549,7 +1551,7 @@ L_DIE:
 				sqTemporaryValue |= 0xFFFFE000;
 			}
 			fMAX31855_thermocouple_temp = (float)sqTemporaryValue / 4.0f;
-			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_TEMPERATURE, "{\"thermocouple_temp\":%.1f,\"d\":\"%s\"}",fMAX31855_thermocouple_temp,thingMacAddress);
+			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_TEMPERATURE, "{\"thermocouple_temp\":%.1f,\"d\":\"%s\"}",fMAX31855_thermocouple_temp,pSystem->pcIdentifier);
 		}
 	}
 }
@@ -1577,6 +1579,8 @@ static void StartSystem(System* pSystem)
     pSystem->pcErr = "{\"status\":\"Success\",\"d\":\"%s\"}";
     pSystem->xMQTTHandle = NULL;
     pSystem->eTopic = TOPIC_SYSTEM_STATUS;
+    (void)snprintf(pSystem->pcIdentifier,SYSTEM_IDENTIFIER_LENGTH,"%s",clientcredentialGG_GROUP);
+    pSystem->pcIdentifier[SYSTEM_IDENTIFIER_LENGTH-1] = 0;
 
     /*-----------------------------------------------------------------*/
 
@@ -1645,7 +1649,7 @@ static void StartSystem(System* pSystem)
 
     /*-----------------------------------------------------------------*/
 
-	prvPublishTopic(pSystem, TOPIC_SYSTEM_STATUS, "{\"status\":\"System started\",\"d\":\"%s\"}",thingMacAddress);
+	prvPublishTopic(pSystem, TOPIC_SYSTEM_STATUS, "{\"status\":\"System started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
 
 	return;
 
