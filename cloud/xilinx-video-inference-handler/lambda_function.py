@@ -6,6 +6,8 @@ import subprocess
 import os
 import json
 import greengrasssdk
+import datetime
+from threading import Timer
 
 
 # Setup logging to stdout
@@ -24,13 +26,14 @@ download_path = "/home/xilinx/download"
 topic = "/unit_controller/video_inference"
 parameters = 'parameters.txt'
 
-
 def run_pydeephi_yolo():
+    num_seconds = 5
+    threshold = 2
+
     payload = {'message': 'starting video inference'}
     client.publish(topic=topic, payload=json.dumps(payload))
 
-    num_seconds = 5
-    threshold = 2
+
     if os.path.isfile(os.path.join(download_path, parameters)):
         with open(os.path.join(download_path, parameters)) as f:
             num_seconds = int(f.readline())
@@ -40,16 +43,19 @@ def run_pydeephi_yolo():
     logger.info("Parameter threshold: {}".format(threshold))
 
     ret = subprocess.check_call(
-            'cd {0} && /usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
-            sync_folder_path, num_seconds, threshold), shell=True)
+            'cd {0} && strace /usr/local/bin/pydeephi_yolo.py {1} {2} 2> /tmp/{3}.txt'.format(
+            sync_folder_path, num_seconds, threshold, str(datetime.datetime.now().isoformat())), shell=True)
     logger.info("{}".format(ret))
 
-    payload = {'message': 'starting video inference'}
+    payload = {'message': 'ended video inference'}
     client.publish(topic=topic, payload=json.dumps(payload))
+    return ret
 
-
-run_pydeephi_yolo()
-
+while (1):
+    ret = run_pydeephi_yolo()
+    if ret != 0:
+        time.sleep(500)
+    time.sleep(0.5)
 
 def lambda_handler(event, context):
     return

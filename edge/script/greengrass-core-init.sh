@@ -338,7 +338,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": false,
+        "Pinned": True,
         "Timeout": 500
       }
     },
