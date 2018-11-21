@@ -116,7 +116,7 @@ synchronized with your S3 bucket.
    ```
 
    You will see a bunch of new files generated. The 
-   '<epoch-time>.png' files are the captured frames; the '<epoch-time>.txt'
+   '\<epoch-time\>.png' files are the captured frames; the '\<epoch-time\>.txt'
    files store the number of people captured in that frame.
 
 9. Go to your S3 bucket on AWS cloud; you will see there is a new folder 
