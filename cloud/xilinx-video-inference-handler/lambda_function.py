@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 import glob
 import subprocess
 import os
@@ -25,23 +26,29 @@ parameters = 'parameters.txt'
 
 
 def run_pydeephi_yolo():
+    payload = {'message': 'starting video inference'}
+    client.publish(topic=topic, payload=json.dumps(payload))
+
     num_seconds = 5
     threshold = 2
-    # video application parameters are read from file if possible
     if os.path.isfile(os.path.join(download_path, parameters)):
         with open(os.path.join(download_path, parameters)) as f:
             num_seconds = int(f.readline())
             threshold = int(f.readline())
-    _ = subprocess.check_output(
-        'cd {0} && /usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
+    logger.info("Running subprocess in {}".format(sync_folder_path))
+    logger.info("Parameter number of seconds: {}".format(num_seconds))
+    logger.info("Parameter threshold: {}".format(threshold))
+
+    ret = subprocess.check_call(
+            'cd {0} && /usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
             sync_folder_path, num_seconds, threshold), shell=True)
+    logger.info("{}".format(ret))
+
+    payload = {'message': 'starting video inference'}
+    client.publish(topic=topic, payload=json.dumps(payload))
 
 
-payload = {'message': 'starting video inference'}
-client.publish(topic=topic, payload=json.dumps(payload))
 run_pydeephi_yolo()
-payload = {'message': 'stopped video inference'}
-client.publish(topic=topic, payload=json.dumps(payload))
 
 
 def lambda_handler(event, context):

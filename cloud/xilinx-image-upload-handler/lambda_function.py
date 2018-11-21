@@ -35,7 +35,8 @@ def copy_to_s3(file):
     session = Session()
     _ = session.get_credentials()
     s3.meta.client.upload_file(os.path.join(sync_folder_path, file),
-                               bucket, file)
+                               bucket, 
+                               os.path.join('images', file))
     return
 
 

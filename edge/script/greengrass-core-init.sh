@@ -365,15 +365,14 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "Timeout": 500
       }
     },
-    {
+   {
       "Id": "53eb2677-cca1-46bf-9cc0-2e9029555662",
-      "functionArn": "arn:aws:lambda:::function:GGIPDetector:1",
+      "FunctionArn": "arn:aws:lambda:::function:GGIPDetector:1",
       "FunctionConfiguration": {
-        "MemorySize": 32768,
         "Pinned": true,
         "Timeout": 3
-      },
-    },
+      }
+    }
   ]
 }
 EOF
