@@ -66,7 +66,7 @@
 /**
  * @brief If set to 1, use GreenGrass instead of raw MQTT
  */
-#define UZED_USE_GG 0
+#define UZED_USE_GG 1
 
 //////////////////// END USER PARAMETERS ////////////////////
 
@@ -257,7 +257,8 @@
 	{ \
 	    code; \
 		if(pSystem->rc != XST_SUCCESS) { \
-			prvPublishTopic(pSystem,pSystem->eTopic,pSystem->pcErr,pSystem->rc,pSystem->pcIdentifier); \
+            pSystem->bError = 1; \
+			xil_printf( pSystem->pcErr, pSystem->rc ); \
 			StopHere(); \
 			goto L_DIE; \
 		} \
@@ -276,39 +277,10 @@ static inline BaseType_t MS_TO_TICKS(BaseType_t xMs)
 /*-----------------------------------------------------------*/
 
 /**
- * @brief The topics that the MQTT client publishes
- */
-typedef enum {
-	TOPIC_BAROMETER_PRESSURE,
-	TOPIC_BAROMETER_TEMPERATURE,
-	TOPIC_BAROMETER_STATUS,
-	TOPIC_THERMOCOUPLE_TEMPERATURE,
-	TOPIC_THERMOCOUPLE_BOARD_TEMPERATURE,
-	TOPIC_THERMOCOUPLE_STATUS,
-	TOPIC_HYGROMETER_RELATIVE_HUMIDITY,
-	TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE,
-	TOPIC_HYGROMETER_STATUS,
-	TOPIC_SYSTEM_STATUS,
-	TOPIC_SHADOW_UPDATE,
-	TOPIC_LAST
-} TOPIC;
-
-typedef struct TopicInfo {
-	TOPIC eTopic;
-	const uint8_t* pbName;
-	uint16_t usNameLen;
-} TopicInfo;
-
-typedef struct ShadowErr {
-	u8 ErrBarometer:1;
-	u8 ErrThermocouple:1;
-	u8 ErrHygrometer:1;
-} ShadowErr;
-
-/**
  * @brief System handle contents
  */
-#define SYSTEM_IDENTIFIER_LENGTH    (6*3)   /* aa:bb:cc:dd:ee:ff<NUL> */
+#define SYSTEM_SENSOR_TOPIC_LENGTH    64
+#define SYSTEM_SHADOW_TOPIC_LENGTH    128
 typedef struct System {
 	XIic 	iic;
 	XGpioPs gpio;
@@ -322,29 +294,29 @@ typedef struct System {
 	u8 pbHygrometerCalibration[16];
 
 	int rc;
-	const char* pcErr;
-	TOPIC eTopic;
-	ShadowErr ShadowError;
+    const char* pcErr;
+    uint8_t bError;
+    uint8_t bLastReportedError;
 
-    char pcIdentifier[SYSTEM_IDENTIFIER_LENGTH];
+    // Sensor start ok
+    uint8_t bBarometerOk;
+    uint8_t bHygrometerOk;
+    uint8_t bThermocoupleOk;
+
+    // Sensor values
+    float fBarometerPressure;
+    float fBarometerTemperature;
+    float fHygrometerHumidity;
+    float fHygrometerTemperature;
+    float fThermocoupleTemperature;
+    float fThermocoupleBoardTemperature;
+
+    uint16_t usSensorTopicLength;
+    uint8_t pbSensorTopic[SYSTEM_SENSOR_TOPIC_LENGTH + 1];
+
+    uint16_t usShadowTopicLength;
+    uint8_t pbShadowTopic[SYSTEM_SHADOW_TOPIC_LENGTH + 1];
 } System;
-
-/*-----------------------------------------------------------*/
-
-static TopicInfo pTopicInfo[] = {
-		{TOPIC_BAROMETER_PRESSURE,						(const uint8_t*)"remote_io_module/sensor_value/Pressure",				0},
-		{TOPIC_BAROMETER_TEMPERATURE,					(const uint8_t*)"remote_io_module/sensor_value/Pressure_Sensor_Temp",	0},
-		{TOPIC_BAROMETER_STATUS,						(const uint8_t*)"remote_io_module/sensor_status/LPS22HB_Error",		0},
-		{TOPIC_THERMOCOUPLE_TEMPERATURE,				(const uint8_t*)"remote_io_module/sensor_value/Thermocouple_Temp",		0},
-		{TOPIC_THERMOCOUPLE_BOARD_TEMPERATURE,			(const uint8_t*)"remote_io_module/sensor_value/Board_Temp_1",			0},
-		{TOPIC_THERMOCOUPLE_STATUS,						(const uint8_t*)"remote_io_module/sensor_status/MAX31855_Error",		0},
-		{TOPIC_HYGROMETER_RELATIVE_HUMIDITY,			(const uint8_t*)"remote_io_module/sensor_value/Relative_Humidity",		0},
-		{TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE,	(const uint8_t*)"remote_io_module/sensor_value/Humidity_Sensor_Temp",	0},
-		{TOPIC_HYGROMETER_STATUS,						(const uint8_t*)"remote_io_module/sensor_status/HTS221_Error",			0},
-		{TOPIC_SYSTEM_STATUS,							(const uint8_t*)"remote_io_module/sensor_status/System_Error",			0},
-		{TOPIC_SHADOW_UPDATE,							(const uint8_t*)"$aws/things/Ultra96-Client/shadow/update",			0},
-		{TOPIC_LAST,									(const uint8_t*)NULL,													0}
-};
 
 /*-----------------------------------------------------------*/
 /**
@@ -355,18 +327,26 @@ static void StopHere(void);
 /*-----------------------------------------------------------*/
 
 /**
- * @brief Initializes topic info data structure
+ * @brief Publishes specified messag
+ *
+ * @param[in] pSystem	            System info
+ * @param[in] pPublishParameters	Publication Parameters
  */
-static void InitTopicInfo(void);
+static void prvPublish(System* pSystem, MQTTAgentPublishParams_t* pPublishParameters);
 
 /**
- * @brief Publishes on any topic with caller-specified printf-style format for data
+ * @brief Publishes shadow from system handle
  *
  * @param[in] pSystem	System info
- * @param[in] eTopic	The topic (enum) to publish
- * @param[in] pcFmt		Printf format string to interpret variable arguments that follow
  */
-static void prvPublishTopic( System* pSystem, TOPIC eTopic, const char* pcFmt, ... );
+static void prvPublishShadow(System* pSystem);
+
+/**
+ * @brief Publishes sensors from system handle
+ *
+ * @param[in] pSystem	System info
+ */
+static void prvPublishSensors(System* pSystem);
 
 /**
  * @brief Creates an MQTT client and then connects to the MQTT broker.
@@ -572,29 +552,133 @@ static void BlinkLed(System* pSystem,BaseType_t xCount, BaseType_t xFinalOn)
 
 /*-----------------------------------------------------------*/
 
-static void InitTopicInfo(void)
+static void prvPublish(System* pSystem, MQTTAgentPublishParams_t* pPublishParameters)
 {
-	TopicInfo* pTI;
+    MQTTAgentReturnCode_t xReturned;
 
-	for(pTI = pTopicInfo; TOPIC_LAST != pTI->eTopic; pTI++) {
-		pTI->usNameLen = strlen((const char*)(pTI->pbName));
-	}
+    if(!pPublishParameters->usTopicLength) {
+        pPublishParameters->usTopicLength = strlen((const char*)pPublishParameters->pucTopic);
+        if(!pPublishParameters->usTopicLength) {
+            return;
+        }
+    }
+    if(!pPublishParameters->ulDataLength) {
+        pPublishParameters->ulDataLength = strlen((const char*)pPublishParameters->pvData);
+        if(!pPublishParameters->ulDataLength) {
+            return;
+        }
+    }
+
+    /* Publish the message. */
+    xReturned = MQTT_AGENT_Publish( pSystem->xMQTTHandle, pPublishParameters, democonfigMQTT_TIMEOUT );
+    switch(xReturned) {
+    case eMQTTAgentSuccess:
+    	configPRINTF( ( "Success: UZed published '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+    	break;
+
+    case eMQTTAgentFailure:
+    	BlinkLed(pSystem, 1, pdFALSE);
+        configPRINTF( ( "ERROR:  UZed failed to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+        break;
+
+    case eMQTTAgentTimeout:
+    	BlinkLed(pSystem, 1, pdFALSE);
+        configPRINTF( ( "ERROR:  UZed timed out to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+        break;
+
+    default:	//FallThrough
+    case eMQTTAgentAPICalledFromCallback:
+    	BlinkLed(pSystem, 1, pdFALSE);
+        configPRINTF( ( "ERROR:  UZed unexpected callback to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+    	configASSERT(pdTRUE);
+    	break;	// Not reached
+    }
 }
 
-static const TopicInfo* GetTopicInfo(TOPIC eTopic)
+static void prvPublishShadow(System* pSystem)
 {
-	TopicInfo* pTI;
+    MQTTAgentPublishParams_t xPublishParameters;
+    char pcDataBuffer[ UZedMAX_DATA_LENGTH ];
+    int iDataLength;
 
-	for(pTI = pTopicInfo; TOPIC_LAST != pTI->eTopic; pTI++) {
-		if(pTI->eTopic == eTopic) {
-			return (const TopicInfo*)pTI;
-		}
-	}
+    if(pSystem->xMQTTHandle == NULL) {
+    	return;
+    }
 
-	configASSERT( pdTRUE );
-	/* Not reached */
-	return (const TopicInfo*)NULL;
+    /*
+     * Compose the message
+     */
+    iDataLength = snprintf(pcDataBuffer, UZedMAX_DATA_LENGTH, "{\"state\": { \"desired\": {\"led\":%u}}}", pSystem->bError);		
+    pcDataBuffer[UZedMAX_DATA_LENGTH - 1] = 0;	// safety
+    if(iDataLength >= UZedMAX_DATA_LENGTH) {
+    	iDataLength = UZedMAX_DATA_LENGTH - 1;
+    } else if(iDataLength < 0) {
+    	iDataLength = 3;
+    	pcDataBuffer[0] = '?';
+    	pcDataBuffer[1] = '?';
+    	pcDataBuffer[2] = '?';
+    	pcDataBuffer[3] = '\0';
+    }
+
+    /* Setup the publish parameters. */
+    memset( &( xPublishParameters ), 0, sizeof( xPublishParameters ) );
+    xPublishParameters.pucTopic = (const uint8_t*)pSystem->pbShadowTopic;
+    xPublishParameters.usTopicLength = pSystem->usShadowTopicLength;
+    xPublishParameters.xQoS = eMQTTQoS0;
+    xPublishParameters.pvData = (void*)pcDataBuffer;
+    xPublishParameters.ulDataLength = ( uint32_t ) iDataLength;
+
+    prvPublish(pSystem,&xPublishParameters);
 }
+
+static void prvPublishSensors(System* pSystem)
+{
+    MQTTAgentPublishParams_t xPublishParameters;
+    char pcDataBuffer[ UZedMAX_DATA_LENGTH ];
+    int iDataLength;
+
+    if(pSystem->xMQTTHandle == NULL) {
+    	return;
+    }
+
+    /*
+     * Compose the message
+     */
+    iDataLength = snprintf(pcDataBuffer, UZedMAX_DATA_LENGTH,
+        "{\n "
+        "\"%s\": %.2f,\n"
+        "\"%s\": %.2f,\n"
+        "\"%s\": %.2f,\n"
+        "\"%s\": %.2f,\n"
+        "\"%s\": %.2f,\n"
+        "\"%s\": %.2f\n"
+        "}"
+        ,
+		"Pressure",             pSystem->fBarometerPressure,
+		"Pressure_Sensor_Temp", pSystem->fBarometerTemperature,
+		"Thermocouple_Temp",    pSystem->fThermocoupleTemperature,
+		"Board_Temp_1",         pSystem->fThermocoupleBoardTemperature,
+		"Relative_Humidity",    pSystem->fHygrometerHumidity,
+		"Humidity_Sensor_Temp", pSystem->fHygrometerTemperature
+        );
+    pcDataBuffer[UZedMAX_DATA_LENGTH - 1] = 0;	// safety
+    if((iDataLength < 0) || (iDataLength >= UZedMAX_DATA_LENGTH)) {
+        pSystem->bError = 1;
+        return;
+    }
+
+    /* Setup the publish parameters. */
+    memset( &( xPublishParameters ), 0, sizeof( xPublishParameters ) );
+    xPublishParameters.pucTopic = pSystem->pbSensorTopic;
+    xPublishParameters.usTopicLength = pSystem->usSensorTopicLength;
+    xPublishParameters.xQoS = eMQTTQoS0;
+    xPublishParameters.pvData = (void*)pcDataBuffer;
+    xPublishParameters.ulDataLength = ( uint32_t ) iDataLength;
+
+    prvPublish(pSystem,&xPublishParameters);
+}
+
+/*--------------------------------------------------------------------------------*/
 
 static void prvCreateClientAndConnectToBroker( System* pSystem )
 {
@@ -624,7 +708,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
         } else {
             xConnectParameters.pcURL = 0;
             pSystem->rc = XST_FAILURE;
-            pSystem->pcErr = "{\"status\":\"Auto-connect: Failed to retrieve Greengrass address and certificate\",\"d\":\"%s\"}";
+            pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate\r\n";
             pSystem->xMQTTHandle = NULL;
         }
 #else
@@ -643,94 +727,27 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
 #endif
 
         if(xConnectParameters.pcURL) {
-            configPRINTF( ( "INFO: UZed attempting to connect to %s.\r\n", xConnectParameters.pcURL ) );
+            configPRINTF( ( "INFO: UZed attempting to connect to '%s'\r\n", xConnectParameters.pcURL ) );
             if(eMQTTAgentSuccess == MQTT_AGENT_Connect(
                     pSystem->xMQTTHandle,
                     &xConnectParameters,
                     democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT
                     )
                 ) {
-                configPRINTF( ( "SUCCESS: MQTT UZed connected.\r\n" ) );
+                configPRINTF( ( "SUCCESS: MQTT UZed connected\r\n" ) );
                 pSystem->rc = XST_SUCCESS;
             } else {
                 /* Could not connect, so delete the MQTT client. */
                 ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
                 pSystem->rc = XST_FAILURE;
-                pSystem->pcErr = "{\"status\":\"Could not connect to MQTT Agent\",\"d\":\"%s\"}";
+                pSystem->pcErr = "ERROR: Could not connect to MQTT Agent\r\n";
                 pSystem->xMQTTHandle = NULL;
             }
         }
     } else {
         pSystem->rc = XST_FAILURE;
-    	pSystem->pcErr = "{\"status\":\"Could not create MQTT Agent\",\"d\":\"%s\"}";
+    	pSystem->pcErr = "ERROR: Could not create MQTT Agent\r\n";
     	pSystem->xMQTTHandle = NULL;
-    }
-}
-
-
-static void prvPublishTopic( System* pSystem, TOPIC eTopic, const char* pcFmt, ... )
-{
-    MQTTAgentPublishParams_t xPublishParameters;
-    MQTTAgentReturnCode_t xReturned;
-    char pcDataBuffer[ UZedMAX_DATA_LENGTH ];
-    int iDataLength;
-    const TopicInfo* pTI;
-    va_list ap;
-
-    if(pSystem->xMQTTHandle == NULL) {
-    	return;
-    }
-
-    /*
-     * Compose the message
-     */
-    va_start(ap,pcFmt);
-    iDataLength = vsnprintf(pcDataBuffer, UZedMAX_DATA_LENGTH, pcFmt, ap);
-    va_end(ap);
-    pcDataBuffer[UZedMAX_DATA_LENGTH - 1] = 0;	// safety
-    if(iDataLength >= UZedMAX_DATA_LENGTH) {
-    	iDataLength = UZedMAX_DATA_LENGTH - 1;
-    } else if(iDataLength < 0) {
-    	iDataLength = 3;
-    	pcDataBuffer[0] = '?';
-    	pcDataBuffer[1] = '?';
-    	pcDataBuffer[2] = '?';
-    	pcDataBuffer[3] = '\0';
-    }
-
-    pTI = GetTopicInfo(eTopic);
-
-    /* Setup the publish parameters. */
-    memset( &( xPublishParameters ), 0, sizeof( xPublishParameters ) );
-    xPublishParameters.pucTopic = pTI->pbName;
-    xPublishParameters.pvData = (void*)pcDataBuffer;
-    xPublishParameters.usTopicLength = pTI->usNameLen;
-    xPublishParameters.ulDataLength = ( uint32_t ) iDataLength;
-    xPublishParameters.xQoS = eMQTTQoS1;
-
-    /* Publish the message. */
-    xReturned = MQTT_AGENT_Publish( pSystem->xMQTTHandle, &xPublishParameters, democonfigMQTT_TIMEOUT );
-    switch(xReturned) {
-    case eMQTTAgentSuccess:
-    	configPRINTF( ( "Success: UZed published '%s': '%s'\r\n", (const char*)pTI->pbName, pcDataBuffer ) );
-    	break;
-
-    case eMQTTAgentFailure:
-    	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed failed to publish '%s': '%s'\r\n", (const char*)pTI->pbName, pcDataBuffer ) );
-        break;
-
-    case eMQTTAgentTimeout:
-    	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed timed out to publish '%s': '%s'\r\n", (const char*)pTI->pbName, pcDataBuffer ) );
-        break;
-
-    default:	//FallThrough
-    case eMQTTAgentAPICalledFromCallback:
-    	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed unexpected callback to publish '%s': '%s'\r\n", (const char*)pTI->pbName, pcDataBuffer ) );
-    	configASSERT(pdTRUE);
-    	break;	// Not reached
     }
 }
 
@@ -747,14 +764,14 @@ static int ReadIicRegs(System* pSystem,u8 bSlaveAddress,BaseType_t xCount,u8 bFi
 	MAY_DIE({
 		if(1 != XIic_Send(pSystem->iic.BaseAddress,bSlaveAddress,&bFirstSlaveReg,1,XIIC_REPEATED_START)) {
 			pSystem->rc = 1;
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs::XIic_Send(Addr) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicRegs::XIic_Send(Addr) -> 0x%08x\r\n";
 		}
 	});
 	MAY_DIE({
 		xReceived = XIic_Recv(pSystem->iic.BaseAddress,bSlaveAddress,pbBuf,xCount,XIIC_STOP);
-		if(xCount != xReceived) {
-			pSystem->rc = xReceived;
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs::XIic_Recv(Data) -> %08x\",\"d\":\"%s\"}";
+		if(xReceived != xCount) {
+			pSystem->rc = ((xReceived & 0xf) << 4) | (xCount & 0xf);
+			pSystem->pcErr = "ReadIicRegs::XIic_Recv(Data) -> 0x%08x\r\n";
 		}
 	});
 
@@ -778,8 +795,8 @@ static int WriteIicRegs(System* pSystem, u8 bSlaveAddress, BaseType_t xCount, u8
 	MAY_DIE({
 		xSent = XIic_Send(pSystem->iic.BaseAddress,bSlaveAddress,pbBuf,xCount,XIIC_STOP);
 		if(xCount != xSent) {
-			pSystem->rc = xSent;
-			pSystem->pcErr = "{\"status\":\"WriteIicRegs::XIic_Send(Buf) -> %08x\",\"d\":\"%s\"}";
+			pSystem->rc = ((xSent & 0xf) << 4) | (xCount & 0xf);
+			pSystem->pcErr = "WriteIicRegs::XIic_Send(Buf) -> 0x%08x\r\n";
 		}
 	});
 
@@ -804,31 +821,32 @@ static void StartBarometer(System* pSystem)
 	int iTimeout;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
-	pSystem->eTopic = TOPIC_BAROMETER_STATUS;
-	pSystem->ShadowError.ErrBarometer = 0;
+    pSystem->bBarometerOk = pdFALSE;
+    pSystem->fBarometerPressure = 0;
+    pSystem->fBarometerTemperature = 0;
 
 	// Verify it is the right chip
 	MAY_DIE({
 		ReadIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_WHO_AM_I,&b);
-		pSystem->pcErr = "{\"status\":\"ReadIicReg(WHO_AM_I) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(WHO_AM_I) -> 0x%08x\r\n";
 	});
 
 	MAY_DIE({
 		if(0xB1 != b) {
-			pSystem->rc = b;
-			pSystem->pcErr = "{\"status\":\"BAROMETER_WHO_AM_I = %08x != B1\",\"d\":\"%s\"}";
+			pSystem->rc = b?b:1;
+			pSystem->pcErr = "BAROMETER_WHO_AM_I = 0x%08x != 0xB1\r\n";
 		}
 	});
 
 	// Reset chip: first swreset, then boot
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_BFLD_SWRESET);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BFLD_SWRESET) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BFLD_SWRESET) -> 0x%08x\r\n";
 	});
 	for(iTimeout = 100; iTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,&b);
-			pSystem->pcErr = "{\"status\":\"ReadIicReg(BAROMETER_REG_CTRL_REG2) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicReg(BAROMETER_REG_CTRL_REG2) -> 0x%08x\r\n";
 		});
 		if(0 == (b & BAROMETER_BFLD_SWRESET)) {
 			break;
@@ -838,18 +856,18 @@ static void StartBarometer(System* pSystem)
 	if(iTimeout <= 0) {
 		MAY_DIE({
 			pSystem->rc = XST_FAILURE;
-			pSystem->pcErr = "{\"status\":\"Barometer swreset timeout\",\"d\":\"%s\"}";
+			pSystem->pcErr = "Barometer swreset timeout\r\n";
 		});
 	}
 
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_BFLD_BOOT);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_BOOT -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_BOOT -> 0x%08x\r\n";
 	});
 	for(iTimeout = 100; iTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,&b);
-			pSystem->pcErr = "{\"status\":\"ReadIicReg(BAROMETER_REG_CTRL_REG2) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicReg(BAROMETER_REG_CTRL_REG2) -> 0x%08x\r\n";
 		});
 		if(0 == (b & BAROMETER_BFLD_BOOT)) {
 			break;
@@ -858,81 +876,81 @@ static void StartBarometer(System* pSystem)
 	}
 	if(iTimeout <= 0) {
 		MAY_DIE({
-			pSystem->pcErr = "{\"status\":\"Barometer boot timeout\",\"d\":\"%s\"}";
+			pSystem->rc = XST_FAILURE;
+			pSystem->pcErr = "Barometer boot timeout\r\n";
 		});
 	}
 
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_BFLD_ZEROBIT);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_ZEROBIT -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_ZEROBIT -> 0x%08x\r\n";
 	});
 
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_FIFO_ENABLE);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_FIFO_ENABLE -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_FIFO_ENABLE -> 0x%08x\r\n";
 	});
 
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_STOP_ON_FTH);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_STOP_ON_FTH -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_STOP_ON_FTH -> 0x%08x\r\n";
 	});
 	
-
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_IF_ADD_INC);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_IF_ADD_INC -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_IF_ADD_INC -> 0x%08x\r\n";
 	});
 
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2, BAROMETER_I2C_DIS);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_I2C_DIS) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_I2C_DIS) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_2);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_2) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_2) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_1);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_1) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_1) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ODR_0);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_0) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ODR_0) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_ENABLE_LPFP);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ENABLE_LPFP) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_ENABLE_LPFP) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_LPFP_CFG);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_LPFP_CFG) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_LPFP_CFG) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_BDU);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BDU) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BDU) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_SIM);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_SIM) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_SIM) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG1,BAROMETER_BFLD_PD);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BFLD_PD) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG1::BAROMETER_BFLD_PD) -> 0x%08x\r\n";
 	});
 	vTaskDelay(xOneMs);
 
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_STATUS, "\"status\":\"Barometer started\",\"d\":\"%s\"",pSystem->pcIdentifier);
+    pSystem->bBarometerOk = pdTRUE;
+	configPRINTF( ( "Barometer started ok\r\n" ) );
+    return;
 
 L_DIE:
-	if(pSystem->rc != XST_SUCCESS) {
-		pSystem->ShadowError.ErrBarometer = 1;
-    }
+	configPRINTF( ( "ERROR: Barometer started not ok\r\n" ) );
 	return;
 }
 
 static void StopBarometer(System* pSystem)
 {
-	pSystem->eTopic = TOPIC_BAROMETER_STATUS;
+    pSystem->bBarometerOk = pdFALSE;
 }
 
 static void SampleBarometer(System* pSystem)
@@ -943,11 +961,11 @@ static void SampleBarometer(System* pSystem)
 	s32 sqTmp;
 	float f;
  	u8 count = 0;
-
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
-	pSystem->eTopic = TOPIC_BAROMETER_STATUS;
-	pSystem->ShadowError.ErrBarometer = 0;
+    if(!pSystem->bBarometerOk) {
+        return;
+    }
 
 	/*
 	 * NOTE: The one shot auto clears but it seems to take 36ms
@@ -955,12 +973,12 @@ static void SampleBarometer(System* pSystem)
 	 */
 	MAY_DIE({
 		WriteIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,BAROMETER_BFLD_ONE_SHOT);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_ONE_SHOT) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(BAROMETER_REG_CTRL_REG2::BAROMETER_BFLD_ONE_SHOT) -> 0x%08x\r\n";
 	});
 	for(xTimeout = 50; xTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicReg(pSystem,BAROMETER_SLAVE_ADDRESS,BAROMETER_REG_CTRL_REG2,&b);
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs(6@BAROMETER_REG_STATUS_REG) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicReg(BAROMETER_REG_CTRL_REG2) -> 0x%08x\r\n";
 		});
 		if(0 == (b & BAROMETER_BFLD_ONE_SHOT)) {
 			break;
@@ -970,14 +988,14 @@ static void SampleBarometer(System* pSystem)
 	MAY_DIE({
 		if(xTimeout <= 0) {
 			pSystem->rc = XST_FAILURE;
-			pSystem->pcErr = "{\"status\":\"Timed out waiting for BAROMETER_BFLD_ONE_SHOT\",\"d\":\"%s\"}";
+			pSystem->pcErr = "Timed out waiting for BAROMETER_BFLD_ONE_SHOT\r\n";
 		}
 	});
 
 	for(xTimeout = 50; xTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,6,BAROMETER_REG_STATUS_REG,pbBuf);
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs(6@BAROMETER_REG_STATUS_REG) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicRegs(6@BAROMETER_REG_STATUS_REG) -> 0x%08x\r\n";
 		});
 		if((BAROMETER_BFLD_P_DA | BAROMETER_BFLD_T_DA) == (pbBuf[0] & (BAROMETER_BFLD_P_DA | BAROMETER_BFLD_T_DA))) {
 			break;
@@ -987,37 +1005,36 @@ static void SampleBarometer(System* pSystem)
 	MAY_DIE({
 		if(xTimeout <= 0) {
 			pSystem->rc = XST_FAILURE;
-			pSystem->pcErr = "{\"status\":\"Timed out waiting for P_DA and T_DA\",\"d\":\"%s\"}";
+			pSystem->pcErr = "Timed out waiting for P_DA and T_DA\r\n";
 		}
 	});
 
 	for(count=1; count<6;count++)
 		pbBuf[count] = 0;
 
-
         MAY_DIE({
             ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_XL,&pbBuf[1]);
-            pSystem->pcErr = "{\"status\":\"ReadIicRegs(BAROMETER_REG_PRESS_OUT_XL) -> %08x\",\"d\":\"%s\"}";
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_XL) -> 0x%08x\r\n";
         });
 
         MAY_DIE({
             ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_L,&pbBuf[2]);
-            pSystem->pcErr = "{\"status\":\"ReadIicRegs(BAROMETER_REG_PRESS_OUT_L) -> %08x\",\"d\":\"%s\"}";
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_L) -> 0x%08x\r\n";
         });
 
         MAY_DIE({
             ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_PRESS_OUT_H,&pbBuf[3]);
-            pSystem->pcErr = "{\"status\":\"ReadIicRegs(BAROMETER_REG_PRESS_OUT_H) -> %08x\",\"d\":\"%s\"}";
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_PRESS_OUT_H) -> 0x%08x\r\n";
         });
 
         MAY_DIE({
             ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_TEMP_OUT_L,&pbBuf[4]);
-            pSystem->pcErr = "{\"status\":\"ReadIicRegs(BAROMETER_REG_TEMP_OUT_L) -> %08x\",\"d\":\"%s\"}";
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_TEMP_OUT_L) -> 0x%08x\r\n";
         });
 
         MAY_DIE({
             ReadIicRegs(pSystem,BAROMETER_SLAVE_ADDRESS,1,BAROMETER_REG_TEMP_OUT_H,&pbBuf[5]);
-            pSystem->pcErr = "{\"status\":\"ReadIicRegs(BAROMETER_REG_TEMP_OUT_H) -> %08x\",\"d\":\"%s\"}";
+            pSystem->pcErr = "ReadIicRegs(BAROMETER_REG_TEMP_OUT_H) -> 0x%08x\r\n";
         });
 		
 
@@ -1031,7 +1048,7 @@ static void SampleBarometer(System* pSystem)
 		sqTmp |= 0xFF800000;
 	}
 	f = (float)sqTmp / 4096.0F;
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_PRESSURE, "{\"pressure\":%.2f,\"d\":\"%s\"}", f, pSystem->pcIdentifier);
+    pSystem->fBarometerPressure = f;
 
 	sqTmp = 0
 			| ((u32)pbBuf[4] << 0)	// l
@@ -1042,12 +1059,9 @@ static void SampleBarometer(System* pSystem)
 	}
 	f = (float)sqTmp/100.0;
 
-	prvPublishTopic(pSystem, TOPIC_BAROMETER_TEMPERATURE, "{\"barometer_temp\":%.2f,\"d\":\"%s\"}", f, pSystem->pcIdentifier);
+    pSystem->fBarometerTemperature = f;
 
 L_DIE:
-	if(pSystem->rc != XST_SUCCESS) {
-		pSystem->ShadowError.ErrBarometer = 1;
-    }
 	return;
 }
 
@@ -1057,33 +1071,33 @@ static void StartHygrometer(System* pSystem)
 {
 	u8 b;
 	int iTimeout;
-	u8 count = 0;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
-	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
-	pSystem->ShadowError.ErrHygrometer = 0;
+    pSystem->bHygrometerOk = pdFALSE;
+    pSystem->fHygrometerHumidity = 0;
+    pSystem->fHygrometerTemperature = 0;
 
 	// Verify it is the right chip
 	MAY_DIE({
 		ReadIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_WHO_AM_I,&b);
-		pSystem->pcErr = "{\"status\":\"ReadIicReg(HYGROMETER_WHO_AM_I) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_WHO_AM_I) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		if(0xBC != b) {
-			pSystem->rc = b;
-			pSystem->pcErr = "{\"status\":\"HYGROMETER_WHO_AM_I = %08x != BC\",\"d\":\"%s\"}";
+			pSystem->rc = b?b:1;
+			pSystem->pcErr = "HYGROMETER_WHO_AM_I = 0x%08x != BC\r\n";
 		}
 	});
 
 	// Reset chip: boot
 	MAY_DIE({
 		WriteIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_CTRL_REG2,HYGROMETER_BFLD_BOOT);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(HYGROMETER_REG_CTRL_REG2::HYGROMETER_BFLD_BOOT -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(HYGROMETER_REG_CTRL_REG2::HYGROMETER_BFLD_BOOT -> 0x%08x\r\n";
 	});
 	for(iTimeout = 1000; iTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_CTRL_REG2,&b);
-			pSystem->pcErr = "{\"status\":\"ReadIicReg(BAROMETER_REG_CTRL_REG2) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicReg(BAROMETER_REG_CTRL_REG2) -> 0x%08x\r\n";
 		});
 		if(0 == (b & HYGROMETER_BFLD_BOOT)) {
 			break;
@@ -1092,7 +1106,8 @@ static void StartHygrometer(System* pSystem)
 	}
 	if(iTimeout <= 0) {
 		MAY_DIE({
-			pSystem->pcErr = "{\"status\":\"Hygrometer boot timeout\",\"d\":\"%s\"}";
+			pSystem->rc = XST_FAILURE;
+			pSystem->pcErr = "Hygrometer boot timeout\r\n";
 		});
 	}
 
@@ -1101,7 +1116,7 @@ static void StartHygrometer(System* pSystem)
 	 */
 	MAY_DIE({
 		ReadIicRegs(pSystem,HYGROMETER_SLAVE_ADDRESS,16,HYGROMETER_REG_CALIB_0,&pSystem->pbHygrometerCalibration[0]);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_CALIB_0) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicRegs(HYGROMETER_REG_CALIB_0) -> 0x%08x\r\n";
 	});
 
 
@@ -1110,22 +1125,22 @@ static void StartHygrometer(System* pSystem)
 	 */
 	MAY_DIE({
 		WriteIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_CTRL_REG1,HYGROMETER_BFLD_PD);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(HYGROMETER_REG_CTRL_REG1::HYGROMETER_BFLD_PD) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(HYGROMETER_REG_CTRL_REG1::HYGROMETER_BFLD_PD) -> 0x%08x\r\n";
 	});
 	vTaskDelay(xOneMs);
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_STATUS, "{\"status\":\"Hygrometer started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
+    pSystem->bHygrometerOk = pdTRUE;
+	configPRINTF( ( "Hygrometer started ok\r\n" ) );
+    return;
 
 L_DIE:
-	if(pSystem->rc != XST_SUCCESS) {
-		pSystem->ShadowError.ErrHygrometer = 1;
-    }
+	configPRINTF( ( "ERROR: Hygrometer started not ok\r\n" ) );
 	return;
 }
 
 static void StopHygrometer(System* pSystem)
 {
-	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
+    pSystem->bHygrometerOk = pdFALSE;
 }
 
 static void SampleHygrometer(System* pSystem)
@@ -1144,8 +1159,9 @@ static void SampleHygrometer(System* pSystem)
 	int tmp32 = 0;
 	TickType_t xOneMs = MS_TO_TICKS( 1 );
 
-	pSystem->eTopic = TOPIC_HYGROMETER_STATUS;
-	pSystem->ShadowError.ErrHygrometer = 0;
+    if(!pSystem->bHygrometerOk) {
+        return;
+    }
 
 	/*
 	 * NOTE: The one shot auto clears but it seems to take FIXME ms
@@ -1153,12 +1169,12 @@ static void SampleHygrometer(System* pSystem)
 	 */
 	MAY_DIE({
 		WriteIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_CTRL_REG2,HYGROMETER_BFLD_ONE_SHOT);
-		pSystem->pcErr = "{\"status\":\"WriteIicReg(HYGROMETER_REG_CTRL_REG2::HYGROMETER_BFLD_ONE_SHOT) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "WriteIicReg(HYGROMETER_REG_CTRL_REG2::HYGROMETER_BFLD_ONE_SHOT) -> 0x%08x\r\n";
 	});
 	for(xTimeout = 10000; xTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicReg(pSystem,HYGROMETER_SLAVE_ADDRESS,HYGROMETER_REG_CTRL_REG2,&b);
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs(6@HYGROMETER_REG_STATUS_REG) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_CTRL_REG2) -> 0x%08x\r\n";
 		});
 		if(0 == (b & HYGROMETER_BFLD_ONE_SHOT)) {
 			break;
@@ -1168,14 +1184,14 @@ static void SampleHygrometer(System* pSystem)
 	MAY_DIE({
 		if(xTimeout <= 0) {
 			pSystem->rc = XST_FAILURE;
-			pSystem->pcErr = "{\"status\":\"Timed out waiting for HYGROMETER_BFLD_ONE_SHOT\",\"d\":\"%s\"}";
+			pSystem->pcErr = "Timed out waiting for HYGROMETER_BFLD_ONE_SHOT\r\n";
 		}
 	});
 
 	for(xTimeout = 50; xTimeout-- > 0; ) {
 		MAY_DIE({
 			ReadIicRegs(pSystem,HYGROMETER_SLAVE_ADDRESS,5,HYGROMETER_REG_STATUS_REG,pbBuf);
-			pSystem->pcErr = "{\"status\":\"ReadIicRegs(6@HYGROMETER_REG_STATUS_REG) -> %08x\",\"d\":\"%s\"}";
+			pSystem->pcErr = "ReadIicRegs(6@HYGROMETER_REG_STATUS_REG) -> 0x%08x\r\n";
 		});
 		if((HYGROMETER_BFLD_H_DA | HYGROMETER_BFLD_T_DA) == (pbBuf[0] & (HYGROMETER_BFLD_H_DA | HYGROMETER_BFLD_T_DA))) {
 			break;
@@ -1185,12 +1201,11 @@ static void SampleHygrometer(System* pSystem)
 	MAY_DIE({
 		if(xTimeout <= 0) {
 			pSystem->rc = XST_FAILURE;
-			pSystem->pcErr = "{\"status\":\"Timed out waiting for HYGROMETER P_DA and T_DA\",\"d\":\"%s\"}";
+			pSystem->pcErr = "Timed out waiting for HYGROMETER P_DA and T_DA\r\n";
 		}
 	});
 
 	/*
-	 * TODO: Convert values read to actual numbers
 	 * REF: ST TN1218
 	 * Interpreting humidity and temperature readings in the HTS221 digital humidity sensor
 	 */
@@ -1201,11 +1216,11 @@ static void SampleHygrometer(System* pSystem)
 	/* 1. Read H0_rH and H1_rH coefficients */
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_rH_x2 , &buffer[0]);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_H0_rH_x2)  -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H0_rH_x2)  -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_rH_x2, &buffer[1]);
-		pSystem->pcErr = "{\"status\":\"HYGROMETER_REG_H1_rH_x2 -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H1_rH_x2) -> 0x%08x\r\n";
 	});
 
 	H0_rh = buffer[0]>>1;
@@ -1216,11 +1231,11 @@ static void SampleHygrometer(System* pSystem)
 
 	MAY_DIE({
 		 ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_T0_OUT_LSB, &buffer[0]);
-		 pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_H0_T0_OUT_LSB) -> %08x\",\"d\":\"%s\"}";
+		 pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H0_T0_OUT_LSB) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		 ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H0_T0_OUT_MSB, &buffer[1]);
-		 pSystem->pcErr = "{\"status\":\"HYGROMETER_REG_H0_T0_OUT_MSB -> %08x\",\"d\":\"%s\"}";
+		 pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H0_T0_OUT_MSB -> 0x%08x\r\n";
 	});
 
 	H0_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
@@ -1230,11 +1245,11 @@ static void SampleHygrometer(System* pSystem)
 
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_T0_OUT_LSB, &buffer[0]);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_H1_T0_OUT_LSB)  -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H1_T0_OUT_LSB)  -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_H1_T0_OUT_MSB, &buffer[1]);
-		pSystem->pcErr = "{\"status\":\"HYGROMETER_REG_H1_T0_OUT_MSB -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_H1_T0_OUT_MSB) -> 0x%08x\r\n";
 	});
 
 	H1_T0_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
@@ -1244,11 +1259,11 @@ static void SampleHygrometer(System* pSystem)
 
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_HUMIDITY_OUT_L, &buffer[0]);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs( HYGROMETER_REG_HUMIDITY_OUT_L) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg( HYGROMETER_REG_HUMIDITY_OUT_L) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
 		ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_HUMIDITY_OUT_H, &buffer[1]);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs HYGROMETER_REG_HUMIDITY_OUT_H -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_HUMIDITY_OUT_H -> 0x%08x\r\n";
 	});
 
 	H_T_out = (((u16)buffer[1])<<8) | (u16)buffer[0];
@@ -1261,7 +1276,7 @@ static void SampleHygrometer(System* pSystem)
 	/* Saturation condition*/
 	if(value>1000) value = 1000;
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_RELATIVE_HUMIDITY, "{\"relative_humidity\":%u,\"d\":\"%s\"}",value,pSystem->pcIdentifier);
+    pSystem->fHygrometerHumidity = value;
 
         /**
 	* @brief Read HTS221 temperature output registers, and calculate temperature.
@@ -1274,17 +1289,17 @@ static void SampleHygrometer(System* pSystem)
 	/*1. Read from 0x32 & 0x33 registers the value of coefficients T0_degC_x8 and T1_degC_x8*/
     MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_degC_x8, &buff2[0]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T0_degC_x8)  -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T0_degC_x8) -> 0x%08x\r\n";
 	});
     MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_degC_x8, &buff2[1]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T1_degC_x8)  -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T1_degC_x8) -> 0x%08x\r\n";
 	});
 
 	/*2. Read from 0x35 register the value of the MSB bits of T1_degC and T0_degC */
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_T0_MSB, &tmp5);
-		pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T1_T0_MSB) -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T1_T0_MSB) -> 0x%08x\r\n";
 	});
 
 	/*Calculate the T0_degC and T1_degC values*/
@@ -1301,20 +1316,20 @@ static void SampleHygrometer(System* pSystem)
     buff2[3] = 0;
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_OUT_LSB, &buff2[0]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T0_OUT_LSB) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T0_OUT_MSB, &buff2[1]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T0_OUT_LSB) -> 0x%08x\r\n";
 	});
 
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_OUT_LSB, &buff2[2]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T1_OUT_LSB) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_T1_OUT_MSB, &buff2[3]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs(HYGROMETER_REG_T0_OUT_LSB) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_T1_OUT_MSB) -> 0x%08x\r\n";
 	});
 
 	T0_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
@@ -1324,11 +1339,11 @@ static void SampleHygrometer(System* pSystem)
 	buff2[0] = 0; buff2[1] = 0; buff2[2] = 0; buff2[3] = 0;
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_TEMP_OUT_L, &buff2[0]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs( HYGROMETER_REG_TEMP_OUT_L) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_TEMP_OUT_L) -> 0x%08x\r\n";
 	});
 	MAY_DIE({
         ReadIicReg(pSystem, HYGROMETER_SLAVE_ADDRESS, HYGROMETER_REG_TEMP_OUT_H, &buff2[1]);
-        pSystem->pcErr = "{\"status\":\"ReadIicRegs( HYGROMETER_REG_TEMP_OUT_H) -> %08x\",\"d\":\"%s\"}";
+        pSystem->pcErr = "ReadIicReg(HYGROMETER_REG_TEMP_OUT_H) -> 0x%08x\r\n";
 	});
 
 	T_out = (((u16)buff2[1])<<8) | (u16)buff2[0];
@@ -1339,70 +1354,41 @@ static void SampleHygrometer(System* pSystem)
 	tmp32 = (( int)(T_out - T0_out)) * (( int)(T1_degC - T0_degC));
 	value = (tmp32 /(T1_out - T0_out)) + T0_degC;
 
-	prvPublishTopic(pSystem, TOPIC_HYGROMETER_HUMIDITY_SENSOR_TEMPERATURE, "{\"hygrometer_temp\":%u,\"d\":\"%s\"}",value,pSystem->pcIdentifier);
+    pSystem->fHygrometerTemperature = value;
 
 L_DIE:
-	if(pSystem->rc != XST_SUCCESS) {
-		pSystem->ShadowError.ErrHygrometer = 1;
-    }
 	return;
 }
 
 /*--------------------------------------------------------------------------------*/
 
-/**
- * @brief Start Barometer
- *
- * @param[in] pSystem	System handle
- */
 static void StartPLTempSensor(System* pSystem)
 {
 	const TickType_t xOneMs = MS_TO_TICKS(1);
 
-	pSystem->eTopic = TOPIC_THERMOCOUPLE_STATUS;
-    pSystem->ShadowError.ErrThermocouple = 0;
+    pSystem->bThermocoupleOk = pdFALSE;
+    pSystem->fThermocoupleBoardTemperature = 0;
+    pSystem->fThermocoupleTemperature = 0;
 
 	//Reset the SPI Peripheral, which takes 4 cycles, so wait a bit after reset
-	MAY_DIE({
-        XSpi_WriteReg(PL_SPI_BASEADDR, XSP_SRR_OFFSET, AXI_SPI_RESET_VALUE);
-        pSystem->pcErr = "{\"status\":\"XSpi_WriteReg (PL_SPI_BASEADDR) -> %08x\",\"d\":\"%s\"}";
-	});
-
+    XSpi_WriteReg(PL_SPI_BASEADDR, XSP_SRR_OFFSET, AXI_SPI_RESET_VALUE);
 	vTaskDelay(xOneMs); //usleep(100);
 
 	// Initialize the AXI SPI Controller with settings compatible with the MAX31855
-	MAY_DIE({
-        XSpi_WriteReg(PL_SPI_BASEADDR, XSP_CR_OFFSET, MAX31855_CR_INIT_MODE);
-        pSystem->pcErr = "{\"status\":\"XSpi_WriteReg (PL_SPI_BASEADDR) -> %08x\",\"d\":\"%s\"}";
-	});
+    XSpi_WriteReg(PL_SPI_BASEADDR, XSP_CR_OFFSET, MAX31855_CR_INIT_MODE);
 
 	// Deselect all slaves to start, then wait a bit for it to take affect
-	MAY_DIE({
-        XSpi_WriteReg(PL_SPI_BASEADDR, XSP_SSR_OFFSET, PL_SPI_CHANNEL_SEL_NONE);
-        pSystem->pcErr = "{\"status\":\"XSpi_WriteReg (PL_SPI_BASEADDR) -> %08x\",\"d\":\"%s\"}";
-	});
+    XSpi_WriteReg(PL_SPI_BASEADDR, XSP_SSR_OFFSET, PL_SPI_CHANNEL_SEL_NONE);
 
 	vTaskDelay(xOneMs); //usleep(100);
 
-	prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"PL Thermocouple started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-
-L_DIE:
-	if(pSystem->rc != XST_SUCCESS) {
-        pSystem->ShadowError.ErrThermocouple = 1;
-    }
-
-	return;
+    pSystem->bThermocoupleOk = pdTRUE;
+	configPRINTF( ("PL Thermocouple started - check state after first reading\r\n") );
 }
 
-
-/**
- * @brief Stop Barometer
- *
- * @param[in] pSystem	System handle
- */
 static void StopPLTempSensor(System* pSystem)
 {
-	pSystem->eTopic = TOPIC_THERMOCOUPLE_STATUS;
+    pSystem->bThermocoupleOk = pdFALSE;
 }
 
 static void XSpi_LowLevelExecute(System* pSystem, u32 qBaseAddress, BaseType_t xSPI_Channel, BaseType_t xByteCount, const u32* pqTxBuffer, u32* pqRxBuffer)
@@ -1474,7 +1460,8 @@ static void XSpi_LowLevelExecute(System* pSystem, u32 qBaseAddress, BaseType_t x
 	 * were transmitted, then flag a failure
 	 */
 	if (xByteCount != xNumBytesRcvd) {
-		pSystem->rc = XST_FAILURE;
+		pSystem->rc = ((xByteCount & 0xf) << 4) | (xNumBytesRcvd & 0xf);
+        pSystem->pcErr = "XSpi_LowLevelExecute() -> 0x%08x\r\n";
 		return;
 	}
 
@@ -1498,73 +1485,67 @@ static void SamplePLTempSensor(System* pSystem)
 	float fMAX31855_internal_temp = 0.0f;
 	float fMAX31855_thermocouple_temp = 0.0f;
 
-	pSystem->eTopic = TOPIC_THERMOCOUPLE_STATUS;
-	pSystem->ShadowError.ErrThermocouple = 0;
+    if(!pSystem->bThermocoupleOk) {
+        return;
+    }
 
 	// Execute 4-byte read transaction.
 	MAY_DIE({
         XSpi_LowLevelExecute(pSystem, (u32)PL_SPI_BASEADDR, (BaseType_t)PL_SPI_CHANNEL_SEL_0, (BaseType_t)4, pqTxBuffer, pqRxBuffer );
-        pSystem->pcErr="{\"status\":\"XSpi_LowLevelExecute(pSystem, (u32)PL_SPI_BASEADDR\",\"d\":\"%s\"}";
-	})
+        if(XST_SUCCESS == pSystem->rc) {
+            if(0) {
+                ;
+            } else if(pqRxBuffer[3] & 0x1) {
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Thermocouple: Open Circuit\r\n";
+            } else if(pqRxBuffer[3] & 0x2) {
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Thermocouple: Short to GND\r\n";
+            } else if(pqRxBuffer[3] & 0x4) {
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Thermocouple: Short to VCC\r\n";
+            } else if(pqRxBuffer[1] & 0x01) {
+                pSystem->rc = XST_FAILURE;
+                pSystem->pcErr = "Thermocouple: Fault\r\n";
+            }
+        }
+	});
 
-L_DIE:
-    if(pSystem->rc != XST_SUCCESS) {
-        pSystem->ShadowError.ErrThermocouple = 1;
+    // Internal Temp
+    {
+        sqTemporaryValue = pqRxBuffer[2];  			// bits 11..4
+        sqTemporaryValue = sqTemporaryValue << 4;		// shift left to make room for bits 3..0
+        sqTemporaryValue2 = pqRxBuffer[3];				// bits 3..0 in the most significant spots
+        sqTemporaryValue2 = sqTemporaryValue2 >> 4;	// shift right to get rid of extra bits and position
+        sqTemporaryValue |= sqTemporaryValue2;		// Combine to get bits 11..0
+        if((pqRxBuffer[2] & 0x80) == 0x80) {				// Check the sign bit and sign-extend if need be
+            sqTemporaryValue |= 0xFFFFF800;
+        }
+        fMAX31855_internal_temp = (float)sqTemporaryValue / 16.0f;
+        pSystem->fThermocoupleBoardTemperature = fMAX31855_internal_temp;
     }
 
-	// Check for various error codes
-	if(0) {
-		;
-	} else if(XST_SUCCESS != pSystem->rc) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"SPI Transaction failure\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-	} else if(pqRxBuffer[3] & 0x1) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Open Circuit\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-	} else if(pqRxBuffer[3] & 0x2) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to GND\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-	} else if(pqRxBuffer[3] & 0x4) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Short to VCC\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-	} else if(pqRxBuffer[1] & 0x01) {
-		prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_STATUS, "{\"status\":\"Fault\",\"d\":\"%s\"}",pSystem->pcIdentifier);
-	} else {
-		// Internal Temp
-		{
-			sqTemporaryValue = pqRxBuffer[2];  			// bits 11..4
-			sqTemporaryValue = sqTemporaryValue << 4;		// shift left to make room for bits 3..0
-			sqTemporaryValue2 = pqRxBuffer[3];				// bits 3..0 in the most significant spots
-			sqTemporaryValue2 = sqTemporaryValue2 >> 4;	// shift right to get rid of extra bits and position
-			sqTemporaryValue |= sqTemporaryValue2;		// Combine to get bits 11..0
-			if((pqRxBuffer[2] & 0x80) == 0x80) {				// Check the sign bit and sign-extend if need be
-				sqTemporaryValue |= 0xFFFFF800;
-			}
-			fMAX31855_internal_temp = (float)sqTemporaryValue / 16.0f;
-			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_BOARD_TEMPERATURE, "{\"thermocouple_boardtemp\":%.1f,\"d\":\"%s\"}",fMAX31855_internal_temp,pSystem->pcIdentifier);
-		}
+    // Thermocouple Temp
+    {
+        sqTemporaryValue = pqRxBuffer[0];  			// bits 13..6
+        sqTemporaryValue = sqTemporaryValue << 6;		// shift left to make room for bits 5..0
+        sqTemporaryValue2 = pqRxBuffer[1];				// bits 5..0 in the most significant spots
+        sqTemporaryValue2 = sqTemporaryValue2 >> 2;	// shift right to get rid of extra bits and position
+        sqTemporaryValue |= sqTemporaryValue2;		// Combine to get bits 13..0
+        if((pqRxBuffer[0] & 0x80) == 0x80) {				// Check the sign bit and sign-extend if need be
+            sqTemporaryValue |= 0xFFFFE000;
+        }
+        fMAX31855_thermocouple_temp = (float)sqTemporaryValue / 4.0f;
+        pSystem->fThermocoupleTemperature = fMAX31855_thermocouple_temp;
+    }
+    return;
 
-		// Thermocouple Temp
-		{
-			sqTemporaryValue = pqRxBuffer[0];  			// bits 13..6
-			sqTemporaryValue = sqTemporaryValue << 6;		// shift left to make room for bits 5..0
-			sqTemporaryValue2 = pqRxBuffer[1];				// bits 5..0 in the most significant spots
-			sqTemporaryValue2 = sqTemporaryValue2 >> 2;	// shift right to get rid of extra bits and position
-			sqTemporaryValue |= sqTemporaryValue2;		// Combine to get bits 13..0
-			if((pqRxBuffer[0] & 0x80) == 0x80) {				// Check the sign bit and sign-extend if need be
-				sqTemporaryValue |= 0xFFFFE000;
-			}
-			fMAX31855_thermocouple_temp = (float)sqTemporaryValue / 4.0f;
-			prvPublishTopic(pSystem, TOPIC_THERMOCOUPLE_TEMPERATURE, "{\"thermocouple_temp\":%.1f,\"d\":\"%s\"}",fMAX31855_thermocouple_temp,pSystem->pcIdentifier);
-		}
-	}
+L_DIE:
+    pSystem->bThermocoupleOk = pdFALSE;
+    return;
 }
 
-static void UpdateShadow(System* pSystem)
-{
-	u8 led_val = 0;
-
-    pSystem->eTopic = TOPIC_SHADOW_UPDATE;
-	led_val = (pSystem->ShadowError.ErrBarometer | pSystem->ShadowError.ErrHygrometer | pSystem->ShadowError.ErrThermocouple);
-	
-	prvPublishTopic(pSystem, TOPIC_SHADOW_UPDATE, "{\"state\": { \"desired\": {\"led\":%u}}}", led_val);		
-}
+/*--------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------*/
 
@@ -1572,19 +1553,53 @@ static void StartSystem(System* pSystem)
 {
 	XIic_Config *pI2cConfig;
 	XGpioPs_Config* pGpioConfig;
+    int iLen;
 
     /*-----------------------------------------------------------------*/
+
+	pSystem->bError = 0;
+    pSystem->bBarometerOk = 0;
+    pSystem->bHygrometerOk = 0;
+    pSystem->bThermocoupleOk = 0;
 
     pSystem->rc = XST_SUCCESS;
-    pSystem->pcErr = "{\"status\":\"Success\",\"d\":\"%s\"}";
+    pSystem->pcErr = "\r\n";
     pSystem->xMQTTHandle = NULL;
-    pSystem->eTopic = TOPIC_SYSTEM_STATUS;
-    (void)snprintf(pSystem->pcIdentifier,SYSTEM_IDENTIFIER_LENGTH,"%s",clientcredentialGG_GROUP);
-    pSystem->pcIdentifier[SYSTEM_IDENTIFIER_LENGTH-1] = 0;
+    MAY_DIE({
+        iLen = snprintf(
+            (char*)pSystem->pbSensorTopic,
+            SYSTEM_SENSOR_TOPIC_LENGTH+1,
+            "%s/remote_io_model/sensor_values",
+            clientcredentialGG_GROUP
+            );
+        if((iLen < 0) || (iLen > SYSTEM_SENSOR_TOPIC_LENGTH)) {
+            pSystem->pbSensorTopic[0] = 0;
+            pSystem->usSensorTopicLength = 0;
+            pSystem->rc = XST_FAILURE;
+            pSystem->pcErr = "Cannot compose system sensor topic: GroupID too long\r\n";
+        } else {
+            pSystem->pbSensorTopic[SYSTEM_SENSOR_TOPIC_LENGTH] = 0;
+            pSystem->usSensorTopicLength = (uint16_t)strlen((const char*)pSystem->pbSensorTopic);
+        }
+    });
 
-    /*-----------------------------------------------------------------*/
-
-    InitTopicInfo();
+    MAY_DIE({
+        iLen = snprintf(
+            (char*)pSystem->pbShadowTopic,
+            SYSTEM_SHADOW_TOPIC_LENGTH+1,
+            "$aws/things/%s-gateway-ultra96-Client/shadow/update",
+            clientcredentialGG_GROUP
+            );
+        if((iLen < 0) || (iLen > SYSTEM_SENSOR_TOPIC_LENGTH)) {
+            pSystem->pbShadowTopic[0] = 0;
+            pSystem->usShadowTopicLength = 0;
+            pSystem->rc = XST_FAILURE;
+            pSystem->pcErr = "Cannot compose system shadow topic: GroupID too long\r\n";
+        } else {
+            pSystem->pbShadowTopic[SYSTEM_SHADOW_TOPIC_LENGTH] = 0;
+            pSystem->usShadowTopicLength = (uint16_t)strlen((const char*)pSystem->pbShadowTopic);
+        }
+    });
 
     /*-----------------------------------------------------------------*/
 
@@ -1593,7 +1608,7 @@ static void StartSystem(System* pSystem)
 
 	MAY_DIE({
 		pSystem->rc = XGpioPs_CfgInitialize(&pSystem->gpio, pGpioConfig, pGpioConfig->BaseAddr);
-		pSystem->pcErr = "{\"status\":\"XGpioPs_CfgInitialize() -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "XGpioPs_CfgInitialize() -> 0x%08x\r\n";
 	});
 	XGpioPs_SetDirectionPin(&pSystem->gpio, LED_PIN, 1);
 	XGpioPs_SetOutputEnablePin(&pSystem->gpio, LED_PIN, 1);
@@ -1606,13 +1621,13 @@ static void StartSystem(System* pSystem)
 
 	MAY_DIE({
 		pSystem->rc = XIic_CfgInitialize(&pSystem->iic, pI2cConfig,	pI2cConfig->BaseAddress);
-		pSystem->pcErr = "{\"status\":\"XIic_CfgInitialize() -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "XIic_CfgInitialize() -> 0x%08x\r\n";
 	});
 	XIic_IntrGlobalDisable(pI2cConfig->BaseAddress);
 
 	MAY_DIE({
 		pSystem->rc = XIic_Start(&pSystem->iic);
-		pSystem->pcErr = "{\"status\":\"XIic_Start() -> %08x\",\"d\":\"%s\"}";
+		pSystem->pcErr = "XIic_Start() -> 0x%08x\r\n";
 	});
 
 
@@ -1628,28 +1643,16 @@ static void StartSystem(System* pSystem)
 
 	/*-----------------------------------------------------------------*/
 
-	pSystem->ShadowError.ErrBarometer = 0;
-	pSystem->ShadowError.ErrThermocouple = 0;
-	pSystem->ShadowError.ErrHygrometer = 0;
-
-	MAY_DIE({
-		StartBarometer(pSystem);
-		pSystem->pcErr = "{\"status\":\"StartBarometer() -> %08x\",\"d\":\"%s\"}";
-	});
-
-	MAY_DIE({
-		StartPLTempSensor(pSystem);
-		pSystem->pcErr = "{\"status\":\"StartPLTempSensor() -> %08x\",\"d\":\"%s\"}";
-	});
-
-	MAY_DIE({
-		StartHygrometer(pSystem);
-		pSystem->pcErr = "{\"status\":\"StartHygroMeter() -> %08x\",\"d\":\"%s\"}";
-	});
+    /*
+     * Ignore system error, as each sensor has its own OK and will skip sampling
+     */
+    StartBarometer(pSystem);
+    StartPLTempSensor(pSystem);
+    StartHygrometer(pSystem);
 
     /*-----------------------------------------------------------------*/
 
-	prvPublishTopic(pSystem, TOPIC_SYSTEM_STATUS, "{\"status\":\"System started\",\"d\":\"%s\"}",pSystem->pcIdentifier);
+	configPRINTF( ( "System started\r\n" ) );
 
 	return;
 
@@ -1661,8 +1664,8 @@ L_DIE:
 
 static void StopSystem(System* pSystem)
 {
-    pSystem->eTopic = TOPIC_SYSTEM_STATUS;
 	if(NULL != pSystem->xMQTTHandle) {
+        prvPublishShadow(pSystem);
 		/* Disconnect the client. */
 		( void ) MQTT_AGENT_Disconnect( pSystem->xMQTTHandle, democonfigMQTT_TIMEOUT );
 	}
@@ -1689,6 +1692,7 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
 	System tSystem;
 	TickType_t xPreviousWakeTime;
     const TickType_t xSamplingPeriod = MS_TO_TICKS( SAMPLING_PERIOD_MS );
+    u8 bFirst;
 
 	/* Avoid compiler warnings about unused parameters. */
     ( void ) pvParameters;
@@ -1702,16 +1706,23 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
     /*
      * Ignore errors in loop and continue forever
      */
+    bFirst = 1;
 	for(;;) {
 		// Line up with next period boundary
 		vTaskDelayUntil( &xPreviousWakeTime, xSamplingPeriod );
 
 		// Publish all sensors
+        tSystem.bError = 0;
 		SampleBarometer(&tSystem);
 		SamplePLTempSensor(&tSystem);
 		SampleHygrometer(&tSystem);
 
-		UpdateShadow(&tSystem);
+        prvPublishSensors(&tSystem);
+        if((tSystem.bLastReportedError != tSystem.bError) || bFirst) {
+            tSystem.bLastReportedError = tSystem.bError;
+            prvPublishShadow(&tSystem);
+        }
+        bFirst = 0;
 	}
 
 	/* Not reached */
