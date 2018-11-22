@@ -43,7 +43,7 @@
 
 /* Timeout used when establishing a connection, which required TLS
 * negotiation. */
-#define democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT        pdMS_TO_TICKS( 12000 )
+#define democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT        pdMS_TO_TICKS( 60000 )
 
 /**
  * @brief MQTT client ID.
@@ -1545,8 +1545,6 @@ L_DIE:
     pSystem->bThermocoupleOk = pdFALSE;
     return;
 }
-
-/*--------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------*/
 
