@@ -48,6 +48,7 @@ so that your Ultra96 can be used as a greengrass core.
 	```bash
 	sudo /greengrass/ggc/core/greengrassd start
 	```
+	Verify that you see the Greengrass daemon start but seeing a response in the CLI of "Greengrass successfully started with PID: XXXX".
 
 4. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
 

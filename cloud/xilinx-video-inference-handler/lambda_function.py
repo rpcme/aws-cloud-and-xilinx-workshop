@@ -43,19 +43,22 @@ def run_pydeephi_yolo():
     logger.info("Parameter threshold: {}".format(threshold))
 
     ret = subprocess.check_call(
-            'cd {0} && PYTHONPATH=/usr/lib/python3.6 strace /usr/local/bin/pydeephi_yolo.py {1} {2} 2> /tmp/{3}.txt'.format(
-            sync_folder_path, num_seconds, threshold, str(datetime.datetime.now().isoformat())), shell=True)
+            'cd {0} && PYTHONPATH=/usr/lib/python3.6 '
+            '/usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
+            sync_folder_path, num_seconds, threshold), shell=True)
     logger.info("{}".format(ret))
+
+    # wait long enough time for application to finish
+    time.sleep(num_seconds)
+    time.sleep(3)
 
     payload = {'message': 'ended video inference'}
     client.publish(topic=topic, payload=json.dumps(payload))
-    return ret
+    return
 
 while (1):
-    ret = run_pydeephi_yolo()
-    if ret != 0:
-        time.sleep(500)
-    time.sleep(0.5)
+    run_pydeephi_yolo()
+    time.sleep(1)
 
 def lambda_handler(event, context):
     return

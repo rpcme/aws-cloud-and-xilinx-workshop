@@ -232,7 +232,7 @@ fi
 # Create the resource definition
 
 # this needs to be created before deployment or else the deployment will fail
-if test ! -d /home/xilinx/bitstream; then mkdir -p /home/xilinx/bitstream; fi
+if test ! -d /home/xilinx/download; then mkdir -p /home/xilinx/download; fi
 
 cat <<EOF > ${d_agg_config}/resource-definition-init.json
 {
@@ -338,7 +338,7 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
            }
         },
         "Executable": "python",
-        "Pinned": True,
+        "Pinned": true,
         "Timeout": 500
       }
     },
