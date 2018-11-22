@@ -400,34 +400,10 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "cloud"
     },
     {
-      "Id":      "cloud-to-hello-world",
-      "Source":  "cloud",
-      "Subject": "hello/world",
-      "Target":  "${xilinx_hello_world_arn}"
-    },
-    {
-      "Id":      "deployer-handler-to-cloud",
-      "Source":  "${xilinx_bitstream_deploy_handler_arn}",
-      "Subject": "/unit_controller/bitstream_deploy",
-      "Target":  "cloud"
-    },
-    {
-      "Id":      "cloud-to-deployer-handler",
-      "Source":  "cloud",
-      "Subject": "/unit_controller/bitstream_deploy",
-      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
-    },
-    {
       "Id":      "inference-handler-to-cloud",
       "Source":  "${xilinx_video_inference_handler_arn}",
       "Subject": "/unit_controller/video_inference",
       "Target":  "cloud"
-    },
-    {
-      "Id":      "cloud-to-inference-handler",
-      "Source":  "cloud",
-      "Subject": "/unit_controller/video_inference",
-      "Target":  "${xilinx_video_inference_handler_arn}"
     },
     {
       "Id":      "upload-handler-to-cloud",
@@ -436,34 +412,16 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "cloud"
     },
     {
-      "Id":      "cloud-to-upload-handler",
-      "Source":  "cloud",
-      "Subject": "/unit_controller/image_upload",
-      "Target":  "${xilinx_image_upload_handler_arn}"
-    },
-    {
       "Id":      "sensor-value-to-cloud",
       "Source":  "${thing_afr_arn}",
-      "Subject": "/remote_io_module/sensor_value",
+      "Subject": "/compressor/+/cooling_system/#",
       "Target":  "cloud"
-    },
-    {
-      "Id":      "cloud-to-sensor-value",
-      "Source":  "cloud",
-      "Subject": "/remote_io_module/sensor_value",
-      "Target":  "${thing_afr_arn}"
     },
     {
       "Id":      "sensor-status-to-cloud",
       "Source":  "${thing_afr_arn}",
       "Subject": "/remote_io_module/sensor_status",
       "Target":  "cloud"
-    },
-    {
-      "Id":      "cloud-to-sensor-status",
-      "Source":  "cloud",
-      "Subject": "/remote_io_module/sensor_status",
-      "Target":  "${thing_afr_arn}"
     },
     {
       "Id":      "core-shadow-to-bitstream-deploy-delta",
