@@ -114,7 +114,7 @@
 // System parameters for the MicroZed IOT kit
 
 #if UZED_USE_GG
-#define GG_DISCOVERY_FILE_SIZE    2500
+#define GG_DISCOVERY_FILE_SIZE    5000
 #endif
 
 /**
@@ -317,6 +317,7 @@ typedef struct System {
     uint16_t usShadowTopicLength;
     uint8_t pbShadowTopic[SYSTEM_SHADOW_TOPIC_LENGTH + 1];
 } System;
+System g_tSystem;
 
 /*-----------------------------------------------------------*/
 /**
@@ -1689,15 +1690,15 @@ static void StopSystem(System* pSystem)
 
 static void prvMQTTConnectAndPublishTask( void * pvParameters )
 {
-	System tSystem;
 	TickType_t xPreviousWakeTime;
     const TickType_t xSamplingPeriod = MS_TO_TICKS( SAMPLING_PERIOD_MS );
     u8 bFirst;
+    System* pSystem = &g_tSystem;
 
 	/* Avoid compiler warnings about unused parameters. */
     ( void ) pvParameters;
 
-    StartSystem(&tSystem);
+    StartSystem(pSystem);
 
 	/* MQTT client is now connected to a broker.  Publish or perish! */
     /* Initialise the xLastWakeTime variable with the current time. */
@@ -1712,21 +1713,21 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
 		vTaskDelayUntil( &xPreviousWakeTime, xSamplingPeriod );
 
 		// Publish all sensors
-        tSystem.bError = 0;
-		SampleBarometer(&tSystem);
-		SamplePLTempSensor(&tSystem);
-		SampleHygrometer(&tSystem);
+        pSystem->bError = 0;
+		SampleBarometer(pSystem);
+		SamplePLTempSensor(pSystem);
+		SampleHygrometer(pSystem);
 
-        prvPublishSensors(&tSystem);
-        if((tSystem.bLastReportedError != tSystem.bError) || bFirst) {
-            tSystem.bLastReportedError = tSystem.bError;
-            prvPublishShadow(&tSystem);
+        prvPublishSensors(pSystem);
+        if((pSystem->bLastReportedError != pSystem->bError) || bFirst) {
+            pSystem->bLastReportedError = pSystem->bError;
+            prvPublishShadow(pSystem);
         }
         bFirst = 0;
 	}
 
 	/* Not reached */
-	StopSystem(&tSystem);
+	StopSystem(pSystem);
 }
 
 /*-----------------------------------------------------------*/
