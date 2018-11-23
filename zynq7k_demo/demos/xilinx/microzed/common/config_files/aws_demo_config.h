@@ -34,14 +34,14 @@
 
 /* Timeout used when performing MQTT operations that do not need extra time
 to perform a TLS negotiation. */
-#define democonfigMQTT_TIMEOUT                             pdMS_TO_TICKS( 3000 )
+#define democonfigMQTT_TIMEOUT                             pdMS_TO_TICKS( 60000 )
 
 /* Timeout used when establishing a connection, which required TLS
 * negotiation. */
-#define democonfigMQTT_ECHO_TLS_NEGOTIATION_TIMEOUT        pdMS_TO_TICKS( 12000 )
+#define democonfigMQTT_ECHO_TLS_NEGOTIATION_TIMEOUT        pdMS_TO_TICKS( 60000 )
 
 /* MQTT echo task example parameters. */
-#define democonfigMQTT_ECHO_TASK_STACK_SIZE                ( configMINIMAL_STACK_SIZE * 2 )
+#define democonfigMQTT_ECHO_TASK_STACK_SIZE                ( configMINIMAL_STACK_SIZE * 32 )
 #define democonfigMQTT_ECHO_TASK_PRIORITY                  ( tskIDLE_PRIORITY )
 
 /* IoT simple subscribe/publish example task parameters. */
