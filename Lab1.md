@@ -58,40 +58,31 @@ Ultra96 uses a Gadget Serial Driver. If the driver is not automatically detected
 
 Ensure you have a serial port terminal emulator such as Putty installed. It can be downloaded from https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html.
 
-#### RNDIS USB Ethernet Installation
-You should see an adapter in Control Panel\Network and Internet\Network Connections labeled 'RNDIS'. If you do not see it, you may need to enable RNDIS on your PC. See https://developer.toradex.com/knowledge-base/how-to-install-microsoft-rndis-driver-for-windows-7
-
-#### Install SFTP on your Laptop
-If you have installed Putty, its version of SFTP is called PSFTP. You can use this to transfer files between your laptop and the Ultra96 over the RNDIS adapter.
-
 ### Configuring and Deploying your Hardware
 Ensure you do not have VPN software running for this workshop.
 
 Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
 
-Open the terminal emulator for Ultra96. The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
-
-Run the command `ip a` to see all ethernet interfaces. You should see:
-1. usb0 at 192.168.3.1/24
-2. eth0 at an address determined by your DHCP server
-3. Other interfaces will not be used in this workshop
-
-Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
-
-The Windows RNDIS adapter should be at an address in the 192.168.3.X/24 space; ultra96 will be accessible at 192.168.3.1
+Open the terminal emulator for Ultra96 and do the following:
+1. Login: The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
+2. Run the command `ip a` to see all ethernet interfaces. You should see:
+ 1. usb0 at 192.168.3.1/24
+ 2. eth0 at an address determined by your DHCP server
+ 3. Other interfaces will not be used in this workshop
+3. Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
 ## AWS Cloud Setup
 
 
 ### Prerequisites
 
-These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. Perform the following steps in the terminal emulator for the Ultra96.
+These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. Thus all the shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as 'xilinx'. A general familiarity with Linux command line operation under the bash shell is assumed.
 
 ### Clone Workshop Repository
 
 In this section, you will clone the workshop Git repository.  The Git repository contains all the workshop code and scripts you will use.
 
-1. If not already done, open the UART connection to the Ultra96 device as 115200-8-N-1.
+1. If not already done, open the UART connection to the Ultra96 device as 115200-8-N-1, and login.
 2. Ensure you are in the $HOME directory
 
    ```bash
@@ -121,7 +112,7 @@ This step will ask for the following pieces of information:
 4. Default output format - use *json*
 
 
-Note that the first two will be stored unencrypted in the file ~/.aws/credentials, while the remainder will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
+Note that the first two will be stored unencrypted in the file ~/.aws/credentials, the rest will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
 
 The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
 This is very broad, and narrower options might succeed. 
@@ -148,24 +139,12 @@ The Cloudformation deployment occurs asynchronously, so the script will immediat
 
 The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
 The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
-for your files to synchronize with the S3 bucket. You should be able to see a FPGA bitstream uploaded on your S3 bucket,
+for your files to synchronize with the S3 bucket. You should be able to see an FPGA bitstream uploaded to your S3 bucket,
 while your local folder is empty. In later labs we will download this FPGA bitstream onto your board.
 
 Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
 of a certain name, you cannot have a bucket with that same name. 
 If you see *BucketAlreadyExists* error, try to rerun the script with another prefix.
-
-
-### Store your AWS IoT Endpoint address in a text file
-To find your endpoint address:
-1. Login to the AWS IoT console for the Region that you entered above when you ran 'aws configure'.
-2. Click on *Settings*
-3. Ensure your *Custom endpoint* is *Enabled*
-4. Copy to the clipboard the contents of the *EndPoint* box in the *Custom endpoint* section
-5. Create and open a text file on your laptop in *C:\temp* called *node-zynq7k.broker.txt*. 
-6. Paste your clipboard into this file on the first line
-7. The second line should contain your GreenGrass group id
-8. Save this file
 
 
 ## Outcomes
