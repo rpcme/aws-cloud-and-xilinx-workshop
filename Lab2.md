@@ -15,7 +15,7 @@ In this section, you will configure and deploy AWS IoT Credentials and copy them
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
-7. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Your group prefix does not have to be the same as the S3 prefix you have used previously.
+6. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Your group prefix does not have to be the same as the S3 prefix you have used previously.
 
 	```bash
 	./deploy-awsiot-objects.sh <your-group-prefix>
@@ -33,7 +33,7 @@ When the script completes, the keys and certificates will be in the directories 
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
    The file 'ggconfig.txt' contains broker endpoint information and GGGROUP for use by the application.
 
-8. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
+7. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
