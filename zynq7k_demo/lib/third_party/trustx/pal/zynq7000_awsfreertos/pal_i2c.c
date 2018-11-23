@@ -75,8 +75,11 @@ extern SemaphoreHandle_t xIicSemaphore;
 //lint --e{715} suppress the unused p_i2c_context variable lint error , since this is kept for future enhancements
 static pal_status_t pal_i2c_acquire(const void* p_i2c_context)
 {
-	//xSemaphoreTake(xIicSemaphore, portMAX_DELAY);
-    return PAL_STATUS_SUCCESS;
+	//if (pdTRUE == xSemaphoreTake(xIicSemaphore, portMAX_DELAY))
+	//{
+		return PAL_STATUS_SUCCESS;
+	//}
+	//return PAL_STATUS_FAILURE;
 }
 
 // I2C release bus function
