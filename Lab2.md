@@ -6,23 +6,49 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 
 In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-gateway-ultra96```.
 
-1. Ensure the the MiroZed board is powered off by unplugging the USB cables.
+1. Ensure the the MiroZed board is powered off by unplugging its two USB cables.
 2. Eject the MicroZed microSD card.
 3. Plug the microSD into the USB-to-SD Card adapter.
-3. Plug the USB-to-SD Card adapter into the USB port of the Ultra96 board with the MicroZed microSD is inserted.
-4. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
+4. Plug the USB-to-SD Card adapter into the USB port of the Ultra96 board. Wait a few seconds.
+5. Mount the microSD card on the file system, supplying password 'xilinx' if required:
+
+   ```bash
+   sudo mount /dev/sda /media
+   ```
+6. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
-5. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT.
+7. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Your group prefix does not have to be the same as the S3 prefix you have used previously.
 
 	```bash
 	./deploy-awsiot-objects.sh <your-group-prefix>
 	```
 
-   When the script completes, the keys and certificates will be in the directories specified above.  The script will also copy the Zynq 7K credential files directly to the MicroZed microSD card.
-   Note that your AWS Greengrass group prefix does not have to be the same as your unique prefix used in S3 deployment.
+   When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. Run the following command to see what is on the SD card:
+
+	```bash
+	ls /media
+	```
+   
+   You should see the following files, where GGGROUP is your group prefix:
+        - BOOT.bin
+   	- GGGROUP-node-zynq7k.crt.pem	
+   	- GGGROUP-node-zynq7k.key.prv.pem
+	- ggconfig.txt
+   
+   
+   BOOT.bin contains the application run on the MicroZed and its associated hardware design.
+   The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
+   The file 'ggconfig.txt' contains broker endpoint information and GGGROUP for use by the application.
+   
+8. Unmount the microSD card
+	```bash
+	sudo umount /media
+	```
+
+9. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
@@ -48,7 +74,7 @@ so that your Ultra96 can be used as a greengrass core.
 	```bash
 	sudo /greengrass/ggc/core/greengrassd start
 	```
-	Verify that you see the Greengrass daemon start but seeing a response in the CLI of "Greengrass successfully started with PID: XXXX".
+	Verify that you see the Greengrass daemon start by seeing a response in the CLI of "Greengrass successfully started with PID: XXXX".
 
 4. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
 
@@ -106,14 +132,15 @@ See picture below for expected response.
 
 ## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
 
-The MicroZed device boots Amazon FreeRTOS from a microSD card. Your card contains a pre-built file 'BOOT.bin'. In the previous step the script copied the security credentials files for a:FreeRTOS to the MicroZed microSD to link your hardware to your IoT account.  The credentials files ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k/GGGROUP-node-zynq7k.crt.pem``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k/GGGROUP-node-zynq7k.key.prv.pem``` should be in the SD Card base directory.  These credentials will link the device to your account which we will then subscribe to a pre-defined MQTT message from the platform.
+The MicroZed device boots Amazon FreeRTOS from a microSD card.
 
-1. Remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board and power the system.
+1. Remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board
+2. Power the microZed by plugging in the two USB cables.
 2. In the AWS IoT Console for your region, navigate to the **Test** tool listed in the left column.
-3. Select "Publish to a topic" sub-menu and enter "freertos/demos/echo" and click the "Publish to topic". See picture below.
+3. Select "Publish to a topic" sub-menu, enter "freertos/demos/echo" for the topic, and click "Publish to topic". See picture below.
 
 	![alt text](images/AFR_HelloWorld_Test.png "a:FreeRTOS Publish Test")
-7. You should now see a MQTT response from the MicroZed platform in the test window response.  See picture below for expected response.
+7. You should now see an MQTT response from the MicroZed platform in the test window response.  See picture below for expected response.
 
 	![alt text](images/AFR_HelloWorld_Test_Response.png "a:FreeRTOS Successful Response")
 
