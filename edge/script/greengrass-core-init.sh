@@ -253,16 +253,17 @@ if test $? != 0; then
 fi
 
 # Create the function definition
-# All the lambda functions:
-#   xilinx-hello-world
-#   xilinx-bitstream-deploy-handler
-#   xilinx-video-inference-handler
-#   xilinx-image-upload-handler
-# These functions MUST be deployed to AWS Lambda with Alias PROD prior to running this.
+#
+# These functions MUST be deployed to AWS Lambda with Alias PROD prior to
+# running the function definition CLI command.
+
 xilinx_hello_world_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-hello-world:PROD
 xilinx_bitstream_deploy_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-bitstream-deploy-handler:PROD
 xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-video-inference-handler:PROD
 xilinx_image_upload_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-image-upload-handler:PROD
+aws_xilinx_workshop_core_shadow_proxy_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_core_shadow_proxy_handler:PROD
+aws_xilinx_workshop_intelligent_io_error_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_intelligent_io_error_handler:PROD
+aws_xilinx_workshop_telemetry_enrichment_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_telemetry_enrichment_handler:PROD
 
 # Note MemorySize is in MB, multiply by 1024
 cat <<EOF > ${d_agg_config}/function-definition-init.json
@@ -314,6 +315,36 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
                 "BOARD":"Ultra96"
            }
         },
+        "Executable": "python",
+        "Pinned": false,
+        "Timeout": 500
+      }
+    },
+    {
+      "Id": "aws_xilinx_workshop_core_shadow_proxy_handler",
+      "FunctionArn": "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
+        "Executable": "python",
+        "Pinned": false,
+        "Timeout": 500
+      }
+    },
+    {
+      "Id": "aws_xilinx_workshop_intelligent_io_error_handler",
+      "FunctionArn": "${aws_xilinx_workshop_intelligent_io_error_handler_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
+        "Executable": "python",
+        "Pinned": false,
+        "Timeout": 500
+      }
+    },
+    {
+      "Id": "aws_xilinx_workshop_telemetry_enrichment_handler",
+      "FunctionArn": "${aws_xilinx_workshop_telemetry_enrichment_handler_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
         "Executable": "python",
         "Pinned": false,
         "Timeout": 500
@@ -412,8 +443,14 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "cloud"
     },
     {
-      "Id":      "sensor-value-to-cloud",
+      "Id":      "sensor-value-to-lambda",
       "Source":  "${thing_afr_arn}",
+      "Subject": "/compressor/+/cooling_system/#",
+      "Target":  "${aws_xilinx_workshop_telemetry_enrichment_handler_arn}"
+    },
+    {
+      "Id":      "sensor-lambda-to-cloud",
+      "Source":  "${aws_xilinx_workshop_telemetry_enrichment_handler_arn}",
       "Subject": "/compressor/+/cooling_system/#",
       "Target":  "cloud"
     },
@@ -424,13 +461,13 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "cloud"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deploy-delta",
+      "Id":      "core-shadow-to-proxy-handler-delta",
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_agg}/shadow/update/delta",
-      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
+      "Target":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}"
     },
     {
-      "Id":      "core-shadow-to-bitstream-deploy-update",
+      "Id":      "bitstream-deploy-to-core-shadow-update",
       "Source":  "${xilinx_bitstream_deploy_handler_arn}",
       "Subject": "\$aws/things/${thing_agg}/shadow/update",
       "Target":  "GGShadowService"
@@ -446,6 +483,42 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_agg}/shadow/update/rejected",
       "Target":  "${xilinx_bitstream_deploy_handler_arn}"
+    },
+    {
+      "Id":      "zynq-to-core-shadow-update",
+      "Source":  "${thing_afr_arn}",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update",
+      "Target":  "GGShadowService"
+    },
+    {
+      "Id":      "core-shadow-to-zynq-accepted",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update/accepted",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "core-shadow-to-zynq-rejected",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update/rejected",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "zynq-shadow-to-zynq-delta",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_afr}/shadow/update/delta",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "zynq-shadow-to-zynq-accepted",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_afr}/shadow/update/accepted",
+      "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "zynq-shadow-to-zynq-rejected",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_afr}/shadow/update/rejected",
+      "Target":  "${thing_afr_arn}"
     }
   ]
 }
