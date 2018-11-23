@@ -33,7 +33,7 @@ When the script completes, the keys and certificates will be in the directories 
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
    The file 'ggconfig.txt' contains broker endpoint information and GGGROUP for use by the application.
 
-7. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
+7. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. Remove the microSD card and plug it into the MicroZed board.
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
