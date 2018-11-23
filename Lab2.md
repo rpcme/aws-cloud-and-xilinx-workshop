@@ -2,9 +2,9 @@
 
 In this lab we will establish basic connectivity to the AWS cloud for both the MicroZed and Ultra96 devices.  In order to do this, we need to establish unique device identities that enable authentication to AWS IoT.  This is done through a client certificate and private key.  You will need to create these credentials in your AWS account and then configure them to each device.
 
-## Configure and Deploy AWS IoT Credentials
+## Configure AWS IoT Credentials and Deploy to MicroZed microSD card
 
-In this section, you will configure and deploy AWS IoT Credentials.  The physical credential files, the private key and certificate for each device, will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-gateway-ultra96```.
+In this section, you will configure and deploy AWS IoT Credentials and copy them to the MicroZed microSD card. The physical credential files, the private key and certificate for each device, will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-gateway-ultra96```.
 
 1. Ensure the the MiroZed board is powered off by unplugging its two USB cables.
 2. Eject the MicroZed microSD card.
@@ -33,10 +33,12 @@ In this section, you will configure and deploy AWS IoT Credentials.  The physica
 	```
    
    You should see the following files, where GGGROUP is your group prefix:
-        - BOOT.bin
-   	- GGGROUP-node-zynq7k.crt.pem	
-   	- GGGROUP-node-zynq7k.key.prv.pem
-	- ggconfig.txt
+   
+   
+    - BOOT.bin
+    - GGGROUP-node-zynq7k.crt.pem	
+    - GGGROUP-node-zynq7k.key.prv.pem
+    - ggconfig.txt
    
    
    BOOT.bin contains the application run on the MicroZed and its associated hardware design.
