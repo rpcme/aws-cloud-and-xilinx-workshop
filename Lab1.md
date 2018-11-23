@@ -66,9 +66,9 @@ Configure your terminal emulator to access the two COM ports by saving individua
 Open the terminal emulator for Ultra96 and do the following:
 1. Login: The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
 2. Run the command `ip a` to see all ethernet interfaces. You should see:
- 1. usb0 at 192.168.3.1/24
- 2. eth0 at an address determined by your DHCP server
- 3. Other interfaces will not be used in this workshop
+    1. usb0 at 192.168.3.1/24
+    2. eth0 at an address determined by your DHCP server. This is the address for the ultra96 as a greengrass controller.
+    3. Other interfaces will not be used in this workshop
 3. Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
 
 ## AWS Cloud Setup
@@ -76,7 +76,7 @@ Open the terminal emulator for Ultra96 and do the following:
 
 ### Prerequisites
 
-These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. Thus all the shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as 'xilinx'. A general familiarity with Linux command line operation under the bash shell is assumed.
+These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as 'xilinx'. A general familiarity with Linux command line operation under the bash shell is assumed.
 
 ### Clone Workshop Repository
 
@@ -113,9 +113,6 @@ This step will ask for the following pieces of information:
 
 
 Note that the first two will be stored unencrypted in the file ~/.aws/credentials, the rest will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
-
-The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
-This is very broad, and narrower options might succeed. 
 
 
 ### Deploy AWS Cloud Artifacts
