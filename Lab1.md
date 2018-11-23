@@ -78,6 +78,9 @@ Open the terminal emulator for Ultra96 and do the following:
 
 These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as 'xilinx'. A general familiarity with Linux command line operation under the bash shell is assumed.
 
+The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
+This is very broad, and narrower options might succeed.
+
 ### Clone Workshop Repository
 
 In this section, you will clone the workshop Git repository.  The Git repository contains all the workshop code and scripts you will use.
