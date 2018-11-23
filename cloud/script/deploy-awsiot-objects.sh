@@ -21,8 +21,22 @@ policy_afr=${thing_afr}-policy
 dc_agg=$(dirname $0)/../../edge/auth-${thing_agg}
 dc_afr=$(dirname $0)/../../edge/auth-${thing_afr}
 
-if test ! -d ${dc_agg}; then mkdir -p ${dc_agg}; fi
-if test ! -d ${dc_afr}; then mkdir -p ${dc_afr}; fi
+if test -d ${dc_agg}; then
+  echo The AWS Greengrass certificate and key for this prefix seem to exist already.
+  echo The only reason to do this again is if you change regions.
+  echo If you are not changing regions, please proceed with the next lab step.
+  exit 0
+fi
+
+if test -d ${dc_afr}; then
+  echo The Amazon FreeRTOS certificate and key for this prefix seem to exist already.
+  echo The only reason to do this again is if you change regions.
+  echo If you are not changing regions, please proceed with the next lab step.
+  exit 0
+fi
+
+mkdir -p ${dc_agg}
+mkdir -p ${dc_afr}
 
 # AWS provisioned Certificate for Greengrass
 echo Creating AWS generated Key and Certificate for [${thing_agg}].
