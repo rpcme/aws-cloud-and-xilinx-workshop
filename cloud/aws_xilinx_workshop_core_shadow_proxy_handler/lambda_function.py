@@ -17,11 +17,7 @@ logger.addHandler(streamHandler)
 
 def lambda_handler(event, context):
     logger.info(event)
-    if 'data' in event.keys():
-        payload=event['data']
-    else:
-        logger.info('No Data found')
-        return
+    payload=event
 
     # For now, just automatically propagate to both lambdas. We can get smarter
     # later.

@@ -30,10 +30,6 @@ def run_pydeephi_yolo():
     num_seconds = 5
     threshold = 2
 
-    payload = {'message': 'starting video inference'}
-    client.publish(topic=topic, payload=json.dumps(payload))
-
-
     if os.path.isfile(os.path.join(download_path, parameters)):
         with open(os.path.join(download_path, parameters)) as f:
             num_seconds = int(f.readline())
@@ -51,9 +47,6 @@ def run_pydeephi_yolo():
     # wait long enough time for application to finish
     time.sleep(num_seconds)
     time.sleep(3)
-
-    payload = {'message': 'ended video inference'}
-    client.publish(topic=topic, payload=json.dumps(payload))
     return
 
 while (1):

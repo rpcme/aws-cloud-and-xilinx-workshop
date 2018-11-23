@@ -27,7 +27,7 @@ s3 = boto3.resource('s3')
 bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
-topic = "unit_controller/image_upload"
+topic = "compressor/{0}".format(os.environ['COREGROUP'])
 parameters = 'parameters.txt'
 
 
@@ -35,8 +35,8 @@ def copy_to_s3(file):
     session = Session()
     _ = session.get_credentials()
     s3.meta.client.upload_file(os.path.join(sync_folder_path, file),
-                               bucket, 
-                               os.path.join('images', file))
+                               bucket,
+                               os.path.join('portal/images', file))
     return
 
 
@@ -64,8 +64,8 @@ class MyEventHandler(FileSystemEventHandler):
         basename = event.src_path.split('/')[-1]
         jpgname = basename.replace('.txt', '.jpg')
 
-        payload = {'Video_Frame_Image': jpgname,
-                   'Num_Persons_Detected': boxes}
+        payload = {'frame_image': jpgname,
+                   'num_persons': boxes}
         copy_to_s3(jpgname)
         client.publish(topic=topic,
                        payload=json.dumps(payload))

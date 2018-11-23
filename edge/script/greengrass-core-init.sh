@@ -388,7 +388,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
             }
           },
           "Variables": {
-                "BOARD":"Ultra96"
+                "BOARD":"Ultra96",
+                "COREGROUP":"${thing_agg}"
            }
         },
         "Executable": "python",
@@ -431,33 +432,21 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Target":  "cloud"
     },
     {
-      "Id":      "inference-handler-to-cloud",
-      "Source":  "${xilinx_video_inference_handler_arn}",
-      "Subject": "/unit_controller/video_inference",
-      "Target":  "cloud"
-    },
-    {
       "Id":      "upload-handler-to-cloud",
       "Source":  "${xilinx_image_upload_handler_arn}",
-      "Subject": "/unit_controller/image_upload",
+      "Subject": "compressor/${thing_agg}",
       "Target":  "cloud"
     },
     {
       "Id":      "sensor-value-to-lambda",
       "Source":  "${thing_afr_arn}",
-      "Subject": "/compressor/+/cooling_system/#",
+      "Subject": "compressor/+/cooling_system/#",
       "Target":  "${aws_xilinx_workshop_telemetry_enrichment_handler_arn}"
     },
     {
       "Id":      "sensor-lambda-to-cloud",
       "Source":  "${aws_xilinx_workshop_telemetry_enrichment_handler_arn}",
-      "Subject": "/compressor/+/cooling_system/#",
-      "Target":  "cloud"
-    },
-    {
-      "Id":      "sensor-status-to-cloud",
-      "Source":  "${thing_afr_arn}",
-      "Subject": "/remote_io_module/sensor_status",
+      "Subject": "compressor/+/cooling_system/#",
       "Target":  "cloud"
     },
     {
