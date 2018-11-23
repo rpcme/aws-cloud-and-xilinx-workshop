@@ -1568,7 +1568,7 @@ static void StartSystem(System* pSystem)
         iLen = snprintf(
             (char*)pSystem->pbSensorTopic,
             SYSTEM_SENSOR_TOPIC_LENGTH+1,
-            "/compressor/%s/cooling_system/1",
+            "compressor/%s-gateway-ultra96/cooling_system/1",
             clientcredentialGG_GROUP
             );
         if((iLen < 0) || (iLen > SYSTEM_SENSOR_TOPIC_LENGTH)) {
