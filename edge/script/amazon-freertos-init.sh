@@ -24,7 +24,7 @@ while read -r line; do
   fs=$(echo $line    | tr -s ' ' ' ' | cut -f3 -d' ')
   sz=$(echo $line    | tr -s ' ' ' ' | cut -f4 -d' ')
 
-  if test "$is_rm" == 1 && test "$fs" == "vfat" && test "$sz" == "7.4G"; then
+  if test "$is_rm" == 1 && test "$fs" == "vfat" && (test "$sz" == "7.4G" || test "$sz" == "7.3G"); then
     found=1
     break
   fi
