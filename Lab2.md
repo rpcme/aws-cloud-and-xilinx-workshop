@@ -10,12 +10,7 @@ In this section, you will configure and deploy AWS IoT Credentials and copy them
 2. Eject the MicroZed microSD card.
 3. Plug the microSD into the USB-to-SD Card adapter.
 4. Plug the USB-to-SD Card adapter into the USB port of the Ultra96 board. Wait a few seconds.
-5. Mount the microSD card on the file system, supplying password 'xilinx' if required:
-
-   ```bash
-   sudo mount /dev/sda /media
-   ```
-6. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
+5. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
@@ -26,14 +21,7 @@ In this section, you will configure and deploy AWS IoT Credentials and copy them
 	./deploy-awsiot-objects.sh <your-group-prefix>
 	```
 
-   When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. Run the following command to see what is on the SD card:
-
-	```bash
-	ls /media
-	```
-   
-   You should see the following files, where GGGROUP is your group prefix:
-   
+When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. You should see the following files, where GGGROUP is your group prefix:
    
     - BOOT.bin
     - GGGROUP-node-zynq7k.crt.pem	
@@ -44,13 +32,8 @@ In this section, you will configure and deploy AWS IoT Credentials and copy them
    BOOT.bin contains the application run on the MicroZed and its associated hardware design.
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
    The file 'ggconfig.txt' contains broker endpoint information and GGGROUP for use by the application.
-   
-8. Unmount the microSD card
-	```bash
-	sudo umount /media
-	```
 
-9. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
+8. Unplug the USB-to-SD Card adapter from the Ultra96 USB port. 
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
