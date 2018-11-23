@@ -100,6 +100,9 @@ so that your Ultra96 can be used as a greengrass core.
 	./make-and-deploy-lambda.sh xilinx-bitstream-deploy-handler
 	./make-and-deploy-lambda.sh xilinx-image-upload-handler
 	./make-and-deploy-lambda.sh xilinx-video-inference-handler
+	./make-and-deploy-lambda.sh aws_xilinx_workshop_core_shadow_proxy_handler
+	./make-and-deploy-lambda.sh aws_xilinx_workshop_intelligent_io_error_handler
+	./make-and-deploy-lambda.sh aws_xilinx_workshop_telemetry_enrichment_handler
 	```
    Again, these lambdas will be used in later labs.
 
