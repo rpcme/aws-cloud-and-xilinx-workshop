@@ -20,6 +20,16 @@ else
   thing_afr=${prefix}-node-zynq7k
 fi
 
+group_info_raw=$(aws greengrass list-groups --output text \
+                     --query "Groups[?Name == '${thing_agg}-group'].[Id,LatestVersion]")
+
+if test ! -z "${group_info_raw}"; then
+  echo A group with that name already exists. Either remove the existing group
+  echo or choose a different prefix.  The prefix for this script must match the
+  echo one created from deploy-awsiot-objects.sh.
+  exit 1
+fi
+
 d_agg_config=$(dirname $0)/../ggc-config
 if test ! -d ${d_agg_config}; then mkdir ${d_agg_config}; fi
 
@@ -312,7 +322,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
             }
           },
           "Variables": {
-                "BOARD":"Ultra96"
+                "BOARD":"Ultra96",
+                "COREGROUP":"${thing_agg}"
            }
         },
         "Executable": "python",
