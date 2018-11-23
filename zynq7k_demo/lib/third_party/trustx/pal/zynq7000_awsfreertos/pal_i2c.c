@@ -177,7 +177,12 @@ pal_status_t pal_i2c_init(const pal_i2c_t* p_i2c_context)
 		{
 			break;
 		}
-	}while(1);
+	}while(0);
+
+	if (xiic_status == XST_SUCCESS)
+	{
+		status = PAL_STATUS_SUCCESS;
+	}
 #else
 	status = PAL_STATUS_SUCCESS;
 #endif
@@ -244,7 +249,6 @@ pal_status_t pal_i2c_deinit(const pal_i2c_t* p_i2c_context)
  * \retval  #PAL_STATUS_FAILURE  Returns when the I2C write fails.
  * \retval  #PAL_STATUS_I2C_BUSY Returns when the I2C bus is busy. 
  */
- 
 pal_status_t pal_i2c_write(pal_i2c_t* p_i2c_context,uint8_t* p_data , uint16_t length)
 {
     pal_status_t status = PAL_STATUS_FAILURE;
@@ -320,8 +324,7 @@ pal_status_t pal_i2c_read(pal_i2c_t* p_i2c_context , uint8_t* p_data , uint16_t 
     //Acquire the I2C bus before read/write
     if (PAL_STATUS_SUCCESS == pal_i2c_acquire(p_i2c_context))
     {    
-
-    	if(length != XIic_Send(p_i2c_ctx->BaseAddress, p_i2c_context->slave_address, p_data, length,XIIC_STOP))
+		if(length != XIic_Recv(p_i2c_ctx->BaseAddress, p_i2c_context->slave_address, p_data, length, XIIC_STOP))
     	{
 			//If I2C Master fails to invoke the read operation, invoke upper layer event handler with error.
 
@@ -379,7 +382,12 @@ pal_status_t pal_i2c_read(pal_i2c_t* p_i2c_context , uint8_t* p_data , uint16_t 
  */
 pal_status_t pal_i2c_set_bitrate(const pal_i2c_t* p_i2c_context , uint16_t bitrate)
 {
-    pal_status_t return_status = PAL_STATUS_FAILURE;
+    pal_status_t return_status = PAL_STATUS_SUCCESS;
+
+    //TBD: set bitrate
+    //
+    //At the moment, this function doesn't update the I2C bitrate or frequency in host controller
+    //but just returns success to continue further in the caller routines.
     return return_status;
 }
 
