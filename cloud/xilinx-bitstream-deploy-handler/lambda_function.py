@@ -26,9 +26,10 @@ bit_folder_path = "/home/xilinx/download"
 topic = "unit_controller/bitstream_deploy"
 bitstream = 'gstreamer_deephi.bit'
 parameters = 'parameters.txt'
+topic = "$aws/things/${0}/shadow/update".format(os.environ['COREGROUP'])
 
 
-def download_from_cloud():
+def download_from_cloud(version):
     session = Session()
     _ = session.get_credentials()
 
@@ -40,17 +41,16 @@ def download_from_cloud():
     client.publish(topic=topic, payload=json.dumps(payload))
 
     # download parameters
+
     s3.meta.client.download_file(bucket, parameters,
                                  os.path.join(bit_folder_path, parameters))
-    payload = {'message': 'Downloaded {} from S3 into {}.'.format(
-        parameters, bit_folder_path)}
-    client.publish(topic=topic, payload=json.dumps(payload))
 
+    # All successful, now publish the update to the core shadow.
+    payload = { 'reported': { 'version': version } }
+    client.publish(topic=topic, payload=json.dumps(payload))
     return
 
 
-download_from_cloud()
-
-
 def lambda_handler(event, context):
+    download_from_cloud( event['bitstream_version'] )
     return
