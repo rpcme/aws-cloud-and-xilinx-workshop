@@ -5,9 +5,9 @@ role_name=lambdas-for-greengrass
 
 base=$(dirname $0)/../${function_name}
 zipfile=$(dirname $0)/../${function_name}.zip
-pushd ${base}
+pushd ${base} > /dev/null
 zip -q -r ${zipfile} *
-popd
+popd > /dev/null
 
 function_found=$(aws lambda list-functions --output text \
         --query "Functions[?FunctionName=='${function_name}']")
