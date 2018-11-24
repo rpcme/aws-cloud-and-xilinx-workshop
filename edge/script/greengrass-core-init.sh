@@ -345,7 +345,21 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "EncodingType": "json",
         "Executable": "python",
         "Pinned": false,
-        "Timeout": 500
+        "Timeout": 500,
+        "Environment": {
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
+          },
+          "Variables": {
+            "BOARD":"Ultra96",
+            "COREGROUP":"${thing_agg}"
+          }
+        }
       }
     },
     {
