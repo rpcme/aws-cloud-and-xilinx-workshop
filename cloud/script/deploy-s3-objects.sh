@@ -78,7 +78,7 @@ echo Constraining bucket access to this specific device
 aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_policy_location}
 
 echo Stage deployable bitstream files to S3 for Lab 4
-#mkdir -p ${local_path}
+mkdir -p ${local_path}
 #cp -f ${bitstream} ${local_path}
 cat <<EOF > ${parameters}
 5
