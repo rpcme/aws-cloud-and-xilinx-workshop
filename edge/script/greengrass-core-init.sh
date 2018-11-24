@@ -1,23 +1,20 @@
 #! /bin/bash
 
-s3_bucket=$1
-prefix=$2
+prefix=$1
 
-if test -z "$s3_bucket"; then
-  echo ERROR: first argument must be named S3 bucket.
-  exit 1
-fi
 if test -z "$prefix"; then
-  echo ERROR: second argument must be provided as a prefix for your group name.
+  echo ERROR: First argument must be provided as a prefix.
   exit 1
 fi
 
 if test -z "$prefix"; then
   thing_agg=gateway-ultra96
   thing_afr=node-zynq7k
+  s3_bucket=aws-cloud-and-xilinx-workshop
 else
   thing_agg=${prefix}-gateway-ultra96
   thing_afr=${prefix}-node-zynq7k
+  s3_bucket=${prefix}-aws-cloud-and-xilinx-workshop
 fi
 
 group_info_raw=$(aws greengrass list-groups --output text \
@@ -348,7 +345,21 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
         "EncodingType": "json",
         "Executable": "python",
         "Pinned": false,
-        "Timeout": 500
+        "Timeout": 500,
+        "Environment": {
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
+          },
+          "Variables": {
+            "BOARD":"Ultra96",
+            "COREGROUP":"${thing_agg}"
+          }
+        }
       }
     },
     {
@@ -519,6 +530,18 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_afr}/shadow/update/rejected",
       "Target":  "${thing_afr_arn}"
+    },
+    {
+      "Id":      "proxy-to-bitstream-deployer",
+      "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "Subject": "func/bitstream-deploy-handler",
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
+    },
+    {
+      "Id":      "proxy-to-intelligent-io-error",
+      "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "Subject": "func/io-error-handler",
+      "Target":  "${aws_xilinx_workshop_intelligent_io_error_handler_arn}"
     }
   ]
 }

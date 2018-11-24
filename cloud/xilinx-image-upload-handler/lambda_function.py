@@ -67,6 +67,7 @@ class MyEventHandler(FileSystemEventHandler):
         payload = {'frame_image': jpgname,
                    'num_persons': boxes}
         copy_to_s3(jpgname)
+        logger.info('Publishing to topic: [{0}]'.format(topic))
         client.publish(topic=topic,
                        payload=json.dumps(payload))
 

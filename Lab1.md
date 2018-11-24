@@ -43,11 +43,6 @@ After the set-up the Ultra96 should look like the picture below.
 The MicroZed should power up automatically when you plug in the microUSB cable. Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
 The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated.
 
-### System Software Installation
-
-#### Ultra96 Portable Drive
-No installation is required - you should see 'PYNQ-USB' mapped to a drive letter in Windows Explorer. Note the drive letter.
-
 #### Serial Port Installation
 The MicroZed and the Ultra96 have one COM port each.
 (Windows 7) Open Device Manager to locate your COM ports.  Note the two COM port numbers.
@@ -64,21 +59,22 @@ Ensure you do not have VPN software running for this workshop.
 Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
 
 Open the terminal emulator for Ultra96 and do the following:
-1. Login: The username is 'xilinx' and the password is 'xilinx'. Your sudo password is also 'xilinx'.
-2. Run the command `ip a` to see all ethernet interfaces. You should see:
-    1. usb0 at 192.168.3.1/24
-    2. eth0 at an address determined by your DHCP server. This is the address for the ultra96 as a greengrass controller.
-    3. Other interfaces will not be used in this workshop
-3. Now run `ping -c 3 www.xilinx.com` to verify internet connectivity.
+
+1. Login: The username is ```xilinx``` and the password is ```xilinx```. The ```sudo``` password is also ```xilinx```.
+2. Run the command ```ip a``` to see all ethernet interfaces. You should see:
+    1. ```usb0``` at 192.168.3.1/24
+    2. ```eth0``` at an address determined by your DHCP server. This is the address for the Ultra96 running AWS Greengrass.
+    3. Other interfaces will not be used in this workshop.
+3. Run the command ```ping -c 3 aws.amazon.com``` to verify internet connectivity.
 
 ## AWS Cloud Setup
 
 
 ### Prerequisites
 
-These labs require that you have Git and the AWS Command Line Interface (CLI) installed in order to perform functions to the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as 'xilinx'. A general familiarity with Linux command line operation under the bash shell is assumed.
+The labs require that you have Git and the AWS Command Line Interface (CLI) installed to perform functions in the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as ```xilinx```. A general familiarity with Linux command line operation under the bash shell is assumed.
 
-The following scripts will succeed if your IAM user has the *AdministratorAccess* policy attached with no permission boundaries.
+The following scripts will succeed if your IAM user has the *```AdministratorAccess```* policy attached with no permission boundaries.
 This is very broad, and narrower options might succeed.
 
 ### Clone Workshop Repository
@@ -97,6 +93,9 @@ In this section, you will clone the workshop Git repository.  The Git repository
    git clone https://github.com/rpcme/aws-cloud-and-xilinx-workshop
    cd aws-cloud-and-xilinx-workshop
    ```
+   
+   The total repository size is more than 30MB so it may take some time to download. Please be patient.
+   
 You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
@@ -109,14 +108,13 @@ Start the configuration as follows:
 aws configure
 ```
 This step will ask for the following pieces of information:
-1. Your AWS Access Key ID
-2. Your AWS Secret Access Key
-3. Default region name - use *eu-west-1*
-4. Default output format - use *json*
 
+1. Type or copy-paste your AWS Access Key ID and press ```Enter```.
+2. Type or copy-paste AWS Secret Access Key and press ```Enter```.
+3. Default region name - use ```us-west-2```
+4. Default output format - use ```json```
 
-Note that the first two will be stored unencrypted in the file ~/.aws/credentials, the rest will be stored in ~/.aws/config. For your security, delete the credentials file at the end of the workshop.
-
+Note that the first two will be stored unencrypted in the file ```~/.aws/credentials```, the rest will be stored in ```~/.aws/config```. For your security, delete the credentials file at the end of the workshop.
 
 ### Deploy AWS Cloud Artifacts
 
@@ -127,25 +125,21 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
-2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts 
-such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the 
-Cloudformation script from that S3 bucket.
+2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts  such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.  Ensure you include a unique-prefix that is short and easily remembered. 
+
+
+3. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.
+
+   The script performs the following functions:
+   
+   * Creates an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
+   * Creates a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
+
+   If you receive an error from the script stating the prefix has already been chosen, then please choose another.
 
 	```bash
-	./deploy-s3-objects.sh <your-unique-prefix>
+	./deploy-s3-objects.sh <prefix>
 	```
-
-The Cloudformation deployment occurs asynchronously, so the script will immediately return with a resulting stack deployment ID. You can use this stack deployment ID to check the status of the deployment. 
-
-The above deployment will prepare an S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop` for you. 
-The script will also create a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` 
-for your files to synchronize with the S3 bucket. You should be able to see an FPGA bitstream uploaded to your S3 bucket,
-while your local folder is empty. In later labs we will download this FPGA bitstream onto your board.
-
-Note that S3 bucket names are globally unique. This means that if someone else has a bucket 
-of a certain name, you cannot have a bucket with that same name. 
-If you see *BucketAlreadyExists* error, try to rerun the script with another prefix.
-
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
