@@ -270,6 +270,7 @@ xilinx_video_inference_handler_arn=arn:aws:lambda:${my_region}:${my_account}:fun
 xilinx_image_upload_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:xilinx-image-upload-handler:PROD
 aws_xilinx_workshop_core_shadow_proxy_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_core_shadow_proxy_handler:PROD
 aws_xilinx_workshop_intelligent_io_error_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_intelligent_io_error_handler:PROD
+aws_xilinx_workshop_aws_connectivity_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_aws_connectivity_handler:PROD
 aws_xilinx_workshop_telemetry_enrichment_handler_arn=arn:aws:lambda:${my_region}:${my_account}:function:aws_xilinx_workshop_telemetry_enrichment_handler:PROD
 
 # Note MemorySize is in MB, multiply by 1024
@@ -341,6 +342,30 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
     {
       "Id": "aws_xilinx_workshop_intelligent_io_error_handler",
       "FunctionArn": "${aws_xilinx_workshop_intelligent_io_error_handler_arn}",
+      "FunctionConfiguration": {
+        "EncodingType": "json",
+        "Executable": "python",
+        "Pinned": false,
+        "Timeout": 500,
+        "Environment": {
+          "ResourceAccessPolicies": [],
+          "Execution": {
+            "IsolationMode": "NoContainer",
+            "RunAs": {
+              "Uid": 0,
+              "Gid": 0
+            }
+          },
+          "Variables": {
+            "BOARD":"Ultra96",
+            "COREGROUP":"${thing_agg}"
+          }
+        }
+      }
+    },
+    {
+      "Id": "aws_xilinx_workshop_aws_connectivity_handler",
+      "FunctionArn": "${aws_xilinx_workshop_aws_connectivity_handler_arn}",
       "FunctionConfiguration": {
         "EncodingType": "json",
         "Executable": "python",
@@ -542,6 +567,30 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
       "Subject": "func/io-error-handler",
       "Target":  "${aws_xilinx_workshop_intelligent_io_error_handler_arn}"
+    },
+    {
+      "Id":      "proxy-to-aws-connectivity",
+      "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "Subject": "func/aws-connectivity-handler",
+      "Target":  "${aws_xilinx_workshop_aws_connectivity_handler_arn}"
+    },
+    {
+      "Id":      "aws-connectivity-to-core-shadow-update",
+      "Source":  "${aws_xilinx_workshop_aws_connectivity_handler_arn}",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update",
+      "Target":  "GGShadowService"
+    },
+    {
+      "Id":      "core-shadow-to-aws-connectivity-accepted",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update/accepted",
+      "Target":  "${aws_xilinx_workshop_aws_connectivity_handler_arn}"
+    },
+    {
+      "Id":      "core-shadow-to-aws-connectivity-rejected",
+      "Source":  "GGShadowService",
+      "Subject": "\$aws/things/${thing_agg}/shadow/update/rejected",
+      "Target":  "${aws_xilinx_workshop_aws_connectivity_handler_arn}"
     }
   ]
 }
