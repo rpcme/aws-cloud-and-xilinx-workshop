@@ -1,23 +1,20 @@
 #! /bin/bash
 
-s3_bucket=$1
-prefix=$2
+prefix=$1
 
-if test -z "$s3_bucket"; then
-  echo ERROR: first argument must be named S3 bucket.
-  exit 1
-fi
 if test -z "$prefix"; then
-  echo ERROR: second argument must be provided as a prefix for your group name.
+  echo ERROR: First argument must be provided as a prefix.
   exit 1
 fi
 
 if test -z "$prefix"; then
   thing_agg=gateway-ultra96
   thing_afr=node-zynq7k
+  s3_bucket=aws-cloud-and-xilinx-workshop
 else
   thing_agg=${prefix}-gateway-ultra96
   thing_afr=${prefix}-node-zynq7k
+  s3_bucket=${prefix}-aws-cloud-and-xilinx-workshop
 fi
 
 group_info_raw=$(aws greengrass list-groups --output text \
