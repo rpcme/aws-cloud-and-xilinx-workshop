@@ -96,7 +96,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $HOME/aws-cloud-and-xilinx-workshop/edge/script
-	./greengrass-core-init.sh <your-prefix>
+	./greengrass-core-init.sh <prefix>
 	```
 	
 
@@ -106,7 +106,7 @@ so that your Ultra96 can be used as a greengrass core.
 
 	```bash
 	cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-	./deploy-greengrass-group.sh <your-group-prefix>
+	./deploy-greengrass-group.sh <prefix>
 	```
    Afer a few seconds, you should be able to see the group has been deployed 
    successfully.

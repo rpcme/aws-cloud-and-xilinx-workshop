@@ -9,8 +9,8 @@ The AWS IoT console will serves as the system deployment dashboard; we will incr
 In lab 2, we deployed the lambda functions configured as part of your Greengrass group.  In this lab we will reuse the same group.
 As a summary,
 
-1. Your group name was defined to be `<your-group-prefix>-gateway-ultra96-group`.
-2. Your S3 bucket name was defined to be `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`.
+1. Your group name was defined to be ```<prefix>-gateway-ultra96-group```.
+2. Your S3 bucket name was defined to be ```<prefix>-aws-cloud-and-xilinx-workshop```.
 
 Make sure your greengrass core service are still running. To check that:
 
@@ -48,7 +48,7 @@ Now lets get started with the existing AWS Greengrass group:
 
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-   ./deploy-greengrass-group.sh <your-group-prefix>
+   ./deploy-greengrass-group.sh <prefix>
    ```
 
    After a few seconds your group should be successfully deployed.
@@ -108,7 +108,7 @@ persons are in view of the camera.
 that LED turn off.
 
 18. If there are people detected, you will see a number of files generated in 
-`<your-unique-prefix>-aws-cloud-and-xilinx-workshop`. 
+`<prefix>-aws-cloud-and-xilinx-workshop`. 
 These files will be uploaded onto the S3 bucket, so
 you will also see some messages on the topic "/unit_controller/image_upload".
 
@@ -118,7 +118,7 @@ you will also see some messages on the topic "/unit_controller/image_upload".
 synchronized with your S3 bucket.
 
    ```bash
-   cd <your-unique-prefix>-aws-cloud-and-xilinx-workshop
+   cd <prefix>-aws-cloud-and-xilinx-workshop
    ```
 
    You will see several new files generated. The ```<epoch-time>.png``` files are the captured frames; the ```<epoch-time>.txt``` files store the number of people captured in that frame.
@@ -126,7 +126,7 @@ synchronized with your S3 bucket.
 9. Go to your S3 bucket on AWS cloud; you will see there is a new folder `images` created. Check the images stored in that folder.
 
 
-## Outcomes
+`## Outcomes
 In this lab we used AWS Greengrass to deploy an ML video 
 surveillance application to a running control system in the Ultra96 platform. 
 
