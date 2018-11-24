@@ -36,8 +36,6 @@ else
   exit 1
 fi
 
-exit 0
-
 if test ! -f ${bitstream}; then
   echo ERROR: Bitstream file not found:
   echo "       ${bitstream}"
