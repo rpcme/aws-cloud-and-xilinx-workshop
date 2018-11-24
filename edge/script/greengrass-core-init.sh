@@ -528,7 +528,7 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
       "Subject": "func/io-error-handler",
       "Target":  "${aws_xilinx_workshop_intelligent_io_error_handler_arn}"
-    },
+    }
   ]
 }
 EOF
