@@ -18,7 +18,7 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
 6. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Your group prefix does not have to be the same as the S3 prefix you have used previously.
 
    ```bash
-./deploy-awsiot-objects.sh <your-group-prefix>
+   ./deploy-awsiot-objects.sh <prefix>
    ```
 
    When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. You should see the following files, where GGGROUP is your group prefix:
