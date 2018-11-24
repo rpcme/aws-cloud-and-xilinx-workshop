@@ -3,10 +3,8 @@ import json
 import greengrasssdk
 import platform
 import logging
-from time import gmtime
 
 client = greengrasssdk.client('iot-data')
-my_platform = platform.platform()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,12 +15,16 @@ logger.addHandler(streamHandler)
 
 def lambda_handler(event, context):
     logger.info(event)
-    payload=event
+    payload=event['state']
 
     # For now, just automatically propagate to both lambdas. We can get smarter
     # later.
     if 'led' in payload.keys():
+        logger.info("found led")
         client.publish(topic='func/io-error-handler', payload=json.dumps(payload))
+        logger.info("Publish completed.")
     if 'bitstream_version' in payload.keys():
+        logger.info("found bitstream_version")
         client.publish(topic='func/bitstream-deploy-handler', payload=json.dumps(payload))
+        logger.info("Publish completed.")
     return

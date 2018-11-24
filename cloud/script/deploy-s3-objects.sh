@@ -80,9 +80,14 @@ aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_pol
 echo Stage deployable bitstream files to S3 for Lab 4
 mkdir -p ${local_path}
 #cp -f ${bitstream} ${local_path}
-cat <<EOF > ${parameters}
+cat <<EOF > ${parameters}1
 5
 2
+EOF
+
+cat <<EOF > ${parameters}2
+5
+3
 EOF
 
 # Right now the same bitstream file is being used. This shouldn't be the case.
@@ -93,7 +98,7 @@ for i in 1 2; do
   echo Staging ${f_bitstream} to version ${i}
   aws s3 cp --quiet ${bitstream}  s3://${bucket_name}/bitstream_deploy/${i}/${f_bitstream}
   echo Staging ${f_parameters} to version ${i}
-  aws s3 cp --quiet ${parameters} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
+  aws s3 cp --quiet ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
 done
 
 #aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read

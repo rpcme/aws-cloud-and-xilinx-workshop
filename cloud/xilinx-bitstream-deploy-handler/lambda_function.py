@@ -25,22 +25,28 @@ parameters            = 'parameters.txt'
 topic                 = "$aws/things/{0}/shadow/update".format(os.environ['COREGROUP'])
 
 def lambda_handler(event, context):
-    version = event['bitstream_version']
-    session = Session()
-    _ = session.get_credentials()
+    logger.info(event)
 
-    bitsream_version='{0}/{1}/{2}'.format(bucket_bitstream_path, version, bitstream)
-    parameters_version='{0}/{1}/{2}'.format(bucket_bitstream_path, version, parameters)
+    payload=event
+    if 'bitstream_version' in payload.keys():
+        version = event['bitstream_version']
+        session = Session()
+        _ = session.get_credentials()
 
-    # download bitstream
-    s3.meta.client.download_file(bucket, bitsream_version,
-                                 os.path.join(bit_folder_path, bitstream))
+        bitsream_version='{0}/{1}/{2}'.format(bucket_bitstream_path, version, bitstream)
+        parameters_version='{0}/{1}/{2}'.format(bucket_bitstream_path, version, parameters)
 
-    # download parameters
-    s3.meta.client.download_file(bucket, parameters_version,
-                                 os.path.join(bit_folder_path, parameters))
+        # download bitstream
+        s3.meta.client.download_file(bucket, bitsream_version,
+                                     os.path.join(bit_folder_path, bitstream))
 
-    # All successful, now publish the update to the core shadow.
-    payload = { 'reported': { 'version': version } }
-    client.publish(topic=topic, payload=json.dumps(payload))
-    return
+        # download parameters
+        s3.meta.client.download_file(bucket, parameters_version,
+                                     os.path.join(bit_folder_path, parameters))
+
+        # All successful, now publish the update to the core shadow.
+        payload = { 'reported': { 'version': version } }
+        client.publish(topic=topic, payload=json.dumps(payload))
+        return
+    else:
+        logger.info("Hit Accepted or Rejected payload")

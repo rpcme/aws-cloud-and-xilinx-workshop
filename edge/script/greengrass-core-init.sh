@@ -516,7 +516,19 @@ cat <<EOF > ${d_agg_config}/subscription-definition-init.json
       "Source":  "GGShadowService",
       "Subject": "\$aws/things/${thing_afr}/shadow/update/rejected",
       "Target":  "${thing_afr_arn}"
-    }
+    },
+    {
+      "Id":      "proxy-to-bitstream-deployer",
+      "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "Subject": "func/bitstream-deploy-handler",
+      "Target":  "${xilinx_bitstream_deploy_handler_arn}"
+    },
+    {
+      "Id":      "proxy-to-intelligent-io-error",
+      "Source":  "${aws_xilinx_workshop_core_shadow_proxy_handler_arn}",
+      "Subject": "func/io-error-handler",
+      "Target":  "${aws_xilinx_workshop_intelligent_io_error_handler_arn}"
+    },
   ]
 }
 EOF
