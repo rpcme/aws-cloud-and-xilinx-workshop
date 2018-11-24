@@ -695,7 +695,8 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
 
         memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
         if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
-            xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
+            configPRINTF( ("Success: GGD is %s\r\n", pSystem->xHostAddressData.pcHostAddress ) );
+        	xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
             xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
             xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
             xConnectParameters.usPort = clientcredentialMQTT_BROKER_PORT;
@@ -707,6 +708,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
             xConnectParameters.pcCertificate = pSystem->xHostAddressData.pcCertificate;
             xConnectParameters.ulCertificateSize = pSystem->xHostAddressData.ulCertificateSize;
         } else {
+            configPRINTF( ("Failed: GGD_GetGGCIPandCertificate()\n" ) );
             xConnectParameters.pcURL = 0;
             pSystem->rc = XST_FAILURE;
             pSystem->pcErr = "Auto-connect: Failed to retrieve Greengrass address and certificate\r\n";
@@ -743,12 +745,14 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
                 pSystem->rc = XST_FAILURE;
                 pSystem->pcErr = "ERROR: Could not connect to MQTT Agent\r\n";
                 pSystem->xMQTTHandle = NULL;
+                configPRINTF( ( "%s\r\n", pSystem->pcErr ) );
             }
         }
     } else {
         pSystem->rc = XST_FAILURE;
     	pSystem->pcErr = "ERROR: Could not create MQTT Agent\r\n";
     	pSystem->xMQTTHandle = NULL;
+        configPRINTF( ( "%s\r\n", pSystem->pcErr ) );
     }
 }
 
