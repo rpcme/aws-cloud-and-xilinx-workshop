@@ -47,7 +47,7 @@ def lambda_handler(event, context):
                                      os.path.join(bit_folder_path, parameters))
 
         # All successful, now publish the update to the core shadow.
-        payload = { 'reported': { 'version': version } }
+        payload = { 'state' : { 'reported': { 'bitstream_version': version } } }
         client.publish(topic=topic, payload=json.dumps(payload))
         return
     else:
