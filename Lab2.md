@@ -87,6 +87,7 @@ so that your Ultra96 can be used as a greengrass core.
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_core_shadow_proxy_handler
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_intelligent_io_error_handler
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_telemetry_enrichment_handler
+	./make-and-deploy-lambda.sh aws_xilinx_workshop_aws_connectivity_handler
 	```
 
 6. Make the initial AWS Greengrass group configuration. The group creation 
