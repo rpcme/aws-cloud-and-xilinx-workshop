@@ -15,7 +15,7 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
-6. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Your group prefix does not have to be the same as the S3 prefix you have used previously.
+6. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Make the prefix match the same value used in the previous lab.
 
    ```bash
    ./deploy-awsiot-objects.sh <prefix>
@@ -87,6 +87,7 @@ so that your Ultra96 can be used as a greengrass core.
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_core_shadow_proxy_handler
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_intelligent_io_error_handler
 	./make-and-deploy-lambda.sh aws_xilinx_workshop_telemetry_enrichment_handler
+	./make-and-deploy-lambda.sh aws_xilinx_workshop_aws_connectivity_handler
 	```
 
 6. Make the initial AWS Greengrass group configuration. The group creation 
