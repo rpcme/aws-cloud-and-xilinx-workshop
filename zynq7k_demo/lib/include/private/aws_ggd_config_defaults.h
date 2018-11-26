@@ -45,7 +45,7 @@
  * @brief Time in milliseconds after which the TCP receive operation should timeout.
  */
 #ifndef ggdconfigTCP_RECEIVE_TIMEOUT_MS
-    #define ggdconfigTCP_RECEIVE_TIMEOUT_MS    ( 60000 )
+    #define ggdconfigTCP_RECEIVE_TIMEOUT_MS    ( 300000 )
 #endif
 
 /**
@@ -59,7 +59,7 @@
  * @brief Time in milliseconds after which the TCP send operation should timeout.
  */
 #ifndef ggdconfigTCP_SEND_TIMEOUT_MS
-    #define ggdconfigTCP_SEND_TIMEOUT_MS    ( 60000 )
+    #define ggdconfigTCP_SEND_TIMEOUT_MS    ( 300000 )
 #endif
 
 /**
