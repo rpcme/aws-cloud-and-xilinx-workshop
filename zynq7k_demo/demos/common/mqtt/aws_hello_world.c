@@ -483,7 +483,7 @@ static MQTTBool_t prvMQTTCallback( void * pvUserData,
 static void prvMQTTConnectAndPublishTask( void * pvParameters )
 {
     BaseType_t x, xReturned;
-    const TickType_t xFiveSeconds = pdMS_TO_TICKS( 2000UL );
+    const TickType_t xFiveSeconds = pdMS_TO_TICKS( 5000UL );
 //    const BaseType_t xIterationsInAMinute = 60 / 5;
     TaskHandle_t xEchoingTask = NULL;
 
