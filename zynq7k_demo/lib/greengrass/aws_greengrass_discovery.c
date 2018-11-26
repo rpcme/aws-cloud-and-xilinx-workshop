@@ -180,6 +180,7 @@ BaseType_t GGD_GetGGCIPandCertificate( char * pcBuffer, /*lint !e971 can use cha
 
     if( xStatus == pdPASS )
     {
+    	xil_printf("JSON Size: %u\r\n",ulJSONFileSize);
         /* Loop until the full JSON is retrieved. */
         do {
             xStatus = GGD_JSONRequestGetFile( &xSocket,
@@ -215,11 +216,18 @@ BaseType_t GGD_GetGGCIPandCertificate( char * pcBuffer, /*lint !e971 can use cha
 
     if( xStatus == pdPASS )
     {
+    	xil_printf("JSON: %s\r\n",pcBuffer);
+
+        /* Start critical section. */
+        taskENTER_CRITICAL();
         xStatus = GGD_GetIPandCertificateFromJSON( pcBuffer,
                                                    ulJSONFileSize,
                                                    NULL,
                                                    pxHostAddressData,
                                                    pdTRUE );
+
+        /* End critical section. */
+        taskEXIT_CRITICAL();
     }
 
     return xStatus;

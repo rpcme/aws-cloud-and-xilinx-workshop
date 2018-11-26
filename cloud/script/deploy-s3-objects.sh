@@ -96,12 +96,12 @@ EOF
 
 for i in 1 2; do
   echo Staging ${f_bitstream} to version ${i}
-  aws s3 cp --quiet ${bitstream}  s3://${bucket_name}/bitstream_deploy/${i}/${f_bitstream}
+  aws s3 cp --quiet  --acl public-read \
+    ${bitstream}  s3://${bucket_name}/bitstream_deploy/${i}/${f_bitstream}
   echo Staging ${f_parameters} to version ${i}
-  aws s3 cp --quiet ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
+  aws s3 cp --quiet  --acl public-read \
+  ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
 done
-
-#aws s3 sync ${local_path} s3://${bucket_name}/ --acl public-read
 
 # When the bitstream download operation takes place during Greengrass lambda
 # invocation, the birstream will be placed here.

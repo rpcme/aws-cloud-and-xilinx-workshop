@@ -43,11 +43,6 @@ After the set-up the Ultra96 should look like the picture below.
 The MicroZed should power up automatically when you plug in the microUSB cable. Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
 The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated.
 
-### System Software Installation
-
-#### Ultra96 Portable Drive
-No installation is required - you should see 'PYNQ-USB' mapped to a drive letter in Windows Explorer. Note the drive letter.
-
 #### Serial Port Installation
 The MicroZed and the Ultra96 have one COM port each.
 (Windows 7) Open Device Manager to locate your COM ports.  Note the two COM port numbers.
@@ -137,13 +132,13 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 
    The script performs the following functions:
    
-   * Creates an Amazon S3 bucket named `<your-unique-prefix>-aws-cloud-and-xilinx-workshop`
-   * Creates a local folder `/home/xilinx/<your-unique-prefix>-aws-cloud-and-xilinx-workshop` that will be used throughout the lab.
+   * Creates an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
+   * Creates a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
 
    If you receive an error from the script stating the prefix has already been chosen, then please choose another.
 
 	```bash
-	./deploy-s3-objects.sh <your-unique-prefix>
+	./deploy-s3-objects.sh <prefix>
 	```
 
 ## Outcomes

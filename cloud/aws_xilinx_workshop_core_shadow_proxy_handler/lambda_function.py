@@ -23,6 +23,10 @@ def lambda_handler(event, context):
         logger.info("found led")
         client.publish(topic='func/io-error-handler', payload=json.dumps(payload))
         logger.info("Publish completed.")
+    if 'is_connected' in payload.keys():
+        logger.info("found is_connected")
+        client.publish(topic='func/aws-connectivity-handler', payload=json.dumps(payload))
+        logger.info("Publish completed.")
     if 'bitstream_version' in payload.keys():
         logger.info("found bitstream_version")
         client.publish(topic='func/bitstream-deploy-handler', payload=json.dumps(payload))

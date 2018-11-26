@@ -29,7 +29,7 @@
 #include "aws_demo.h"
 
 /* MQTT echo task example parameters. */
-#define democonfigMQTT_UZED_IOT_TASK_STACK_SIZE                ( 1024 )
+#define democonfigMQTT_UZED_IOT_TASK_STACK_SIZE                ( 2048 )
 #define democonfigMQTT_UZED_IOT_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 2)
 
 demoDECLARE_DEMO( vStartMQTTUZedIotDemo );
