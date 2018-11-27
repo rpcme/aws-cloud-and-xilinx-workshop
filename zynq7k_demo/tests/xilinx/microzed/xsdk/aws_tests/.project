@@ -125,16 +125,6 @@
 			<locationURI>AFR_ROOT/tests/xilinx/microzed/common/config_files/aws_wifi_config.h</locationURI>
 		</link>
 		<link>
-			<name>src/config_files/trcConfig.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/xilinx/microzed/common/config_files/trcConfig.h</locationURI>
-		</link>
-		<link>
-			<name>src/config_files/trcSnapshotConfig.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/xilinx/microzed/common/config_files/trcSnapshotConfig.h</locationURI>
-		</link>
-		<link>
 			<name>src/config_files/unity_config.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/tests/xilinx/microzed/common/config_files/unity_config.h</locationURI>
@@ -145,24 +135,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/lib/bufferpool</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/lib/crypto</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/lib/pkcs11</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/lib/third_party</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/application_code/common_test/crypto</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/tests/common/crypto</locationURI>
 		</link>
 		<link>
 			<name>src/application_code/common_test/devmode_key_provisioning</name>
@@ -173,6 +153,11 @@
 			<name>src/application_code/common_test/framework</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/application_code/common_test/greengrass</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/tests/common/greengrass</locationURI>
 		</link>
 		<link>
 			<name>src/application_code/common_test/include</name>
@@ -205,17 +190,17 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/application_code/common_test/shadow</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/tests/common/shadow</locationURI>
+		</link>
+		<link>
 			<name>src/application_code/common_test/test_runner</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/application_code/common_test/tls</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -260,6 +245,21 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/lib/aws/bufferpool</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/lib/aws/crypto</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/lib/aws/greengrass</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/greengrass</locationURI>
+		</link>
+		<link>
 			<name>src/lib/aws/include</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -280,6 +280,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/lib/aws/shadow</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/shadow</locationURI>
+		</link>
+		<link>
 			<name>src/lib/aws/tls</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -290,19 +295,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/lib/bufferpool/aws_bufferpool_static_thread_safe.c</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/lib/bufferpool/aws_bufferpool_static_thread_safe.c</locationURI>
-		</link>
-		<link>
-			<name>src/lib/crypto/aws_crypto.c</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/lib/crypto/aws_crypto.c</locationURI>
-		</link>
-		<link>
-			<name>src/lib/pkcs11/aws_pkcs11_mbedtls.c</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/lib/pkcs11/mbedtls/aws_pkcs11_mbedtls.c</locationURI>
+			<name>src/lib/third_party/jsmn</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/third_party/jsmn</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/mbedtls</name>
@@ -317,12 +312,12 @@
 		<link>
 			<name>src/lib/third_party/unity</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>AFR_ROOT/lib/third_party/unity/src</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/unity_fixture</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>AFR_ROOT/lib/third_party/unity/extras/fixture/src</locationURI>
 		</link>
 		<link>
 			<name>src/application_code/common_test/devmode_key_provisioning/aws_dev_mode_key_provisioning.c</name>
@@ -430,6 +425,11 @@
 			<locationURI>AFR_ROOT/tests/common/include/aws_test_tcp.h</locationURI>
 		</link>
 		<link>
+			<name>src/application_code/common_test/include/aws_test_tls.h</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/tests/common/include/aws_test_tls.h</locationURI>
+		</link>
+		<link>
 			<name>src/application_code/common_test/logging/aws_logging_task_dynamic_buffers.c</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/demos/common/logging/aws_logging_task_dynamic_buffers.c</locationURI>
@@ -468,26 +468,6 @@
 			<name>src/application_code/common_test/tls/aws_test_tls.c</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/tests/common/tls/aws_test_tls.c</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils/CertificateConfigurationTool</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils/echo_server.go</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/utils/echo_server.go</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils/readme-gencert.txt</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/utils/readme-gencert.txt</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils/tls_echo_server.go</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/utils/tls_echo_server.go</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/FreeRTOS/event_groups.c</name>
@@ -533,6 +513,16 @@
 			<name>src/lib/aws/FreeRTOS-Plus-TCP/source</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/lib/aws/bufferpool/aws_bufferpool_static_thread_safe.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/bufferpool/aws_bufferpool_static_thread_safe.c</locationURI>
+		</link>
+		<link>
+			<name>src/lib/aws/crypto/aws_crypto.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/crypto/aws_crypto.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/include/FreeRTOS.h</name>
@@ -645,9 +635,14 @@
 			<locationURI>AFR_ROOT/lib/mqtt/aws_mqtt_lib.c</locationURI>
 		</link>
 		<link>
+			<name>src/lib/aws/pkcs11/aws_pkcs11_mbedtls.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/pkcs11/mbedtls/aws_pkcs11_mbedtls.c</locationURI>
+		</link>
+		<link>
 			<name>src/lib/aws/pkcs11/aws_pkcs11_pal.c</name>
 			<type>1</type>
-			<locationURI>AFR_ROOT/lib/pkcs11/portable/xilinx/zynq/aws_pkcs11_pal.c</locationURI>
+			<locationURI>AFR_ROOT/lib/pkcs11/portable/xilinx/microzed/aws_pkcs11_pal.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/secure_sockets/aws_secure_sockets.c</name>
@@ -688,46 +683,6 @@
 			<name>src/lib/third_party/pkcs11/pkcs11t.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/pkcs11/pkcs11t.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity/unity.c</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/src/unity.c</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity/unity.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/src/unity.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity/unity_internals.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/src/unity_internals.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity_fixture/unity_fixture.c</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/extras/fixture/src/unity_fixture.c</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity_fixture/unity_fixture.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/extras/fixture/src/unity_fixture.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity_fixture/unity_fixture_internals.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/extras/fixture/src/unity_fixture_internals.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/unity_fixture/unity_fixture_malloc_overrides.h</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/third_party/unity/extras/fixture/src/unity_fixture_malloc_overrides.h</locationURI>
-		</link>
-		<link>
-			<name>src/application_code/common_test/utils/CertificateConfigurationTool/PEMfileToCString.html</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/tests/common/utils/CertificateConfigurationTool/PEMfileToCString.html</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/FreeRTOS/portable/GCC</name>
@@ -1250,6 +1205,11 @@
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/platform_time.h</locationURI>
 		</link>
 		<link>
+			<name>src/lib/third_party/mbedtls/include/platform_util.h</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/platform_util.h</locationURI>
+		</link>
+		<link>
 			<name>src/lib/third_party/mbedtls/include/ripemd160.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/ripemd160.h</locationURI>
@@ -1348,11 +1308,6 @@
 			<name>src/lib/third_party/mbedtls/include/xtea.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/xtea.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/mbedtls/source/Makefile</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/Makefile</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/mbedtls/source/aes.c</name>
@@ -1583,6 +1538,11 @@
 			<name>src/lib/third_party/mbedtls/source/platform.c</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/platform.c</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/mbedtls/source/platform_util.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/platform_util.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/mbedtls/source/ripemd160.c</name>

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Xilinx, Inc.
- * Amazon FreeRTOS V1.0.0
+ * Amazon FreeRTOS V1.1.2  
  * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -46,8 +46,8 @@
 /* AWS library includes. */
 #include "aws_system_init.h"
 #include "aws_logging_task.h"
-#include "aws_wifi.h"
 #include "aws_clientcredential.h"
+#include "aws_dev_mode_key_provisioning.h"
 
 /* Logging Task Defines. */
 #define mainLOGGING_MESSAGE_QUEUE_LENGTH    ( 15 )
@@ -56,12 +56,8 @@
 /* Unit test defines. */
 #define mainTEST_RUNNER_TASK_STACK_SIZE     ( configMINIMAL_STACK_SIZE * 16 )
 
-/* The task delay for allowing the lower priority logging task to print out Wi-Fi
- * failure status before blocking indefinitely. */
-#define mainLOGGING_WIFI_STATUS_DELAY       pdMS_TO_TICKS( 1000 )
-
 /* The name of the devices for xApplicationDNSQueryHook. */
-#define mainDEVICE_NICK_NAME				"WindowsTest" /* FIX ME.*/
+#define mainDEVICE_NICK_NAME				"XilinxTest"
 
 /* Static arrays for FreeRTOS-Plus-TCP stack initialization for Ethernet network
  * connections are declared below. If you are using an Ethernet connection on your MCU
@@ -132,11 +128,6 @@ void vApplicationDaemonTaskStartupHook( void );
  */
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent );
 
-/**
- * @brief Connects to Wi-Fi.
- */
-static void prvWifiConnect( void );
-
 /*
  * Just seeds the simple pseudo random number generator.
  */
@@ -176,7 +167,7 @@ int main( void )
      * including the Wi-Fi initialization, is performed in the RTOS daemon task
      * startup hook. */
     vTaskStartScheduler();
-    configPRINT_STRING("vTaskStartScheduler complete - should not reach here \n\r");
+    configPRINTF( ("vTaskStartScheduler complete - should not reach here \n\r") );
 
     return 0;
 }
@@ -201,46 +192,18 @@ static void prvSRand( UBaseType_t ulSeed )
 	ulNextRand = ulSeed;
 }
 
+extern int platform_init_fs();
 static void prvMiscInitialization( void )
 {
 	time_t xTimeNow;
-	int Status;
-#if 0
-	XAdcPs_Config *ConfigPtr;
-	XAdcPs *XAdcInstPtr = &XAdcInst;
-	u16 TempRawData;
-	int chnum = 0, i;
-#endif
 
-    /* Perform any hardware initializations, that don't require the RTOS to be
-     * running, here.
-     */
-	//configPRINT_STRING("Test Message \n\r");
-
-		/* Seed the random number generator. */
-		time( &xTimeNow );
-		xil_printf("Seed for randomiser: %lu \n\r", xTimeNow);
-		prvSRand( ( uint32_t ) xTimeNow );
-		xil_printf("Random numbers: %08X %08X %08X %08X\n\r", ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32());
-		vPortInstallFreeRTOSVectorTable();
-		platform_init_fs();
-
-#if 0
-		ConfigPtr = XAdcPs_LookupConfig(XADC_DEVICE_ID);
-		if (ConfigPtr != NULL) {
-			XAdcPs_CfgInitialize(XAdcInstPtr, ConfigPtr,
-						ConfigPtr->BaseAddress);
-			XAdcPs_SetSequencerMode(XAdcInstPtr, XADCPS_SEQ_MODE_SAFE);
-			for (i = 0; i < 26; i++) {
-				TempRawData = XAdcPs_GetAdcData(XAdcInstPtr, chnum++);
-				xil_printf("XADC initialized %d: 0x%x \n\r", chnum, TempRawData);
-				if (chnum == 7)
-					chnum = 13;
-			}
-		} else {
-			xil_printf("XADC not found \n\r");
-		}
-#endif
+	/* Seed the random number generator. */
+	time( &xTimeNow );
+	xil_printf("Seed for randomiser: %lu \n\r", xTimeNow);
+	prvSRand( ( uint32_t ) xTimeNow );
+	xil_printf("Random numbers: %08X %08X %08X %08X\n\r", ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32());
+	vPortInstallFreeRTOSVectorTable();
+	platform_init_fs();
 }
 /*-----------------------------------------------------------*/
 
@@ -259,9 +222,10 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     /* If the network has just come up...*/
     if( eNetworkEvent == eNetworkUp )
     {
-    	configPRINT_STRING("Network connection successful.\n\r");
+    	configPRINTF( ("Network connection successful.\n\r") );
         if( ( xTasksAlreadyCreated == pdFALSE ) && ( SYSTEM_Init() == pdPASS ) )
         {
+            vDevModeKeyProvisioning();
             xTaskCreate( TEST_RUNNER_RunTests_task,
                          "TestRunner",
                          mainTEST_RUNNER_TASK_STACK_SIZE,
@@ -273,12 +237,6 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
 
 }
 
-/*-----------------------------------------------------------*/
-
-void prvWifiConnect( void )
-{
-	/* Not supported */
-}
 /*-----------------------------------------------------------*/
 
 /**
@@ -355,7 +313,7 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
  */
 void vApplicationMallocFailedHook()
 {
-	configPRINT_STRING("In vApplicationMallocFailedHook \n\r");
+	configPRINTF( ("In vApplicationMallocFailedHook \n\r") );
     /* The TCP tests will test behavior when the entire heap is allocated. In
      * order to avoid interfering with those tests, this function does nothing. */
 }
@@ -375,8 +333,6 @@ void vApplicationMallocFailedHook()
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
                                     char * pcTaskName )
 {
-	configPRINT_STRING("In vApplicationStackOverflowHook \n\r");
-	configPRINT_STRING(("taskname %s \n\r", pcTaskName));
     portDISABLE_INTERRUPTS();
 
     /* Loop forever */
@@ -462,7 +418,6 @@ time_t xReturn;
 
 #endif /* if ( ipconfigUSE_LLMNR != 0 ) || ( ipconfigUSE_NBNS != 0 ) */
 /*-----------------------------------------------------------*/
-#warning _gettimeofday_r is just stubbed out here.
 struct timezone;
 struct timeval;
 int _gettimeofday_r(struct _reent * x, struct timeval *y , struct timezone * ptimezone )
@@ -482,7 +437,7 @@ static const char *pcSuccess = "Ping reply received - ";
 static const char *pcInvalidChecksum = "Ping reply received with invalid checksum - ";
 static const char *pcInvalidData = "Ping reply received with invalid data - ";
 
-	configPRINT_STRING("vApplicationPingReplyHook \n\r");
+	configPRINTF( ("vApplicationPingReplyHook \n\r") );
 	switch( eStatus )
 	{
 		case eSuccess	:
@@ -525,7 +480,7 @@ void vAssertCalled(const char * pcFile,
 	(void)pcFileName;
 	(void)ulLineNumber;
 
-	printf("vAssertCalled %s, %ld\n", pcFile, (long)ulLine);
+	configPRINTF( ("vAssertCalled %s, %ld\n", pcFile, (long)ulLine) );
 	fflush(stdout);
 
 	/* Setting ulBlockVariable to a non-zero value in the debugger will allow
@@ -554,19 +509,4 @@ void vAssertCalled(const char * pcFile,
     }
 
 #endif
-
-    extern uint32_t ulApplicationGetNextSequenceNumber(
-         uint32_t ulSourceAddress,
-         uint16_t usSourcePort,
-         uint32_t ulDestinationAddress,
-         uint16_t usDestinationPort )
-    {
-         /* Ignoring input parameters. */
-         ( void ) ulSourceAddress;
-         ( void ) usSourcePort;
-         ( void ) ulDestinationAddress;
-         ( void ) usDestinationPort;
-
-         return uxRand();
-    }
 

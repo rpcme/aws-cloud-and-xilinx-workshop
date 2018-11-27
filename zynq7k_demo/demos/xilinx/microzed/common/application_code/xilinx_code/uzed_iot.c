@@ -32,7 +32,7 @@
  * MQTT topics at a defined rate.
  *
  * The demo uses one task. The task implemented by
- * prvMQTTConnectAndPublishTask() creates the MQTT client, subscribes to the
+ * prvUZedIotTask() creates the GG MQTT client, subscribes to the
  * broker specified by the clientcredentialMQTT_BROKER_ENDPOINT constant,
  * performs the publish operations periodically forever.
  */
@@ -114,7 +114,7 @@
 // System parameters for the MicroZed IOT kit
 
 #if UZED_USE_GG
-#define GG_DISCOVERY_FILE_SIZE    5000
+#define GG_DISCOVERY_FILE_SIZE    4096
 #endif
 
 /**
@@ -383,7 +383,7 @@ static void StopSystem(System* pSystem);
  * @param[in] pvParameters Parameters passed while creating the task. Unused in our
  * case.
  */
-static void prvMQTTConnectAndPublishTask( void * pvParameters );
+static void prvUZedIotTask( void * pvParameters );
 
 /*-----------------------------------------------------------*/
 
@@ -684,6 +684,7 @@ static void prvPublishSensors(System* pSystem)
 static void prvCreateClientAndConnectToBroker( System* pSystem )
 {
     MQTTAgentConnectParams_t xConnectParameters;
+    BaseType_t xStatus;
 
     configPRINTF( ( "MQTT UZed broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
@@ -691,11 +692,12 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
      * is set by mqttconfigMAX_BROKERS. */
     if( eMQTTAgentSuccess == MQTT_AGENT_Create( &pSystem->xMQTTHandle ) ) {
 #if UZED_USE_GG
-        configPRINTF( ( "Attempting automated selection of Greengrass device using group '%s'\r\n", clientcredentialGG_GROUP) );
-
+        configPRINTF( ( "Attempting automated selection of Greengrass device\r\n" ) );
         memset( &pSystem->xHostAddressData, 0, sizeof( GGD_HostAddressData_t ) );
-        if(pdPASS == GGD_GetGGCIPandCertificate(&pSystem->pcJSONFile[0],GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData)) {
-            configPRINTF( ("Success: GGD is %s\r\n", pSystem->xHostAddressData.pcHostAddress ) );
+        xStatus = GGD_GetGGCIPandCertificate(pSystem->pcJSONFile,GG_DISCOVERY_FILE_SIZE,&pSystem->xHostAddressData);
+
+        if(pdPASS == xStatus) {
+            configPRINTF( ("Success: GGC is %s\r\n", pSystem->xHostAddressData.pcHostAddress ) );
         	xConnectParameters.pcURL = pSystem->xHostAddressData.pcHostAddress;
             xConnectParameters.xFlags = mqttagentREQUIRE_TLS | mqttagentURL_IS_IP_ADDRESS;
             xConnectParameters.xURLIsIPAddress = pdTRUE; /* Deprecated. */
@@ -715,7 +717,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
             pSystem->xMQTTHandle = NULL;
         }
 #else
-        /* Connect to the broker. */
+        /* Connect directly to the broker. */
         xConnectParameters.pcURL = clientcredentialMQTT_BROKER_ENDPOINT; /* The URL of the MQTT broker to connect to. */
         xConnectParameters.xFlags = democonfigMQTT_AGENT_CONNECT_FLAGS;   /* Connection flags. */
         xConnectParameters.xURLIsIPAddress = pdFALSE;                              /* Deprecated. */
@@ -737,13 +739,13 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
                     democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT
                     )
                 ) {
-                configPRINTF( ( "SUCCESS: MQTT UZed connected\r\n" ) );
+                configPRINTF( ( "SUCCESS: connected\r\n" ) );
                 pSystem->rc = XST_SUCCESS;
             } else {
                 /* Could not connect, so delete the MQTT client. */
                 ( void ) MQTT_AGENT_Delete( pSystem->xMQTTHandle );
                 pSystem->rc = XST_FAILURE;
-                pSystem->pcErr = "ERROR: Could not connect to MQTT Agent\r\n";
+                pSystem->pcErr = "ERROR: Could not connect\r\n";
                 pSystem->xMQTTHandle = NULL;
                 configPRINTF( ( "%s\r\n", pSystem->pcErr ) );
             }
@@ -1568,6 +1570,8 @@ static void StartSystem(System* pSystem)
     pSystem->rc = XST_SUCCESS;
     pSystem->pcErr = "\r\n";
     pSystem->xMQTTHandle = NULL;
+
+    /*-----------------------------------------------------------------*/
     MAY_DIE({
         iLen = snprintf(
             (char*)pSystem->pbSensorTopic,
@@ -1690,7 +1694,7 @@ static void StopSystem(System* pSystem)
 
 /*--------------------------------------------------------------------------------*/
 
-static void prvMQTTConnectAndPublishTask( void * pvParameters )
+static void prvUZedIotTask( void * pvParameters )
 {
 	TickType_t xPreviousWakeTime;
     const TickType_t xSamplingPeriod = MS_TO_TICKS( SAMPLING_PERIOD_MS );
@@ -1736,17 +1740,17 @@ static void prvMQTTConnectAndPublishTask( void * pvParameters )
 
 void vStartMQTTUZedIotDemo( void )
 {
-    configPRINTF( ( "Creating MQTT UZed Task...\r\n" ) );
+    configPRINTF( ( "Creating UZed Task...\r\n" ) );
 
     /*
      * Create the task that publishes messages to the MQTT broker periodically
      */
-    ( void ) xTaskCreate( prvMQTTConnectAndPublishTask,        		/* The function that implements the demo task. */
-                          "MQTTUZedIot",                       		/* The name to assign to the task being created. */
+    ( void ) xTaskCreate( prvUZedIotTask,        		            /* The function that implements the demo task. */
+                          "UZedIot",                       		    /* The name to assign to the task being created. */
 						  democonfigMQTT_UZED_IOT_TASK_STACK_SIZE, 	/* The size, in WORDS (not bytes), of the stack to allocate for the task being created. */
                           NULL,                                		/* The task parameter is not being used. */
-                          democonfigMQTT_UZED_IOT_TASK_PRIORITY,   /* The priority at which the task being created will run. */
-                          NULL                              		/* Not storing the task's handle. */
+                          democonfigMQTT_UZED_IOT_TASK_PRIORITY,    /* The priority at which the task being created will run. */
+                          NULL                                      /* Not storing the task's handle. */
     					);
 }
 

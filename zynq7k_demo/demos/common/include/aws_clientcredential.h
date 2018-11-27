@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS V1.2.7
+ * Amazon FreeRTOS V1.4.4
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -59,30 +59,18 @@ extern const char clientcredentialIOT_THING_NAME[];
 /*
  * Wi-Fi network to join.
  */
-#define clientcredentialWIFI_SSID       "SSID HERE"
+#define clientcredentialWIFI_SSID       "Paste wifi ssid."
 
 /*
  * Password needed to join Wi-Fi network.
  */
-#define clientcredentialWIFI_PASSWORD   ""
+#define clientcredentialWIFI_PASSWORD   "Paste wifi password."
 
 /**
  * @brief Security type
  * WPA2 Security, @see WIFISecurity_t
- * Possible values are - eWiFiSecurityOpen, eWiFiSecurityWEP, eWiFiSecurityWPA,
- * eWiFiSecurityWPA2
+ * other values are - eWiFiSecurityOpen, eWiFiSecurityWEP, eWiFiSecurityWPA
  */
 #define clientcredentialWIFI_SECURITY   eWiFiSecurityWPA2
-
-/*
- * Length of device certificate included from aws_clientcredential_keys.h .
- */
-static const uint32_t clientcredentialCLIENT_CERTIFICATE_LENGTH = sizeof( clientcredentialCLIENT_CERTIFICATE_PEM );
-
-/*
- * Length of device private key included from aws_clientcredential_keys.h .
- */
-
-static const uint32_t clientcredentialCLIENT_PRIVATE_KEY_LENGTH = sizeof( clientcredentialCLIENT_PRIVATE_KEY_PEM );
 
 #endif

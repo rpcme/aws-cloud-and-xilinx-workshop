@@ -47,11 +47,8 @@
 #include "aws_helper_secure_connect.h"
 #include "jsmn.h"
 
-#include "aws_system_init.h"
-#include "aws_clientcredential.h"
-#include "aws_pkcs11_config.h"
-
 /* Standard includes. */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -253,7 +250,7 @@ BaseType_t GGD_JSONRequestStart( Socket_t * pxSocket )
         ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES] = 0;
         /* Send HTTP request over secure connection (HTTPS) to get the GGC JSON file. */
         xStatus = GGD_SecureConnect_Send( ggdCLOUD_DISCOVERY_ADDRESS,
-                                          ( uint32_t ) strlen( ggdCLOUD_DISCOVERY_ADDRESS ),
+                                          ( uint32_t ) sizeof( ggdCLOUD_DISCOVERY_ADDRESS ) - 1,
                                           *pxSocket );
 
         if( xStatus == pdFAIL )

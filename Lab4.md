@@ -126,7 +126,7 @@ synchronized with your S3 bucket.
 9. Go to your S3 bucket on AWS cloud; you will see there is a new folder `images` created. Check the images stored in that folder.
 
 
-`## Outcomes
+## Outcomes
 In this lab we used AWS Greengrass to deploy an ML video 
 surveillance application to a running control system in the Ultra96 platform. 
 

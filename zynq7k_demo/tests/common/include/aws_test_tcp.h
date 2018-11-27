@@ -29,11 +29,11 @@
  * Update tcptestECHO_SERVER_ADDR# and
  * tcptestECHO_PORT with IP address
  * and port of unencrypted TCP echo server. */
-#define tcptestECHO_SERVER_ADDR0        10
-#define tcptestECHO_SERVER_ADDR1        136
-#define tcptestECHO_SERVER_ADDR2        247
-#define tcptestECHO_SERVER_ADDR3        1
-#define tcptestECHO_PORT                ( 9001 )
+#define tcptestECHO_SERVER_ADDR0         34
+#define tcptestECHO_SERVER_ADDR1         218
+#define tcptestECHO_SERVER_ADDR2         25
+#define tcptestECHO_SERVER_ADDR3         197
+#define tcptestECHO_PORT                 ( 8883 )
 
 /* Encrypted Echo Server.
  * If tcptestSECURE_SERVER is set to 1, the following must be updated:
@@ -45,12 +45,19 @@
  * using TLS.
  * 5. tcptestECHO_HOST_ROOT_CA with the trusted root certificate of the
  * echo server using TLS. */
-#define tcptestSECURE_SERVER            1
+#define tcptestSECURE_SERVER             1
 
-#define tcptestECHO_SERVER_TLS_ADDR0    10
-#define tcptestECHO_SERVER_TLS_ADDR1    136
-#define tcptestECHO_SERVER_TLS_ADDR2    247
-#define tcptestECHO_SERVER_TLS_ADDR3    1
-//#define tcptestECHO_PORT_TLS            ( 443 )
-#define tcptestECHO_PORT_TLS            ( 9000 )
+#define tcptestECHO_SERVER_TLS_ADDR0     34
+#define tcptestECHO_SERVER_TLS_ADDR1     218
+#define tcptestECHO_SERVER_TLS_ADDR2     25
+#define tcptestECHO_SERVER_TLS_ADDR3     197
+#define tcptestECHO_PORT_TLS             ( 443 )
+
+/* Number of times to retry a connection if it fails. */
+#define tcptestRETRY_CONNECTION_TIMES    6
+
+/* The root certificate used for the encrypted echo server.
+ * This certificate is self-signed, and not in the trusted catalog. */
+static const char tcptestECHO_HOST_ROOT_CA[] = "Paste root certificate here";
+
 #endif /* ifndef AWS_TEST_TCP_H */
