@@ -125,10 +125,8 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
-2. Run the script that triggers the Cloudformation deployment. The script packages deployable artifacts  such as AWS Lambda functions, copies all the artifacts to an S3 bucket, and then executes the Cloudformation script from that S3 bucket.  Ensure you include a unique-prefix that is short and easily remembered. 
 
-
-3. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.
+2. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.
 
    The script performs the following functions:
    
