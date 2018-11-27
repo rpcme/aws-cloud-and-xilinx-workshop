@@ -22,50 +22,6 @@ You should be able to see a running process in the background.
 
 ## Lab Steps
 
-In Lab 2, we tested our AWS Greengrass Core on the topic "hello/world". In this lab, we will work more with the AWS Greengrass Core's Device Shadow and other topics:
-
-* ```compressor/<groupname>```: The AWS Lambda function responsible for uploading video frame images with inferred 'boxes' around persons sends telemetry to this topic. The message payload composes the number of persons found and the image file name.
-
-Our ML video surveillance application uses two parameters:
-
-* 'num_seconds': specifies how long this application runs.
-* 'threshold': specifies the capture condition. The video frame is captured when there are a number of persons no less than the threshold value.
-
-Now lets get started with the existing AWS Greengrass group:
-
-1. Connect the eCon USB camera to the Ultra96 board J8.  See the picture below showing Ultra96 with the camera connected.
-
-   ![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
-
-2. In the terminal window connected to the Ultra96, issue the folowing command:
-   
-   ```bash
-   cd /home/xilinx/download
-   ```
-   Verify that this folder is empty before we do anything.
-
-3. Now lets redeploy the AWS Greengass group.
-
-   ```bash
-   cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-   ./deploy-greengrass-group.sh <prefix>
-   ```
-
-   After a few seconds your group should be successfully deployed.
-   
-4. Go to the AWS IoT Console page and click on **Test** on the left-hand side menu. 
-5. Click on **Subscribe to a topic** under the **Subscriptions** header.
-6. In the **Subscription topic** input box, enter ```compressor/+```. 
-7. Click the **Subscribe to topic** button.
-
-    **TODO** NEED TO CHANGE See picture below for expected result.
-
-   ![alt text](images/Subscribe_Video_Inference.PNG)
-
-   > Notice that your have a long-running lambda function already publishing on the topic ```compressor/+```, indicating the video inference is being called. 
-
-   Since you have not provided any ML configurations, the video surveillance application will use the default parameters ('num_seconds' = 5, 'threshold' = 2).
-
 8. In AWS IoT Console go to the **Manage** menu on the left pane.
 9. Click **Things**, which is the first item under **Manage**.
 10. Locate the Thing that represents your core. The name is ```<prefix>-gateway-ultra96```.
