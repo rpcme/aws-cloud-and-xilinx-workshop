@@ -4,7 +4,7 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 
 ## Configure AWS IoT Credentials and Deploy to MicroZed microSD card
 
-In this section, you will configure and deploy AWS IoT Core credentials and copy them to the MicroZed microSD card. The physical credential files, the private key and certificate for each device, will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-GGGROUP-gateway-ultra96```.
+In this section, you will configure and deploy AWS IoT Core credentials and copy them to the MicroZed microSD card. The physical credential files, the private key and the certificate for each device will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-PREFIX-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-PREFIX-gateway-ultra96```, where PREFIX is your greengrass group and s3 bucket prefix.
 
 1. Ensure the the MiroZed board is powered off by unplugging its two USB cables.
 2. Eject the MicroZed microSD card.  The microSD card is ejected by gently pressing the card forward toward the slot entry, releasing, and then pulling the card out by hand.
@@ -21,16 +21,16 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
    ./deploy-awsiot-objects.sh <prefix>
    ```
 
-   When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. You should see the following files, where GGGROUP is your group prefix:
+   When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. You should see the following files:
    
    * BOOT.bin
-   * GGGROUP-node-zynq7k.crt.der	
-   * GGGROUP-node-zynq7k.key.prv.der
+   * PREFIX-node-zynq7k.crt.der	
+   * PREFIX-node-zynq7k.key.prv.der
    * ggconfig.txt
    
    BOOT.bin contains the application run on the MicroZed and its associated hardware design.
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
-   The file 'ggconfig.txt' contains broker endpoint information and GGGROUP for use by the application.
+   The file 'ggconfig.txt' contains broker endpoint information and PREFIX for use by the application.
 
 7. Remove the USB-to-SD Card adapter from the Ultra96 USB port.
 8. Remove the microSD card from the USB-to-SD adapter.
