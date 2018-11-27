@@ -46,13 +46,6 @@
 #define democonfigMQTT_UZED_TLS_NEGOTIATION_TIMEOUT        pdMS_TO_TICKS( 60000 )
 
 /**
- * @brief MQTT client ID.
- *
- * It must be unique per MQTT broker.
- */
-#define UZedCLIENT_ID          ( ( const uint8_t * ) "MQTTUZed" )
-
-/**
  * @brief Dimension of the character array buffers used to hold data (strings in
  * this case) that is published to and received from the MQTT broker (in the cloud).
  */
@@ -67,6 +60,17 @@
  * @brief If set to 1, use GreenGrass instead of raw MQTT
  */
 #define UZED_USE_GG 1
+
+/**
+ * @brief MQTT client ID.
+ *
+ * It must be unique per MQTT broker.
+ */
+#if UZED_USE_GG
+#define UZedCLIENT_ID          ( ( const uint8_t * ) "GGUZed" )
+#else
+#define UZedCLIENT_ID          ( ( const uint8_t * ) "MQTTUZed" )
+#endif
 
 //////////////////// END USER PARAMETERS ////////////////////
 
@@ -258,7 +262,7 @@
 	    code; \
 		if(pSystem->rc != XST_SUCCESS) { \
             pSystem->bError = 1; \
-			xil_printf( pSystem->pcErr, pSystem->rc ); \
+			configPRINTF( (pSystem->pcErr, pSystem->rc ) ); \
 			StopHere(); \
 			goto L_DIE; \
 		} \
@@ -574,23 +578,23 @@ static void prvPublish(System* pSystem, MQTTAgentPublishParams_t* pPublishParame
     xReturned = MQTT_AGENT_Publish( pSystem->xMQTTHandle, pPublishParameters, democonfigMQTT_TIMEOUT );
     switch(xReturned) {
     case eMQTTAgentSuccess:
-    	configPRINTF( ( "Success: UZed published '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+    	configPRINTF( ( "Success: Published '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
     	break;
 
     case eMQTTAgentFailure:
     	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed failed to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+        configPRINTF( ( "ERROR: Failed to publish '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
         break;
 
     case eMQTTAgentTimeout:
     	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed timed out to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+        configPRINTF( ( "ERROR: Timed out publishing '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
         break;
 
     default:	//FallThrough
     case eMQTTAgentAPICalledFromCallback:
     	BlinkLed(pSystem, 1, pdFALSE);
-        configPRINTF( ( "ERROR:  UZed unexpected callback to publish '%s': '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
+        configPRINTF( ( "ERROR: Unexpected callback publishing '%s'\r\n", (const char*)pPublishParameters->pucTopic, (const char*)pPublishParameters->pvData ) );
     	configASSERT(pdTRUE);
     	break;	// Not reached
     }
@@ -686,7 +690,7 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
     MQTTAgentConnectParams_t xConnectParameters;
     BaseType_t xStatus;
 
-    configPRINTF( ( "MQTT UZed broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
+    configPRINTF( ( "Broker ID: '%s'\r\n", clientcredentialMQTT_BROKER_ENDPOINT ) );
     /* The MQTT client object must be created before it can be used.  The
      * maximum number of MQTT client objects that can exist simultaneously
      * is set by mqttconfigMAX_BROKERS. */
@@ -732,7 +736,9 @@ static void prvCreateClientAndConnectToBroker( System* pSystem )
 #endif
 
         if(xConnectParameters.pcURL) {
-            configPRINTF( ( "INFO: UZed attempting to connect to '%s'\r\n", xConnectParameters.pcURL ) );
+            configPRINTF( ( "INFO: %s: Attempting to connect to '%s'\r\n",
+            		UZED_USE_GG? "GreenGrass":"MQTT",
+            		xConnectParameters.pcURL ) );
             if(eMQTTAgentSuccess == MQTT_AGENT_Connect(
                     pSystem->xMQTTHandle,
                     &xConnectParameters,
@@ -973,6 +979,7 @@ static void SampleBarometer(System* pSystem)
     if(!pSystem->bBarometerOk) {
         return;
     }
+    pSystem->rc = XST_SUCCESS;
 
 	/*
 	 * NOTE: The one shot auto clears but it seems to take 36ms
@@ -1169,6 +1176,7 @@ static void SampleHygrometer(System* pSystem)
     if(!pSystem->bHygrometerOk) {
         return;
     }
+    pSystem->rc = XST_SUCCESS;
 
 	/*
 	 * NOTE: The one shot auto clears but it seems to take FIXME ms
@@ -1495,6 +1503,7 @@ static void SamplePLTempSensor(System* pSystem)
     if(!pSystem->bThermocoupleOk) {
         return;
     }
+    pSystem->rc = XST_SUCCESS;
 
 	// Execute 4-byte read transaction.
 	MAY_DIE({
@@ -1548,7 +1557,6 @@ static void SamplePLTempSensor(System* pSystem)
     return;
 
 L_DIE:
-    pSystem->bThermocoupleOk = pdFALSE;
     return;
 }
 
@@ -1688,7 +1696,7 @@ static void StopSystem(System* pSystem)
 	BlinkLed(pSystem, 5, pdFALSE);
 
 	/* End the demo by deleting all created resources. */
-	configPRINTF( ( "MQTT UZed sensor demo finished.\r\n" ) );
+	configPRINTF( ( "Sensor demo done.\r\n" ) );
 	vTaskDelete( NULL ); /* Delete this task. */
 }
 
@@ -1740,7 +1748,7 @@ static void prvUZedIotTask( void * pvParameters )
 
 void vStartMQTTUZedIotDemo( void )
 {
-    configPRINTF( ( "Creating UZed Task...\r\n" ) );
+    configPRINTF( ( "Creating UZedIot Task...\r\n" ) );
 
     /*
      * Create the task that publishes messages to the MQTT broker periodically
