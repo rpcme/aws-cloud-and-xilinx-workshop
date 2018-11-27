@@ -1602,7 +1602,7 @@ static void StartSystem(System* pSystem)
         iLen = snprintf(
             (char*)pSystem->pbShadowTopic,
             SYSTEM_SHADOW_TOPIC_LENGTH+1,
-            "$aws/things/%s-gateway-ultra96-Client/shadow/update",
+            "$aws/things/%s-gateway-ultra96/shadow/update",
             clientcredentialGG_GROUP
             );
         if((iLen < 0) || (iLen > SYSTEM_SENSOR_TOPIC_LENGTH)) {
