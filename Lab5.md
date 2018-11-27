@@ -70,7 +70,7 @@ Now lets get started with the existing AWS Greengrass group:
 9. Click **Things**, which is the first item under **Manage**.
 10. Locate the Thing that represents your core. The name is ```<prefix>-gateway-ultra96```.
 11. Click on **Shadow**.
-12. Click on the **Edit** link.
+12. The first time you get onto this page, you may need to create a shadow document. Otherwise click on the **Edit** link. 
 13. Change the Device Shadow JSON document until it aligns with the following block where the desired state for ```bitstream_version``` is ```2```.  Note, based on what has happened in previous labs, the Device  Shadow might look slightly different.  The key is setting the desired state of the ```bitstream_version```.
 
 	```json
