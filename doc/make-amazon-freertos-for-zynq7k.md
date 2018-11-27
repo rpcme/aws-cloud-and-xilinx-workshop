@@ -17,7 +17,7 @@ These are the steps to build the MicroZed code for the workshop:
 
    ![alt text](images/xsdk_string_subst.jpeg "")
 
-6. Create a new variable ```AFR_HOME``` and set its value to ```CLONEPATH/zynq7k_demo```
+6. Create a new variable ```AFR_ROOT``` and set its value to ```CLONEPATH/zynq7k_demo```
    YOU SHOULD USE ONLY FORWARD SLASHES '/' FOR THE PATH SEPARATOR, EVEN ON WINDOWS
    e.g. D:/b/reinvent/aws-cloud-and-xilinx-workshop-master/zynq7k_demo
 
@@ -25,7 +25,7 @@ These are the steps to build the MicroZed code for the workshop:
 
 7. OK your way back to the empty workspace
 
-8. Import pre-defined projects into workspace – the root directory should be ```AFR_HOME```.
+8. Import pre-defined projects into workspace – the root directory should be ```AFR_ROOT```.
 
    File -> Import... -> General -> Existing Projects into Workspace -> Next -> Select Root Directory -> Browse...
    DOUBLE CHECK THE ROOT DIRECTORY AFTER SETTING IT AS IT MAY END UP SELECTING A SUBDIRECTORY. MANUALLY EDIT IF NECESSARY.
