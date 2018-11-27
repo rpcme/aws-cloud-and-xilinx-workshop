@@ -29,6 +29,9 @@ def lambda_handler(event, context):
 
     payload=event
     if 'bitstream_version' in payload.keys():
+        if not os.path.exists(bit_folder_path):
+            os.mkdir(bit_folder_path)
+
         version = event['bitstream_version']
         session = Session()
         _ = session.get_credentials()
