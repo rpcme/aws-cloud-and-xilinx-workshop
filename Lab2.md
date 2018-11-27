@@ -24,8 +24,8 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
    When the script completes, the keys and certificates will be in the directories specified above. The script will also copy any necessary files directly to the MicroZed microSD card. You should see the following files, where GGGROUP is your group prefix:
    
    * BOOT.bin
-   * GGGROUP-node-zynq7k.crt.pem	
-   * GGGROUP-node-zynq7k.key.prv.pem
+   * GGGROUP-node-zynq7k.crt.der	
+   * GGGROUP-node-zynq7k.key.prv.der
    * ggconfig.txt
    
    BOOT.bin contains the application run on the MicroZed and its associated hardware design.
