@@ -74,11 +74,11 @@ Now lets get started with the existing AWS Greengrass group:
 13. Change the Device Shadow JSON document until it aligns with the following block where the desired state for ```bitstream_version``` is ```2```.  Note, based on what has happened in previous labs, the Device  Shadow might look slightly different.  The key is setting the desired state of the ```bitstream_version```.
 
 	```json
-   {
-     "desired": {
-       "bitstream_version": 2
-     }
-   }
+   	{
+     		"desired": {
+       		"bitstream_version": 2
+     		}
+   	}
 	```
 
 14. Click **Save**.
