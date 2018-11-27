@@ -1,6 +1,6 @@
 # Lab 4: Deploy ML in the edge
 
-In this lab we will deploy an FPGA based machine learning (ML) video 
+In this lab we will experience FPGA based machine learning (ML) video 
 surveillance application to the remote asset unit controller for the **Compressor** physically represented by the Ultra96 development board.
 The AWS IoT console will serves as the system deployment dashboard; we will incrementally add and test functions for the running system.
 
