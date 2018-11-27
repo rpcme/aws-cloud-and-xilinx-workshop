@@ -1,4 +1,4 @@
-# Lab 4: Deploy ML in the edge
+# Lab 5: Deploy ML in the edge
 
 In this lab we will experience FPGA based machine learning (ML) video 
 surveillance application to the remote asset unit controller for the **Compressor** physically represented by the Ultra96 development board.
