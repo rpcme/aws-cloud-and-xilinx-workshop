@@ -28,9 +28,10 @@ In this lab we will demonstrate the intelligent I/O module of the MicroZed kit c
 
 # Lab 4: Deriving Machine Learning Inference Value
 
+Time to completion: 25 minutes
+
 In this lab we will use the video machine learning inference function of the FPGA to trigger an interaction with AWS cloud.  The Ultra96 upon detection of a person send a copy of the video frame capture to AWS cloud which will then be used to add an alert to the system monitor dash board that someone is near the asset and display a picture of that person. 
 
-Time to completion: 25 minutes
 [Go to Lab 4](./Lab4.md)
 
 
