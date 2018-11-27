@@ -47,10 +47,6 @@
 #include "aws_helper_secure_connect.h"
 #include "jsmn.h"
 
-#include "aws_system_init.h"
-#include "aws_clientcredential.h"
-#include "aws_pkcs11_config.h"
-
 /* Standard includes. */
 #include <stdlib.h>
 #include <string.h>
@@ -180,7 +176,6 @@ BaseType_t GGD_GetGGCIPandCertificate( char * pcBuffer, /*lint !e971 can use cha
 
     if( xStatus == pdPASS )
     {
-    	xil_printf("JSON Size: %u\r\n",ulJSONFileSize);
         /* Loop until the full JSON is retrieved. */
         do {
             xStatus = GGD_JSONRequestGetFile( &xSocket,
@@ -216,18 +211,11 @@ BaseType_t GGD_GetGGCIPandCertificate( char * pcBuffer, /*lint !e971 can use cha
 
     if( xStatus == pdPASS )
     {
-    	xil_printf("JSON: %s\r\n",pcBuffer);
-
-        /* Start critical section. */
-        taskENTER_CRITICAL();
         xStatus = GGD_GetIPandCertificateFromJSON( pcBuffer,
                                                    ulJSONFileSize,
                                                    NULL,
                                                    pxHostAddressData,
                                                    pdTRUE );
-
-        /* End critical section. */
-        taskEXIT_CRITICAL();
     }
 
     return xStatus;
@@ -261,7 +249,7 @@ BaseType_t GGD_JSONRequestStart( Socket_t * pxSocket )
         ggdCLOUD_DISCOVERY_ADDRESS[ggdCLOUD_DISCOVERY_ADDRESS_BYTES] = 0;
         /* Send HTTP request over secure connection (HTTPS) to get the GGC JSON file. */
         xStatus = GGD_SecureConnect_Send( ggdCLOUD_DISCOVERY_ADDRESS,
-                                          ( uint32_t ) strlen( ggdCLOUD_DISCOVERY_ADDRESS ),
+                                          ( uint32_t ) sizeof( ggdCLOUD_DISCOVERY_ADDRESS ) - 1,
                                           *pxSocket );
 
         if( xStatus == pdFAIL )

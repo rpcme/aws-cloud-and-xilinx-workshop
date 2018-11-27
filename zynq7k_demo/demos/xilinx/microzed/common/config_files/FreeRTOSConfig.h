@@ -1,6 +1,6 @@
 /*
  * FreeRTOS Kernel V10.0.1
- * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -26,7 +26,7 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-/* Unity includes for testing. */
+/* Xilinx includes. */
 #include "xparameters.h"
 
 /*-----------------------------------------------------------
@@ -164,7 +164,7 @@ extern void vLoggingPrint( const char * pcMessage );
 #define configPRINT( X )     vLoggingPrint( X )
 
 /* Map the logging task's printf to the board specific output function. */
-#include <stdio.h>
+#include "xil_printf.h"
 #define configPRINT_STRING( X )    xil_printf( X );
 /* Sets the length of the buffers into which logging messages are written - so
  * also defines the maximum length of each log message. */ 
@@ -176,10 +176,6 @@ extern void vLoggingPrint( const char * pcMessage );
 
 /* The priority at which the tick interrupt runs.  This should probably be kept at 1. */
 #define configKERNEL_INTERRUPT_PRIORITY             1
-
-/* The maximum interrupt priority from which FreeRTOS API functions can be called.
- * Only API functions that end in ...FromISR() can be used within interrupts. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY        ( 1 << 5 )
 
 /****** Hardware specific settings. *******************************************/
 
@@ -286,9 +282,7 @@ Zynq MPU. */
 extern uint32_t uxRand();
 #define configRAND32()    uxRand()
 
-
-
-/* Header required for the tracealyzer recorder library. */
-/* #include "trcRecorder.h" */
+/* The platform FreeRTOS is running on. */
+#define configPLATFORM_NAME    "XilinxZynq7000"
 
 #endif /* FREERTOS_CONFIG_H */

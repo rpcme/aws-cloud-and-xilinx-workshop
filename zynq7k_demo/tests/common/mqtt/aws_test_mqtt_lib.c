@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS
+ * Amazon FreeRTOS MQTT AFQP V1.1.2  
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -291,7 +291,7 @@ static MQTTReturnCode_t prvSendMQTTConnect( void )
     xConnectParams.pucUserName = ( const uint8_t * ) "Amazon FreeRTOS";
     xConnectParams.usUserNameLength = ( uint16_t ) ( strlen( ( const char * ) xConnectParams.pucUserName ) );
     xConnectParams.usPacketIdentifier = ( uint16_t ) testmqttlibCONNECT_PACKET_ID;
-    xConnectParams.usKeepAliveIntervlSeconds = mqttconfigKEEP_ALIVE_INTERVAL_SECONDS;
+    xConnectParams.usKeepAliveIntervalSeconds = mqttconfigKEEP_ALIVE_INTERVAL_SECONDS;
     xConnectParams.ulKeepAliveActualIntervalTicks = mqttconfigKEEP_ALIVE_ACTUAL_INTERVAL_TICKS;
     xConnectParams.ulPingRequestTimeoutTicks = mqttconfigKEEP_ALIVE_TIMEOUT_TICKS;
     xConnectParams.ulTimeoutTicks = testmqttlibOPERATION_TIMEOUT_TICKS;

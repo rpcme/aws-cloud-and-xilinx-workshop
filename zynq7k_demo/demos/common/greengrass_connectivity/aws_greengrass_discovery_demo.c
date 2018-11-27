@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS Greengrass Demo V1.2.6
+ * Amazon FreeRTOS Greengrass Demo V1.4.4
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -55,7 +55,7 @@
 
 #define ggdDEMO_MAX_MQTT_MESSAGES      3
 #define ggdDEMO_MAX_MQTT_MSG_SIZE      500
-#define ggdDEMO_DISCOVERY_FILE_SIZE    2500
+#define ggdDEMO_DISCOVERY_FILE_SIZE    2800
 #define ggdDEMO_MQTT_MSG_TOPIC         "freertos/demos/ggd"
 #define ggdDEMO_MQTT_MSG_DISCOVERY     "{\"message\":\"Hello #%lu from Amazon FreeRTOS to Greengrass Core.\"}"
 
@@ -217,6 +217,7 @@ static void prvDiscoverGreenGrassCore( void * pvParameters )
         }
     }
 
+    configPRINTF( ("----Demo finished----\r\n") );
     vTaskDelete( NULL );
 }
 

@@ -189,14 +189,14 @@ static BaseType_t ReadGreenGrassInfo( const char * pcFileName)
 
     pDst = (char*)pkcs11configFILE_NAME_CLIENT_CERTIFICATE;
     (void)snprintf(pDst, FILE_NAMELEN + 1,
-        "%s-node-zynq7k.crt.pem",
+        "%s-node-zynq7k.crt.der",
         clientcredentialGG_GROUP
         );
     pDst[FILE_NAMELEN] = 0;
 
     pDst = (char*)pkcs11configFILE_NAME_KEY;
     (void)snprintf(pDst, FILE_NAMELEN + 1,
-        "%s-node-zynq7k.key.prv.pem",
+        "%s-node-zynq7k.key.prv.der",
         clientcredentialGG_GROUP
         );
     pDst[FILE_NAMELEN] = 0;

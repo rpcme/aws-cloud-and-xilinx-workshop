@@ -230,6 +230,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>src/lib/aws/shadow</name>
+			<type>2</type>
+			<locationURI>AFR_ROOT/lib/shadow</locationURI>
+		</link>
+		<link>
 			<name>src/lib/aws/tls</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -338,6 +343,11 @@
 			<name>src/application_code/common_demos/source/aws_logging_task_dynamic_buffers.c</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/demos/common/logging/aws_logging_task_dynamic_buffers.c</locationURI>
+		</link>
+		<link>
+			<name>src/application_code/common_demos/source/aws_shadow_lightbulb_on_off.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/demos/common/shadow/aws_shadow_lightbulb_on_off.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/FreeRTOS/event_groups.c</name>
@@ -522,7 +532,7 @@
 		<link>
 			<name>src/lib/aws/pkcs11/aws_pkcs11_pal.c</name>
 			<type>1</type>
-			<locationURI>AFR_ROOT/lib/pkcs11/portable/xilinx/zynq/aws_pkcs11_pal.c</locationURI>
+			<locationURI>AFR_ROOT/lib/pkcs11/portable/xilinx/microzed/aws_pkcs11_pal.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/aws/secure_sockets/aws_secure_sockets.c</name>
@@ -1095,6 +1105,11 @@
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/platform_time.h</locationURI>
 		</link>
 		<link>
+			<name>src/lib/third_party/mbedtls/include/platform_util.h</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/platform_util.h</locationURI>
+		</link>
+		<link>
 			<name>src/lib/third_party/mbedtls/include/ripemd160.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/ripemd160.h</locationURI>
@@ -1193,11 +1208,6 @@
 			<name>src/lib/third_party/mbedtls/include/xtea.h</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/include/mbedtls/xtea.h</locationURI>
-		</link>
-		<link>
-			<name>src/lib/third_party/mbedtls/source/Makefile</name>
-			<type>1</type>
-			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/Makefile</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/mbedtls/source/aes.c</name>
@@ -1428,6 +1438,11 @@
 			<name>src/lib/third_party/mbedtls/source/platform.c</name>
 			<type>1</type>
 			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/platform.c</locationURI>
+		</link>
+		<link>
+			<name>src/lib/third_party/mbedtls/source/platform_util.c</name>
+			<type>1</type>
+			<locationURI>AFR_ROOT/lib/third_party/mbedtls/library/platform_util.c</locationURI>
 		</link>
 		<link>
 			<name>src/lib/third_party/mbedtls/source/ripemd160.c</name>

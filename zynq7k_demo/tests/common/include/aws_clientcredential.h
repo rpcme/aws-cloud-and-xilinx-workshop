@@ -35,12 +35,12 @@
 /*
  * MQTT Broker endpoint.
  */
-static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "";
+static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "Paste AWS IoT Broker endpoint here.";
 
 
 /* Use of a "define" and not a "static const" here to be able to
  * use pre-compile concatenation on the string. */
-#define clientcredentialIOT_THING_NAME               "WindowsTest"
+#define clientcredentialIOT_THING_NAME               "Paste AWS IoT Thing name here."
 
 /*
  * Port number the MQTT broker is using.
@@ -69,16 +69,5 @@ static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "";
  * eWiFiSecurityWPA2
  */
 #define clientcredentialWIFI_SECURITY                eWiFiSecurityWPA2
-
-/*
- * Length of device certificate included from aws_clientcredential_keys.h .
- */
-static const uint32_t clientcredentialCLIENT_CERTIFICATE_LENGTH = sizeof( clientcredentialCLIENT_CERTIFICATE_PEM );
-
-/*
- * Length of device private key included from aws_clientcredential_keys.h .
- */
-
-static const uint32_t clientcredentialCLIENT_PRIVATE_KEY_LENGTH = sizeof( clientcredentialCLIENT_PRIVATE_KEY_PEM );
 
 #endif /* ifndef __AWS_CLIENTCREDENTIAL__H__ */

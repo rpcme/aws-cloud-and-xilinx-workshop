@@ -31,31 +31,29 @@
 								<option id="xilinx.gnu.compiler.misc.other.159190055" name="Other flags" superClass="xilinx.gnu.compiler.misc.other" value="-c -fmessage-length=0 -MT&quot;$@&quot; -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard" valueType="string"/>
 								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.660897649" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
 								<option id="xilinx.gnu.compiler.dircategory.includes.1641764802" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/aws/include}&quot;"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/mbedtls/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/pkcs11"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/config_files}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/aws/FreeRTOS-Plus-TCP/include}&quot;"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/tests/xilinx/microzed/common/application_code/xilinx_code"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/FreeRTOS-Plus-TCP/source/portable/NetworkInterface"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/tests/common/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/FreeRTOS-Plus-TCP/source/protocols/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/FreeRTOS-Plus-TCP/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/mbedtls/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/mbedtls/include/mbedtls"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/pkcs11"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/third_party/mcu_vendor/xilinx/aws_bsp/ps7_cortexa9_0/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/tests/xilinx/microzed/common/config_files"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/include"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/include/private"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/lib/FreeRTOS/portable/GCC/ARM_CA9"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/tests/common/third_party/unity/src"/>
-									<listOptionValue builtIn="false" value="${AFR_HOME}/tests/common/third_party/unity/extras/fixture/src"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mbedtls/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/pkcs11"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/jsmn"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/tests/xilinx/microzed/common/application_code/xilinx_code"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/FreeRTOS-Plus-TCP/source/portable/NetworkInterface"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/tests/common/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/FreeRTOS-Plus-TCP/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mbedtls/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mbedtls/include/mbedtls"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/pkcs11"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mcu_vendor/xilinx/aws_bsp/ps7_cortexa9_0/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/tests/xilinx/microzed/common/config_files"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/include/private"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/FreeRTOS/portable/GCC/ARM_CA9"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/unity/src"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/unity/extras/fixture/src"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.421923162" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
 									<listOptionValue builtIn="false" value="AMAZON_FREERTOS_ENABLE_UNIT_TESTS"/>
+									<listOptionValue builtIn="false" value="ZYNQ7000"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1864908472" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -63,7 +61,7 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.816062628" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="xilinx.gnu.compiler.option.debugging.level.1653585012" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.213171180" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/include"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/include"/>
 								</option>
 								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.1136778821" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
 							</tool>
@@ -90,7 +88,7 @@
 							</tool>
 							<tool id="xilinx.gnu.armv7.cxx.toolchain.linker.debug.1896927807" name="ARM v7 g++ linker" superClass="xilinx.gnu.armv7.cxx.toolchain.linker.debug">
 								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1614729991" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/lib"/>
+									<listOptionValue builtIn="false" value="${AFR_ROOT}/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/lib"/>
 								</option>
 								<option id="xilinx.gnu.linker.inferred.swplatform.flags.1570080027" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
@@ -100,81 +98,6 @@
 								<option id="xilinx.gnu.c.linker.option.lscript.1574702651" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.size.debug.865534952" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
-						</toolChain>
-					</folderInfo>
-				</configuration>
-			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
-		</cconfiguration>
-		<cconfiguration id="xilinx.gnu.armv7.exe.release.1946542387">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="xilinx.gnu.armv7.exe.release.1946542387" moduleId="org.eclipse.cdt.core.settings" name="Release">
-				<externalSettings/>
-				<extensions>
-					<extension id="com.xilinx.sdk.managedbuilder.XELF.arm.a53.x32" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
-			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="xilinx.gnu.armv7.exe.release.1946542387" name="Release" parent="xilinx.gnu.armv7.exe.release" prebuildStep="a9-linaro-pre-build-step">
-					<folderInfo id="xilinx.gnu.armv7.exe.release.1946542387." name="/" resourcePath="">
-						<toolChain id="xilinx.gnu.armv7.exe.release.toolchain.130110388" name="Xilinx ARM v7 GNU Toolchain" superClass="xilinx.gnu.armv7.exe.release.toolchain">
-							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.x32" id="xilinx.armv7.target.gnu.base.release.929062368" isAbstract="false" name="Release Platform" superClass="xilinx.armv7.target.gnu.base.release"/>
-							<builder buildPath="${workspace_loc:/test1}/Release" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.release.1600841690" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.release"/>
-							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.release.1921258984" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.release">
-								<inputType id="xilinx.gnu.assembler.input.1764222601" superClass="xilinx.gnu.assembler.input"/>
-							</tool>
-							<tool id="xilinx.gnu.armv7.c.toolchain.compiler.release.776759264" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.release">
-								<option defaultValue="gnu.c.optimization.level.more" id="xilinx.gnu.compiler.option.optimization.level.1622985257" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
-								<option id="xilinx.gnu.compiler.option.debugging.level.440246969" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.555655329" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/include"/>
-								</option>
-								<option id="xilinx.gnu.compiler.misc.other.674155530" name="Other flags" superClass="xilinx.gnu.compiler.misc.other" value="-c -fmessage-length=0 -MT&quot;$@&quot; -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard" valueType="string"/>
-								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.1945085233" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
-								<inputType id="xilinx.gnu.armv7.c.compiler.input.912118060" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
-							</tool>
-							<tool id="xilinx.gnu.armv7.cxx.toolchain.compiler.release.165306891" name="ARM v7 g++ compiler" superClass="xilinx.gnu.armv7.cxx.toolchain.compiler.release">
-								<option defaultValue="gnu.c.optimization.level.more" id="xilinx.gnu.compiler.option.optimization.level.72681691" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
-								<option id="xilinx.gnu.compiler.option.debugging.level.79256210" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.1724708625" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/include"/>
-								</option>
-								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.1384224531" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
-							</tool>
-							<tool id="xilinx.gnu.armv7.toolchain.archiver.361342444" name="ARM v7 archiver" superClass="xilinx.gnu.armv7.toolchain.archiver"/>
-							<tool id="xilinx.gnu.armv7.c.toolchain.linker.release.1631135544" name="ARM v7 gcc linker" superClass="xilinx.gnu.armv7.c.toolchain.linker.release">
-								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1429797586" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/lib"/>
-								</option>
-								<option id="xilinx.gnu.linker.inferred.swplatform.flags.879676812" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lrsa,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
-								</option>
-								<option id="xilinx.gnu.c.linker.option.lscript.1451533708" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
-								<option id="xilinx.gnu.c.link.option.ldflags.1268518289" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>
-								<inputType id="xilinx.gnu.linker.input.595092653" superClass="xilinx.gnu.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-								<inputType id="xilinx.gnu.linker.input.lscript.435302196" name="Linker Script" superClass="xilinx.gnu.linker.input.lscript"/>
-							</tool>
-							<tool id="xilinx.gnu.armv7.cxx.toolchain.linker.release.1210750307" name="ARM v7 g++ linker" superClass="xilinx.gnu.armv7.cxx.toolchain.linker.release">
-								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.219854349" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/proj/xhdhdstaff1/harinik/AWSQ/AmazonFreeRTOS_ForHelloDemo/AmazonFreeRTOS/lib/third_party/mcu_vendor/xilinx/aws_tests_bsp/ps7_cortexa9_0/lib"/>
-								</option>
-								<option id="xilinx.gnu.linker.inferred.swplatform.flags.1989782964" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lrsa,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
-								</option>
-								<option id="xilinx.gnu.c.linker.option.lscript.1346164860" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
-							</tool>
-							<tool id="xilinx.gnu.armv7.size.release.1088062465" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.release"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -194,18 +117,9 @@
 		<scannerConfigBuildInfo instanceId="xilinx.gnu.armv7.exe.debug.1259186275;xilinx.gnu.armv7.exe.debug.1259186275.">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53X32GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="xilinx.gnu.armv7.exe.release.1946542387;xilinx.gnu.armv7.exe.release.1946542387.">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53X32GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="xilinx.gnu.armv7.exe.release.1946542387;xilinx.gnu.armv7.exe.release.1946542387.;xilinx.gnu.armv7.c.toolchain.compiler.release.776759264;xilinx.gnu.armv7.c.compiler.input.912118060">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53X32GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/aws_tests"/>
-		</configuration>
-		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/aws_tests"/>
 		</configuration>
 	</storageModule>

@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS V1.0.0
+ * Amazon FreeRTOS V1.1.2  
  * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -31,12 +31,15 @@
 
 #define testrunnerUNSUPPORTED                      0
 
+/* Unsupported Tests */
+#define testrunnerFULL_CBOR_ENABLED                testrunnerUNSUPPORTED
+#define testrunnerFULL_OTA_AGENT_ENABLED           testrunnerUNSUPPORTED
+#define testrunnerFULL_OTA_PAL_ENABLED             testrunnerUNSUPPORTED
+#define testrunnerFULL_WIFI_ENABLED                testrunnerUNSUPPORTED
+
 /* Enable tests by setting defines to 1 */
-#define testrunnerFULL_CBOR_ENABLED                0
-#define testrunnerFULL_OTA_AGENT_ENABLED           0
-#define testrunnerFULL_OTA_PAL_ENABLED             0
 #define testrunnerFULL_MQTT_ALPN_ENABLED           0
-#define testrunnerFULL_PKCS11_ENABLED              1
+#define testrunnerFULL_PKCS11_ENABLED              0
 #define testrunnerFULL_CRYPTO_ENABLED              0
 #define testrunnerFULL_MQTT_STRESS_TEST_ENABLED    0
 #define testrunnerFULL_MQTT_AGENT_ENABLED          0
@@ -44,9 +47,8 @@
 #define testrunnerFULL_GGD_ENABLED                 0
 #define testrunnerFULL_GGD_HELPER_ENABLED          0
 #define testrunnerFULL_SHADOW_ENABLED              0
-#define testrunnerFULL_MQTT_ENABLED                1
-#define testrunnerFULL_WIFI_ENABLED                0
+#define testrunnerFULL_MQTT_ENABLED                0
 #define testrunnerFULL_MEMORYLEAK_ENABLED          0
-#define testrunnerFULL_TLS_ENABLED                 1
+#define testrunnerFULL_TLS_ENABLED                 0
 
 #endif /* AWS_TEST_RUNNER_CONFIG_H */

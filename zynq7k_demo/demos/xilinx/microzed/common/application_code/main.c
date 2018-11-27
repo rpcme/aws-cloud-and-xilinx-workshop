@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Xilinx, Inc.
- * Amazon FreeRTOS V1.2.7
- * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Amazon FreeRTOS V1.4.4
+ * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -46,23 +46,19 @@
 /* AWS library includes. */
 #include "aws_system_init.h"
 #include "aws_logging_task.h"
-#include "aws_wifi.h"
 #include "aws_clientcredential.h"
 #include "platform_config.h"
+#include "aws_dev_mode_key_provisioning.h"
 
 /* Logging Task Defines. */
 #define mainLOGGING_MESSAGE_QUEUE_LENGTH    ( 15 )
 #define mainLOGGING_TASK_STACK_SIZE         ( configMINIMAL_STACK_SIZE * 8 )
 
-/* The task delay for allowing the lower priority logging task to print out Wi-Fi
- * failure status before blocking indefinitely. */
-#define mainLOGGING_WIFI_STATUS_DELAY       pdMS_TO_TICKS( 1000 )
-
 /* Unit test defines. */
 #define mainTEST_RUNNER_TASK_STACK_SIZE     ( configMINIMAL_STACK_SIZE * 16 )
 
 /* The name of the devices for xApplicationDNSQueryHook. */
-#define mainDEVICE_NICK_NAME				"WindowsTest" /* FIX ME.*/
+#define mainDEVICE_NICK_NAME				"XilinxDemo"
 
 
 /* Static arrays for FreeRTOS-Plus-TCP stack initialization for Ethernet network
@@ -134,11 +130,6 @@ void vApplicationDaemonTaskStartupHook( void );
  */
 void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent );
 
-/**
- * @brief Connects to Wi-Fi.
- */
-static void prvWifiConnect( void );
-
 /*
  * Just seeds the simple pseudo random number generator.
  */
@@ -178,7 +169,7 @@ int main( void )
      * including the Wi-Fi initialization, is performed in the RTOS daemon task
      * startup hook. */
     vTaskStartScheduler();
-    configPRINT_STRING("vTaskStartScheduler complete - should not reach here \n\r");
+    configPRINTF( ("vTaskStartScheduler complete - should not reach here \n\r") );
 
     return 0;
 }
@@ -203,22 +194,21 @@ static void prvSRand( UBaseType_t ulSeed )
 	ulNextRand = ulSeed;
 }
 
+extern int platform_init_fs();
 static void prvMiscInitialization( void )
 {
 	time_t xTimeNow;
-	int Status;
-    /* Perform any hardware initializations, that don't require the RTOS to be
-     * running, here.
-     */
-	//configPRINT_STRING("Test Message \n\r");
+	/* Perform any hardware initializations, that don't require the RTOS to be
+	 * running, here.
+	 */
 
-		/* Seed the random number generator. */
-		time( &xTimeNow );
-		xil_printf("Seed for randomiser: %lu \n\r", xTimeNow);
-		prvSRand( ( uint32_t ) xTimeNow );
-		xil_printf("Random numbers: %08X %08X %08X %08X\n\r", ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32());
-		vPortInstallFreeRTOSVectorTable();
-		platform_init_fs();
+	/* Seed the random number generator. */
+	time( &xTimeNow );
+	xil_printf("Seed for randomiser: %lu \n\r", xTimeNow);
+	prvSRand( ( uint32_t ) xTimeNow );
+	xil_printf("Random numbers: %08X %08X %08X %08X\n\r", ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32(), ipconfigRAND32());
+	vPortInstallFreeRTOSVectorTable();
+	platform_init_fs();
 }
 /*-----------------------------------------------------------*/
 
@@ -226,7 +216,6 @@ void vApplicationDaemonTaskStartupHook( void )
 {
     /* Perform any hardware initialization, that require the RTOS to be
      * running, here. NOTHING to be done here for now */
-
 }
 /*-----------------------------------------------------------*/
 
@@ -237,21 +226,17 @@ void vApplicationIPNetworkEventHook( eIPCallbackEvent_t eNetworkEvent )
     /* If the network has just come up...*/
     if( eNetworkEvent == eNetworkUp )
     {
-    	configPRINT_STRING("Network connection successful.\n\r");
+    	configPRINTF( ("Network connection successful.\n\r") );
         if( ( xTasksAlreadyCreated == pdFALSE ) && ( SYSTEM_Init() == pdPASS ) )
         {
+            /* This is not needed for the workshop as key are already provisioned. */
         	//vDevModeKeyProvisioning( );
             DEMO_RUNNER_RunDemos();
             xTasksAlreadyCreated = pdTRUE;
         }
     }
 }
-/*-----------------------------------------------------------*/
 
-void prvWifiConnect( void )
-{
-	/* NOT supported */
-}
 /*-----------------------------------------------------------*/
 
 /**
@@ -329,7 +314,7 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 void vApplicationMallocFailedHook()
 {
     taskDISABLE_INTERRUPTS();
-	configPRINT_STRING("In vApplicationMallocFailedHook \n\r");
+	configPRINTF( ("In vApplicationMallocFailedHook \n\r") );
     for( ;; );
 }
 /*-----------------------------------------------------------*/
@@ -348,8 +333,6 @@ void vApplicationMallocFailedHook()
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
                                     char * pcTaskName )
 {
-	configPRINT_STRING(("In vApplicationStackOverflowHook\n\r"));
-	configPRINT_STRING(("Taskname %s \n\r", pcTaskName));
     portDISABLE_INTERRUPTS();
 
     /* Loop forever */
@@ -412,7 +395,7 @@ time_t xReturn;
     BaseType_t xApplicationDNSQueryHook( const char * pcName )
     {
 
-    	configPRINT_STRING("xApplicationDNSQueryHook \n\r");
+    	configPRINTF( ("xApplicationDNSQueryHook \n\r") );
         BaseType_t xReturn;
 
         /* Determine if a name lookup is for this node.  Two names are given
@@ -436,7 +419,6 @@ time_t xReturn;
 
 #endif /* if ( ipconfigUSE_LLMNR != 0 ) || ( ipconfigUSE_NBNS != 0 ) */
 /*-----------------------------------------------------------*/
-#warning _gettimeofday_r is just stubbed out here.
 struct timezone;
 struct timeval;
 int _gettimeofday_r(struct _reent * x, struct timeval *y , struct timezone * ptimezone )
@@ -456,7 +438,7 @@ static const char *pcSuccess = "Ping reply received - ";
 static const char *pcInvalidChecksum = "Ping reply received with invalid checksum - ";
 static const char *pcInvalidData = "Ping reply received with invalid data - ";
 
-	xil_printf("vApplicationPingReplyHook \n\r");
+	configPRINTF( ("vApplicationPingReplyHook \n\r") );
 	switch( eStatus )
 	{
 		case eSuccess	:
@@ -499,7 +481,7 @@ void vAssertCalled(const char * pcFile,
 	(void)pcFileName;
 	(void)ulLineNumber;
 
-	printf("vAssertCalled %s, %ld\n", pcFile, (long)ulLine);
+	configPRINTF( ("vAssertCalled %s, %ld\n", pcFile, (long)ulLine) );
 	fflush(stdout);
 
 	/* Setting ulBlockVariable to a non-zero value in the debugger will allow
@@ -528,19 +510,4 @@ void vAssertCalled(const char * pcFile,
     }
 
 #endif
-
-    extern uint32_t ulApplicationGetNextSequenceNumber(
-         uint32_t ulSourceAddress,
-         uint16_t usSourcePort,
-         uint32_t ulDestinationAddress,
-         uint16_t usDestinationPort )
-    {
-         /* Ignoring input parameters. */
-         ( void ) ulSourceAddress;
-         ( void ) usSourcePort;
-         ( void ) ulDestinationAddress;
-         ( void ) usDestinationPort;
-
-         return uxRand();
-    }
 
