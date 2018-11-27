@@ -114,7 +114,7 @@
 // System parameters for the MicroZed IOT kit
 
 #if UZED_USE_GG
-#define GG_DISCOVERY_FILE_SIZE    2800
+#define GG_DISCOVERY_FILE_SIZE    4096
 #endif
 
 /**
