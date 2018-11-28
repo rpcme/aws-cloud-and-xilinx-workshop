@@ -17,10 +17,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 client = greengrasssdk.client('iot-data')
 
 
-bucket = os.environ['COREGROUP']
+bucket = os.environ['BUCKET']
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
-topic = "unit_controller/video_inference"
+topic = "compressor/video_inference"
 parameters = 'parameters.txt'
 
 def run_pydeephi_yolo():

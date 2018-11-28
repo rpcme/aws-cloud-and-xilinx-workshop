@@ -14,7 +14,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 client = greengrasssdk.client('iot-data')
 s3 = boto3.resource('s3')
 
-bucket                = os.environ['COREGROUP']
+bucket                = os.environ['BUCKET']
 bucket_bitstream_path = 'bitstream_deploy'
 bit_folder_path       = "/home/xilinx/download"
 bitstream             = 'gstreamer_deephi.bit'

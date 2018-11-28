@@ -21,7 +21,7 @@ client = greengrasssdk.client('iot-data')
 s3 = boto3.resource('s3')
 
 
-bucket = os.environ['COREGROUP']
+bucket = os.environ['BUCKET']
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
 topic = "compressor/{0}".format(os.environ['COREGROUP'])

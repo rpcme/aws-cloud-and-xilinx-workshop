@@ -322,7 +322,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
                 "BOARD":"Ultra96",
-                "COREGROUP":"${thing_agg}"
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",
@@ -359,7 +360,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
             "BOARD":"Ultra96",
-            "COREGROUP":"${thing_agg}"
+            "COREGROUP":"${thing_agg}",
+            "BUCKET":"${s3_bucket}"
           }
         }
       }
@@ -383,7 +385,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
             "BOARD":"Ultra96",
-            "COREGROUP":"${thing_agg}"
+            "COREGROUP":"${thing_agg}",
+            "BUCKET":"${s3_bucket}"
           }
         }
       }
@@ -414,7 +417,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
                 "BOARD":"Ultra96",
-                "COREGROUP":"${thing_agg}"
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",
@@ -438,7 +442,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
                 "BOARD":"Ultra96",
-                "COREGROUP":"${thing_agg}"
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",
