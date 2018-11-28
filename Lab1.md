@@ -157,3 +157,5 @@ In this lab, you installed prerequisites to your workstation and installed lab p
 [Next Lab](./Lab2.md)
 
 [Index](./README.md)
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
