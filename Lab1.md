@@ -141,10 +141,7 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    
    If you receive an error from the script stating the prefix has already been chosen, then please choose another.
 
-   The script has performed the following functions:
-   
-   * Created an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
-   * Created a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
+   The script will create an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```.
 
 
 
