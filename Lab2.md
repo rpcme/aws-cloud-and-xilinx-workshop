@@ -132,11 +132,12 @@ See picture below for expected response.
 The MicroZed device boots Amazon FreeRTOS from a microSD card.
 
 1. If you have not already done so, remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board.
-2. Power the microZed by plugging in the two USB cables.  Plug in the USB cable to the larger board first.
-2. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
-9. Click on **Subscribe to a topic** under the **Subscriptions** header.
-10. In the **Subscription topic** input box, enter ```freertos/demos/echo```. 
-11. Click the **Subscribe to topic** button.
+2. Power the MicroZed by plugging two USB-to-microUSB cables into J2 and J7.
+3. After both power cables are plugged in reset the MicroZed by press the RST/SW2 button on the SoM.
+4. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
+5. Click on **Subscribe to a topic** under the **Subscriptions** header.
+6. In the **Subscription topic** input box, enter ```freertos/demos/echo```. 
+7. Click the **Subscribe to topic** button.
 
 	![alt text](images/AFR_HelloWorld_Test.png "a:FreeRTOS Hello World Test")
 7. In the test window, you should now see an MQTT response from Amazon FreeRTOS running on the MicroZed.  See the picture below for expected response.
