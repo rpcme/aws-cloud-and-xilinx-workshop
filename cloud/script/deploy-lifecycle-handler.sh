@@ -68,7 +68,7 @@ EOF
     sleep 5
 
   fi
-  
+
   function_version=$(aws lambda create-function --output text \
         --function-name ${function_name} \
         --zip-file fileb://${zipfile}  \
@@ -106,12 +106,14 @@ fi
 
 
 
-  function_arn=$(aws lambda get-function --output text \
-	  --function-name ${function_name} \
-	  --query Configuration.FunctionArn)
+function_arn=$(aws lambda get-function --output text \
+  --function-name ${function_name} \
+  --query Configuration.FunctionArn)
 
 
 
+my_region=$(echo ${function_arn} | cut -f4 -d':')
+my_account=$(echo ${function_arn} | cut -f5 -d':')
 
 # CONNECTED RULE
 cat <<EOF > /tmp/${prefix}ConnectedEventCollector.json
@@ -131,6 +133,15 @@ EOF
 aws iot create-topic-rule --output text \
     --rule-name ${prefix}ConnectedEventCollector \
     --topic-rule-payload file:///tmp/${prefix}ConnectedEventCollector.json
+
+aws lambda add-permission                                                     \
+    --function-name "#{function_name}"                                        \
+    --region "${my_region}"                                                     \
+    --principal iot.amazonaws.com                                             \
+    --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}ConnectedEventCollector            \
+    --source-account "${my_account}"                                           \
+    --statement-id "${prefix}ConnectedEventCollector"                                            \
+    --action "lambda:InvokeFunction"
 
 # DISCONNECTED RULE
 cat <<EOF > /tmp/${prefix}DisconnectedEventCollector.json
@@ -152,3 +163,20 @@ aws iot create-topic-rule --output text \
     --topic-rule-payload file:///tmp/${prefix}DisconnectedEventCollector.json
 
 
+aws lambda add-permission                                                     \
+    --function-name "#{function_name}"                                        \
+    --region "${my_region}"                                                     \
+    --principal iot.amazonaws.com                                             \
+    --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}ConnectedEventCollector            \
+    --source-account "${my_account}"                                           \
+    --statement-id "${prefix}ConnectedEventCollector"                                            \
+    --action "lambda:InvokeFunction"
+
+aws lambda add-permission                                                     \
+    --function-name "#{function_name}"                                        \
+    --region "${my_region}"                                                     \
+    --principal iot.amazonaws.com                                             \
+    --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}DisconnectedEventCollector            \
+    --source-account "${my_account}"                                           \
+    --statement-id "${prefix}DisconnectedEventCollector"                                            \
+    --action "lambda:InvokeFunction"
