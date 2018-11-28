@@ -32,3 +32,5 @@ In this lab we will use the video machine learning inference function of the FPG
 In this lab we will deploy a new machine learning edge inference function to the FPGA of the unit controller running on Ultra96.  This new edge ML inference function will be used to monitor a local camera that is monitoring the remote asset to any persons in the area of the asset. 
 
 [Go to Lab 5](./Lab5.md)
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
