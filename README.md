@@ -42,15 +42,3 @@ Time to completion: 25 minutes
 In this lab we will deploy a new machine learning edge inference function to the FPGA of the unit controller running on Ultra96.  This new edge ML inference function will be used to monitor a local camera that is monitoring the remote asset to any persons in the area of the asset. 
 
 [Go to Lab 5](./Lab5.md)
-
-# Time to Completion Summary
-
-| duration | topic |
-|----------|-------|
-|Lab 1 | 20 minutes |
-|Lab 2 | 20 minutes |
-|Lab 3 | 20 minutes |
-|Lab 4 | 25 minutes |
-|Lab 5 | 25 minutes |
-
-110 minutes.  10 minutes buffer. 
