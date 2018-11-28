@@ -1,7 +1,6 @@
 import logging
 import sys
 import os
-import glob
 import subprocess
 import json
 import boto3
@@ -15,9 +14,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 client = greengrasssdk.client('iot-data')
 s3 = boto3.resource('s3')
 
-# This is where the bitstream is stored
-# Assume there is only 1 folder with suffix `-aws-cloud-and-xilinx-workshop`
-bucket                = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
+bucket                = os.environ['COREGROUP']
 bucket_bitstream_path = 'bitstream_deploy'
 bit_folder_path       = "/home/xilinx/download"
 bitstream             = 'gstreamer_deephi.bit'

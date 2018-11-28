@@ -1,6 +1,5 @@
 import logging
 import sys
-import glob
 import subprocess
 import os
 import time
@@ -22,9 +21,7 @@ client = greengrasssdk.client('iot-data')
 s3 = boto3.resource('s3')
 
 
-# This is where the video inference results are stored
-# Assume there is only 1 folder with suffix `-aws-cloud-and-xilinx-workshop`
-bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
+bucket = os.environ['COREGROUP']
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
 topic = "compressor/{0}".format(os.environ['COREGROUP'])
