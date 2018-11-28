@@ -58,7 +58,7 @@ These files will be uploaded onto the S3 bucket.
 As shown in the last lab, you can see some messages 
 if you subscribe to the topic `compressor/+`.
 
-    ![alt text](images/Publish_Image_Upload.PNG)
+    ![alt text](images/Publish_Bitstream_Deploy.PNG)
 
 12. On the Ultra96 debug interface navigate to the directory that is 
 synchronized with your S3 bucket.
