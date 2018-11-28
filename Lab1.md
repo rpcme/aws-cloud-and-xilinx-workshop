@@ -21,46 +21,43 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 
    ![alt text](images/MicroZed_SD_CardJumperSettings.png?raw=true "SD Card Boot Jumper Settings")
 5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
-6. Connect one microUSB cable to J7 of the Arduino Carrier Card and the USB hub.  This provides power to the boards.
-7. Connect one microUSB cable to J2 of the MicroZed SoM and the USB hub.  This provides the debug UART interface. Set COM port parameters to 115200,N,8,1.
+
+Leave the MicroZed assembled as is and we will power it up at the end of Lab 2 after writing the microSD card contents via the Ultra96 platform.  The MicroZed board is powered by the J2 and J7 microUSB connections on the boards.
 
 ### Avnet Ultra96
 
 1. Ensure that the microSD is plugged in.
 2. Plug in the 12V power supply to J5.
 3. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
-4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This provides three services to your PC:
+4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This USB interface provides three services to your PC:
     1. A debug UART interface
     2. A portable drive named 'PYNQ-USB' to navigate the Ultra96 file system
     3. An RNDIS (Ethernet over USB) interface
 
-After the set-up the Ultra96 should look like the picture below.
+We will only be using the UART interface in this workshop.  After the set-up the Ultra96 should look like the picture below.
 
 ![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
-### Power up your Hardware
-
-The MicroZed should power up automatically when you plug in the microUSB cable. Ensure that D2 (blue LED) and D5 (green LED) on the MicroZed SoM are illuminated.
-The Ultra96 should power up after pressing SW3. S3 is the pushbutton switch near the power connector. You should see DS6 and DS9 (green LEDs) illuminated.
 
 #### Serial Port Installation
-The MicroZed and the Ultra96 have one COM port each.
-(Windows 7) Open Device Manager to locate your COM ports.  Note the two COM port numbers.
+The Ultra96 and MicroZed each have one COM port.  We will primarily be using the Ultra96 serial port in this workshop but provide refernce on installation for both platforms in this section in case debug is required.
 
-MicroZed uses a Silicon Labs CP2104 USB-to-UART Bridge. If the driver is not automatically detected by your OS, it can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers.
+MicroZed uses a Silicon Labs CP2104 USB-to-UART Bridge. If the driver is not automatically detected by your OS, it can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers.  A
 
-Ultra96 uses a Gadget Serial Driver. If the driver is not automatically detected by your OS, load the driver from the 'serial_driver' folder on the Ultra96 portable drive.
+Ultra96 uses a Gadget Serial Driver. If the driver is not automatically detected by your OS, load the driver from the 'serial_driver' folder on the Ultra96 portable drive named 'PYNQ-USB'.
 
 Ensure you have a serial port terminal emulator such as Putty installed. It can be downloaded from https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html.
+
+Configure your terminal emulator to access the COM ports with the following serial port settings 115200,8,N,1.  These parameters are the same for both the Ultra96 and the MicroZed platforms.
 
 ### Configuring and Deploying your Hardware
 Ensure you do not have VPN software running for this workshop.
 
-Configure your terminal emulator to access the two COM ports by saving individual sessions for them. Each session should use 115200,8,N,1 for the serial port settings.
-
 Open the terminal emulator for Ultra96 and do the following:
 
-1. Login: The username is ```xilinx``` and the password is ```xilinx```. The ```sudo``` password is also ```xilinx```.
+1. Login if requested.  For refernce at log-in and in future commands requiring sudo access:
+	The username is ```xilinx``` and the password is ```xilinx```. 
+	The ```sudo``` password is also ```xilinx```.
 2. Run the command ```ip a``` to see all ethernet interfaces. You should see:
     1. ```usb0``` at 192.168.3.1/24
     2. ```eth0``` at an address determined by your DHCP server. This is the address for the Ultra96 running AWS Greengrass.
@@ -72,7 +69,9 @@ Open the terminal emulator for Ultra96 and do the following:
 
 ### Prerequisites
 
-The labs require that you have Git and the AWS Command Line Interface (CLI) installed to perform functions in the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as ```xilinx```. A general familiarity with Linux command line operation under the bash shell is assumed.
+A general familiarity with Linux command line operation under the bash shell is assumed.
+
+The labs require that you have Git and the AWS Command Line Interface (CLI) installed to perform functions in the AWS Cloud. The Ultra96 root file system includes these commands. All shell commands shown in the labs are assumed to be performed in the terminal emulator for the Ultra96, after logging in as ```xilinx```, which is the default user. 
 
 The following scripts will succeed if your IAM user has the *```AdministratorAccess```* policy attached with no permission boundaries.
 This is very broad, and narrower options might succeed.
@@ -81,7 +80,7 @@ This is very broad, and narrower options might succeed.
 
 In this section, you will clone the workshop Git repository.  The Git repository contains all the workshop code and scripts you will use.
 
-1. If not already done, open the UART connection to the Ultra96 device as 115200-8-N-1, and login.
+1. If not already done, open the UART connection to the Ultra96 device as 115200-8-N-1, and login as xilinx user if requested.
 2. Ensure you are in the $HOME directory
 
    ```bash
@@ -100,7 +99,7 @@ You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI on the Ultra96 board. The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page. 
+In this section, we will configure the AWS CLI on the Ultra96 board.  The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target - in this case Ultra96. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page.  
 The AWS CLI has already been installed on the Ultra96 for you.
 
 Start the configuration as follows:
