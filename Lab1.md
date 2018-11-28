@@ -99,7 +99,8 @@ You're done! Let's move to the next section.
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI on the Ultra96 board.  The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target - in this case Ultra96. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page.  
+In this section, we will configure the AWS CLI on the Ultra96 board.  The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target - in this case Ultra96. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page and follow steps 1-5 to acquire your AWS Access Key ID and your AWS Secret Access Key.  Capture these as you will need them in the steps below.
+
 The AWS CLI has already been installed on the Ultra96 for you.
 
 Start the configuration as follows:
@@ -108,8 +109,8 @@ aws configure
 ```
 This step will ask for the following pieces of information:
 
-1. Type or copy-paste your AWS Access Key ID and press ```Enter```.
-2. Type or copy-paste AWS Secret Access Key and press ```Enter```.
+1. Type or copy-paste your AWS Access Key ID acquired above and press ```Enter```.
+2. Type or copy-paste AWS Secret Access Key acquired above and press ```Enter```.
 3. Default region name - use ```us-west-2```
 4. Default output format - use ```json```
 
@@ -127,16 +128,18 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 
 2. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.
 
-   The script performs the following functions:
+   ```bash
+   ./deploy-s3-objects.sh <prefix>
+   ```
    
-   * Creates an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
-   * Creates a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
-
    If you receive an error from the script stating the prefix has already been chosen, then please choose another.
 
-	```bash
-	./deploy-s3-objects.sh <prefix>
-	```
+   The script has performed the following functions:
+   
+   * Created an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
+   * Created a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
+
+
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
