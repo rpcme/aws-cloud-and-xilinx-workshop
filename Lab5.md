@@ -77,8 +77,7 @@ In this lab we used AWS Greengrass to deploy an ML video
 surveillance application to a running control system in the Ultra96 platform. 
 
 
-# Learning More About These Concepts
-
-
 [Index](./README.md)
 
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
