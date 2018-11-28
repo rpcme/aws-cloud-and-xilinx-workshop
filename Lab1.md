@@ -1,6 +1,6 @@
 # Lab 1: Setup the Environment
 
-In this lab, you will initialize your account with a static web application, Amazon Cognito, and other configuration.  You will also login to your Amazon Web Services account to configure credentials for the Xilinx hardware used in this workshop.
+In this lab you will prepare the hardware, download the workshop content locally, and initilize the cloud components.  To do this you will also login to your Amazon Web Services account to configure credentials for the Xilinx hardware used in this workshop.
 
 ## Applying your Credits
 
