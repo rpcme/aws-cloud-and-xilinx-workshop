@@ -49,6 +49,10 @@ bucket=$(aws s3api create-bucket --output text \
              --create-bucket-configuration '{ "LocationConstraint": "us-west-2" }' \
              --bucket "${bucket_name}" \
              --query Location)
+if test $? != 0; then
+  echo Error creating bucket.  It could have been an itermittent problem.
+  echo Please try again.
+fi
 
 my_ip=$(curl ifconfig.co  --stderr /dev/null)
 
