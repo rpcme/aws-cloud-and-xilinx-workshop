@@ -145,10 +145,10 @@ The MicroZed device boots Amazon FreeRTOS from the prepared microSD card and the
 
 ## Outcomes
 
-In this lab we established basic "hello world" connectivity from an a:FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
-
-## Learning More About These Concepts
+In this lab we established basic "hello world" connectivity from an Amazon FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
 
 [Next Lab](./Lab3.md)
 
 [Index](./README.md)
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
