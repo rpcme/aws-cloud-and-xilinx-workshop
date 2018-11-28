@@ -66,7 +66,7 @@ so that your Ultra96 can be used as a greengrass core.
 	```
 	Verify that you see the Greengrass daemon start by seeing a response in the CLI of "Greengrass successfully started with PID: XXXX".
 
-4. Build and upload the AWS Lambda function named ```xilinx-hello-world```.
+4. We will now build a number of AWS Greengrass edge Lambda functions used throughout the workshop.  First build and upload the AWS Lambda function named ```xilinx-hello-world```.
 
 	```bash
 	cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
