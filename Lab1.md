@@ -151,9 +151,6 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
 
-# Learning More About These Concepts
-
-
 [Next Lab](./Lab2.md)
 
 [Index](./README.md)
