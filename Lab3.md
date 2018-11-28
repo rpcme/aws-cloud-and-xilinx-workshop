@@ -72,9 +72,8 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 
 In this lab, you brought in live control sensor readings into the AWS cloud and saw them plotted on a dashboard using the MQTT communication mechamisms of a:FreeRTOS.  We then invoked a sensor health failure which caused the MicroZed device shadow to change to a failed state; which was automatically detected by the unit controller and AWS cloud to generate alerts.
 
-## Learning More About These Concepts
-
 [Next Lab](./Lab4.md)
 
 [Index](./README.md)
 
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
