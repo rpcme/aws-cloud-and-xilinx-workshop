@@ -40,7 +40,10 @@ You should be able to see a running process in the background.
 7. Click **Save**.
 
 	For a moment, you will see a ```delta``` section.  And then it will disappear.  Also the ```reported``` section for the value displays ```2```.
+    The result looks like the following:
 	
+    ![alt text](images/Ultra96_Device_Shadow.PNG?raw=true "Ultra96 Device Shadow")
+
     > **What just happened?**  When changing the desired state, the event triggered the AWS Lambda function in AWS Greengrass to download version 2.  When it completed, the AWS Lambda function reported back that it completed downloading version 2.
 
 8. After this call, your `/home/xilinx/download` is no longer empty.
