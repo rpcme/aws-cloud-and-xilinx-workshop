@@ -6,19 +6,7 @@ The AWS IoT console will serves as the system deployment dashboard; we will incr
 
 ## Preparation
 
-In lab 2, we deployed the lambda functions configured as part of your Greengrass group.  In this lab we will reuse the same group.
-As a summary,
-
-1. Your group name was defined to be ```<prefix>-gateway-ultra96-group```.
-2. Your S3 bucket name was defined to be ```<prefix>-aws-cloud-and-xilinx-workshop```.
-
-Make sure your greengrass core service are still running. To check that:
-
-```shell
-ps aux | grep /greengrass/gg/packages/1.7.0/bin/daemon
-```
-
-You should be able to see a running process in the background.
+Before doing this lab, make sure lab 4 completes without any problem.
 
 ## Lab Steps
 

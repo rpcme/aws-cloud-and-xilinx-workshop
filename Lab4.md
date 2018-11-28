@@ -11,9 +11,28 @@ Our ML video surveillance application uses two parameters:
 * 'num_seconds': specifies how long this application runs.
 * 'threshold': specifies the capture condition. The video frame is captured when there are a number of persons no less than the threshold value.
 
-Now lets get started with the existing AWS Greengrass group:
+## Preparation
 
-1. Connect the eCon USB camera to the Ultra96 board J8.  See the picture below showing Ultra96 with the camera connected.
+In lab 2, we deployed the lambda functions configured as part of your Greengrass group.  In this lab we will reuse the same group.
+As a summary,
+
+1. Your group name was defined to be ```<prefix>-gateway-ultra96-group```.
+2. Your S3 bucket name was defined to be ```<prefix>-aws-cloud-and-xilinx-workshop```.
+
+Make sure your greengrass core service are still running. To check that:
+
+```shell
+ps aux | grep /greengrass/gg/packages/1.7.0/bin/daemon
+```
+
+You should be able to see a running process in the background.
+
+## Lab Steps
+
+Now lets get started with the existing AWS Greengrass group.
+
+1. If you have not done so, connect the eCon USB camera to the Ultra96 board J8. 
+   See the picture below showing Ultra96 with the camera connected.
 
    ![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
 
@@ -24,7 +43,7 @@ Now lets get started with the existing AWS Greengrass group:
    ```
    Verify that this folder is empty before we do anything.
 
-3. Now lets redeploy the AWS Greengass group.
+3. Now let's redeploy the AWS Greengass group.
 
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
@@ -33,18 +52,20 @@ Now lets get started with the existing AWS Greengrass group:
 
    After a few seconds your group should be successfully deployed.
 
-   > When a person is detected at the Edge device it will also trigger a capture of the video frame, add bounding boxes to identify the persons within the video frame captured, and transmit the frame to AWS Cloud.  Go to the dashboard and point the camera at a person - you should see a "unathorized person" event triggered in the Cloud Dashboard and a still frame of the captured video stream sent from the edge device.
+   > When a person is detected at the edge device it will also trigger a capture of the video frame, add bounding boxes to identify the persons within the video frame captured, and transmit the frame to AWS Cloud.
 
 4. Go to the AWS IoT Console page and click on **Test** on the left-hand side menu. 
 5. Click on **Subscribe to a topic** under the **Subscriptions** header.
 6. In the **Subscription topic** input box, enter ```compressor/+```. 
 7. Click the **Subscribe to topic** button.
 
-    **TODO** NEED TO CHANGE See picture below for expected result.
+   See picture below for expected result.
 
    ![alt text](images/Subscribe_Video_Inference.PNG)
 
-   > Notice that your have a long-running lambda function already publishing on the topic ```compressor/+```, indicating the video inference is being called. 
+   > Notice that your have a long-running lambda function calling the video inference. 
+   You will see some messages published on the topic ```compressor/+``` 
+   when you are pointing the camera to a few persons.
 
    Since you have not provided any ML configurations, the video surveillance application will use the default parameters ('num_seconds' = 5, 'threshold' = 2).
 
