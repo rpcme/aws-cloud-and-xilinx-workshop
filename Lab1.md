@@ -4,7 +4,7 @@ In this lab you will prepare the hardware, download the workshop content locally
 
 ## Applying your Credits
 
-If part of this workshop you received credits to offset any potential cost occurred in the AWS Cloud during this workshop, please follow these steps to apply the credits.
+If as part of this workshop you received credits to offset any potential cost occurred in the AWS Cloud during this workshop, please follow the steps on the card provided to apply the credits.
 
 
 ## Xilinx Hardware Setup
