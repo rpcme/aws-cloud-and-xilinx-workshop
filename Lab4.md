@@ -72,9 +72,8 @@ Now lets get started with the existing AWS Greengrass group.
 # Outcomes
 In this lab you saw the ability to bring data back from an FPGA based machine learning application deployed at the edge.  Deploying ML inference at the edge offers the ability to dramatically reduce the volume of data required to be sent back to the cloud which is important for remote industrial assets where connectivity is intermittent, expensive, and bandwidth limited.
 
-## Learning More About These Concepts
-
 [Next Lab](./Lab5.md)
 
 [Index](./README.md)
 
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
