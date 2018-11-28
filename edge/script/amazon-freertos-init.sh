@@ -47,5 +47,6 @@ sudo cp $(dirname $0)/../sd_card/BOOT.bin /media
 sudo cp ${dc_afr}/${thing_afr}.crt.der /media
 sudo cp ${dc_afr}/${thing_afr}.key.prv.der /media
 sudo cp ${dc_afr}/ggconfig.txt /media
+sudo ls -l /media
 sudo umount /media
 echo microSD now unmounted. Remove and insert microSD to the MicroZED board.
