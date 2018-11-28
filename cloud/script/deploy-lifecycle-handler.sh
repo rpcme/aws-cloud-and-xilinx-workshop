@@ -134,15 +134,6 @@ aws iot create-topic-rule --output text \
     --rule-name ${prefix}ConnectedEventCollector \
     --topic-rule-payload file:///tmp/${prefix}ConnectedEventCollector.json
 
-aws lambda add-permission                                                     \
-    --function-name "#{function_name}"                                        \
-    --region "${my_region}"                                                     \
-    --principal iot.amazonaws.com                                             \
-    --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}ConnectedEventCollector            \
-    --source-account "${my_account}"                                           \
-    --statement-id "${prefix}ConnectedEventCollector"                                            \
-    --action "lambda:InvokeFunction"
-
 # DISCONNECTED RULE
 cat <<EOF > /tmp/${prefix}DisconnectedEventCollector.json
 {
@@ -164,7 +155,7 @@ aws iot create-topic-rule --output text \
 
 
 aws lambda add-permission                                                     \
-    --function-name "#{function_name}"                                        \
+    --function-name "${function_name}"                                        \
     --region "${my_region}"                                                     \
     --principal iot.amazonaws.com                                             \
     --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}ConnectedEventCollector            \
@@ -173,7 +164,7 @@ aws lambda add-permission                                                     \
     --action "lambda:InvokeFunction"
 
 aws lambda add-permission                                                     \
-    --function-name "#{function_name}"                                        \
+    --function-name "${function_name}"                                        \
     --region "${my_region}"                                                     \
     --principal iot.amazonaws.com                                             \
     --source-arn arn:aws:iot:${my_region}:${my_account}:rule/${prefix}DisconnectedEventCollector            \
