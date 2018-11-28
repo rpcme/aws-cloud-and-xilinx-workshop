@@ -4,7 +4,12 @@ In this section we will provide answers to common questions that users may see
 in this workshop.
 
 
-### <a name="reboot"></a>What should I do after reboot?
+### <a name="reboot"></a>How do I reset the Ultra96 board?
+
+Press the POR_B / SW1 button on Ultra96 to initate a reset of the Ultra96 platform.  The POR_B button is located behind the two USB ports on the board.
+
+
+### <a name="reboot"></a>What should I do after reboot on Ultra96?
 
 Since the Greengrass core service is not started automatically after boot,
 you need to [manually start it](#start-daemon).
