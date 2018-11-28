@@ -32,7 +32,6 @@ def greengrass_hello_world_run():
 
 
 SYSFS_LEDS = [
-    '/sys/class/leds/ds3',
     '/sys/class/leds/ds4',
     '/sys/class/leds/ds5',
     '/sys/class/leds/ds6'
