@@ -133,7 +133,7 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
 
-2. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.
+2. In this step, you will run a script that creates an S3 bucket in your account and adds artifacts that are used throughout the labs.  You will need to append this command with a unique prefix of your definition which we will use through other aspects of the workshop.
 
    ```bash
    ./deploy-s3-objects.sh <prefix>
