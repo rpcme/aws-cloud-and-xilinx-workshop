@@ -69,7 +69,7 @@ synchronized with your S3 bucket.
 
     You will see several new files generated. The ```<epoch-time>.png``` files are the captured frames; the ```<epoch-time>.txt``` files store the number of people captured in that frame.
 
-13. Go to your S3 bucket on AWS cloud; you will see there is a new folder `images` created. Check the images stored in that folder.
+13. Go to your S3 bucket on AWS cloud; you will see there is a new folder `portal/images` created. Check the images stored in that folder.
 
 
 ## Outcomes
