@@ -2,7 +2,7 @@
 
 In Lab 2, we tested our AWS Greengrass Core on the topic "hello/world". In this lab, we will work more with the AWS Greengrass Core's Device Shadow and other topics.
 
-In this lab, you will make use of the Video Inference Handler and Image Upload Handler functions we deployed in Lab 2 to to send a Machine Learning based "person activity" alert from the remote asset unit controller USB camera to the AWS Cloud along with a still frame video capture of the image.
+In this lab, you will make use of the Video Inference Handler and Image Upload Handler functions we deployed in Lab 2 to send a Machine Learning based "person activity" alert from the remote asset unit controller USB camera to the AWS Cloud along with a still frame video capture of the image.
 
 * ```compressor/<groupname>```: The AWS Lambda function responsible for uploading video frame images with inferred 'boxes' around persons sends telemetry to this topic. The message payload composes the number of persons found and the image file name.
 
@@ -41,7 +41,7 @@ Now lets get started with the existing AWS Greengrass group.
    ```bash
    cd $HOME/download
    ```
-   Verify that this folder is empty before we do anything.
+   Verify that this folder is empty before we do anything.  This folder will be serve as a local synchronization point with the cloud in the later labs.
 
 3. Now let's redeploy the AWS Greengass group.
 
