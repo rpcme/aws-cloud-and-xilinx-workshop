@@ -53,8 +53,6 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 4. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
 
    ![alt text](images/MicroZed_MAX31855_Thermocouple_Removed.jpg "MAX31855 Thermocouple Removed")
-
-   **TODO** Need to have picture of the thermocouple removed.
    
 5. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1).
 
