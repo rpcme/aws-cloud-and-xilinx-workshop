@@ -75,7 +75,7 @@ You can just run the following commands.
 
 ```shell
 cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-./deploy-greengrass-group.sh <your-group-prefix>
+./deploy-greengrass-group.sh <prefix>
 ```
 
 
@@ -91,9 +91,9 @@ execute without any error.
 
 ```shell
 cd $HOME/aws-cloud-and-xilinx-workshop/edge/script
-./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
+./greengrass-core-init.sh <prefix>
 cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-./deploy-greengrass-group.sh <your-group-prefix>
+./deploy-greengrass-group.sh <prefix>
 ```
 
 
@@ -137,7 +137,7 @@ Select the roles you want to delete and click "Delete role".
 
 The roles created by this workshop are:
 * "GreengrassServiceRole"
-* "role-greengrass-group-\<your-group-prefix\>-gateway-ultra96"
+* "role-greengrass-group-\<prefix\>-gateway-ultra96"
 
 You may also want to disassociate the "GreengrassServiceRole" from your
 account before deleting it.
