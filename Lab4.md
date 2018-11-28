@@ -20,7 +20,7 @@ Now lets get started with the existing AWS Greengrass group:
 2. In the terminal window connected to the Ultra96, issue the folowing command:
    
    ```bash
-   cd /home/xilinx/download
+   cd $HOME/download
    ```
    Verify that this folder is empty before we do anything.
 
