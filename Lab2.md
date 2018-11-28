@@ -36,9 +36,12 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
    The file 'ggconfig.txt' contains broker endpoint information and PREFIX for use by the application.
 
-7. Remove the USB-to-SD Card adapter from the Ultra96 USB port.
-8. Remove the microSD card from the USB-to-SD adapter.
-9. Insert the microSD into the the MicroZed board print side down, with the gold contacts being put in first.  Gently press the card into the slot until it clicks, and then release your finger from the card.
+5. Remove the USB-to-SD Card adapter from the Ultra96 USB port.
+6. Remove the microSD card from the USB-to-SD adapter.
+7. Insert the microSD into the the MicroZed board print side down, with the gold contacts being put in first.  Gently press the card into the slot until it clicks, and then release your finger from the card.
+8. To prepare the system for Labs 4 and 5 connect the eCon USB camera to the Ultra96 board J8 prior to deploying your Greengrass group.  See the picture below showing Ultra96 with the camera connected.
+
+   ![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
