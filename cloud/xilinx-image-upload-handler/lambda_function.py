@@ -55,7 +55,7 @@ class MyEventHandler(FileSystemEventHandler):
 
         logger.info("Number of boxes found: {}".format(boxes))
 
-        if int(boxes) == 0:
+        if not boxes or int(boxes) == 0:
             return
 
         basename = event.src_path.split('/')[-1]
