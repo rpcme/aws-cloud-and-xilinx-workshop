@@ -57,4 +57,3 @@ In this lab you saw the ability to bring data back from an FPGA based machine le
 
 [Index](./README.md)
 
-```
