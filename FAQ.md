@@ -138,6 +138,7 @@ Select the roles you want to delete and click "Delete role".
 The roles created by this workshop are:
 * "GreengrassServiceRole"
 * "role-greengrass-group-\<prefix\>-gateway-ultra96"
+* "lambdas-for-greengrass"
 
 You may also want to disassociate the "GreengrassServiceRole" from your
 account before deleting it.
