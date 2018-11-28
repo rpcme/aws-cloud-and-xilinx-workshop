@@ -144,4 +144,22 @@ You may also want to disassociate the "GreengrassServiceRole" from your
 account before deleting it.
 
 
+### <a name="reset-ip"></a>Why is my board no longer able to access S3 bucket?
+
+The bucket policy for the S3 bucket we created in the lab is restricting the 
+access to the device (the same public IP address); so it is likely your
+public IP has changed in this case.
+
+Run the following the get the public IP:
+
+```shell
+curl ifconfig.co  --stderr /dev/null
+```
+
+Go to your S3 bucket web console. Click on the name of the S3 bucket created.
+Go to "Permissions" tab, then "Bucket Policy". In the editor, change the 
+original line into "aws:SourceIp": "<your.new.public.ip>/32".
+
+
+
 [Index](./README.md)
