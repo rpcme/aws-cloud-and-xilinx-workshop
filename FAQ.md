@@ -4,7 +4,7 @@ In this section we will provide answers to common questions that users may see
 in this workshop.
 
 
-### <a name="reboot"></a>How should I do after reboot?
+### <a name="reboot"></a>What should I do after reboot?
 
 Since the Greengrass core service is not started automatically after boot,
 you need to [manually start it](#start-daemon).
