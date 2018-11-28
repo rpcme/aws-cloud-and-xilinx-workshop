@@ -4,7 +4,12 @@ In this section we will provide answers to common questions that users may see
 in this workshop.
 
 
-### <a name="reboot"></a>How should I do after reboot?
+### <a name="reboot"></a>How do I reset the Ultra96 board?
+
+Press the POR_B / SW1 button on Ultra96 to initate a reset of the Ultra96 platform.  The POR_B button is located behind the two USB ports on the board.
+
+
+### <a name="reboot"></a>What should I do after reboot on Ultra96?
 
 Since the Greengrass core service is not started automatically after boot,
 you need to [manually start it](#start-daemon).
@@ -75,7 +80,7 @@ You can just run the following commands.
 
 ```shell
 cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-./deploy-greengrass-group.sh <your-group-prefix>
+./deploy-greengrass-group.sh <prefix>
 ```
 
 
@@ -91,9 +96,9 @@ execute without any error.
 
 ```shell
 cd $HOME/aws-cloud-and-xilinx-workshop/edge/script
-./greengrass-core-init.sh <your-s3-bucket-name> <your-group-prefix>
+./greengrass-core-init.sh <prefix>
 cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
-./deploy-greengrass-group.sh <your-group-prefix>
+./deploy-greengrass-group.sh <prefix>
 ```
 
 
@@ -137,10 +142,32 @@ Select the roles you want to delete and click "Delete role".
 
 The roles created by this workshop are:
 * "GreengrassServiceRole"
-* "role-greengrass-group-\<your-group-prefix\>-gateway-ultra96"
+* "role-greengrass-group-\<prefix\>-gateway-ultra96"
+* "lambdas-for-greengrass"
 
 You may also want to disassociate the "GreengrassServiceRole" from your
 account before deleting it.
 
 
+### <a name="reset-ip"></a>Why is my board no longer able to access S3 bucket?
+
+The bucket policy for the S3 bucket we created in the lab is restricting the 
+access to the device (the same public IP address); so it is likely your
+public IP has changed in this case.
+
+Run the following the get the public IP:
+
+```shell
+curl ifconfig.co  --stderr /dev/null
+```
+
+Go to your S3 bucket web console. Click on the name of the S3 bucket created.
+Go to "Permissions" tab, then "Bucket Policy". In the editor, change the 
+original line into "aws:SourceIp": "<your.new.public.ip>/32".
+
+
+
 [Index](./README.md)
+
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.

@@ -36,9 +36,12 @@ In this section, you will configure and deploy AWS IoT Core credentials and copy
    The credential files link the device to your account to allow subscription of pre-defined MQTT messages from the platform.
    The file 'ggconfig.txt' contains broker endpoint information and PREFIX for use by the application.
 
-7. Remove the USB-to-SD Card adapter from the Ultra96 USB port.
-8. Remove the microSD card from the USB-to-SD adapter.
-9. Insert the microSD into the the MicroZed board print side down, with the gold contacts being put in first.  Gently press the card into the slot until it clicks, and then release your finger from the card.
+5. Remove the USB-to-SD Card adapter from the Ultra96 USB port.
+6. Remove the microSD card from the USB-to-SD adapter.
+7. Insert the microSD into the the MicroZed board print side down, with the gold contacts being put in first.  Gently press the card into the slot until it clicks, and then release your finger from the card.
+8. To prepare the system for Labs 4 and 5 connect the eCon USB camera to the Ultra96 board J8 prior to deploying your Greengrass group.  See the picture below showing Ultra96 with the camera connected.
+
+   ![alt text](images/Ultra96_WithCamera.jpg?raw=true "Ultra96 with USB Camera")
 
 ## Configure and Deploy AWS Greengrass on Xilinx Ultra96
 
@@ -120,18 +123,20 @@ so that your Ultra96 can be used as a greengrass core.
 9. Click on **Subscribe to a topic** under the **Subscriptions** header.
 10. In the **Subscription topic** input box, enter ```hello/world```. 
 11. Click the **Subscribe to topic** button.
+    You should now see a MQTT response from the Ultra96 platform in the test window response.
+    See picture below for expected response.
 
-You should now see a MQTT response from the Ultra96 platform in the test window response.
-See picture below for expected response.
-
-![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
+    ![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
 
 
 ## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
 
 The MicroZed device boots Amazon FreeRTOS from the prepared microSD card and then connects to the AWS Cloud.
 
-1. If you have not already done so, remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board.
+1. If you have not already done so, remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board.  The microSD card location is shown in the image below.
+
+   ![alt text](images/MicroZed_IIoT_HW_Overview.png "MicroZed IIoT Kit Overview")
+
 2. Power the MicroZed by plugging two USB-to-microUSB cables into J2 and J7.
 3. After both power cables are plugged in reset the MicroZed by press the RST/SW2 button on the SoM.
 4. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand navigation menu.
@@ -146,10 +151,10 @@ The MicroZed device boots Amazon FreeRTOS from the prepared microSD card and the
 
 ## Outcomes
 
-In this lab we established basic "hello world" connectivity from an a:FreeRTOS IoT node on the MicroZed platform and from a Linux Greengrass IoT node on the Ultra96 platform.
-
-## Learning More About These Concepts
+In this lab we established basic "hello world" connectivity from an Amazon FreeRTOS IoT node on the MicroZed platform and from AWS Greengrass running on Embedded Linux on the Ultra96 platform.
 
 [Next Lab](./Lab3.md)
 
 [Index](./README.md)
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.

@@ -4,7 +4,7 @@ In this lab you will prepare the hardware, download the workshop content locally
 
 ## Applying your Credits
 
-If part of this workshop you received credits to offset any potential cost occurred in the AWS Cloud during this workshop, please follow these steps to apply the credits.
+If as part of this workshop you received credits to offset any potential cost occurred in the AWS Cloud during this workshop, please follow the steps on the card provided to apply the credits.
 
 
 ## Xilinx Hardware Setup
@@ -17,7 +17,7 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 3. Plug the MicroZed System on Module (SoM) onto the Arduno Carrier Card.  When completed with this step the system should look like the picture below.
 
    ![alt text](images/MicroZed_IIoT_HW_Overview.png "IIoT Kit Overview")
-4. Ensure that the microSD card is plugged in. It is located on the bottom side of the board below the USB UART.  Check that the boot mode jumpers (JP1-JP3) are configured for SD Card boot (JP1 - Pins 1 & 2, JP2 - Pins 2 & 3, JP3 - Pins 2 & 3). See picture below for the proper jumper settings.
+4. Check that the boot mode jumpers (JP1-JP3) are configured for SD Card boot (JP1 - Pins 1 & 2, JP2 - Pins 2 & 3, JP3 - Pins 2 & 3). See picture below for the proper jumper settings.
 
    ![alt text](images/MicroZed_SD_CardJumperSettings.png?raw=true "SD Card Boot Jumper Settings")
 5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
@@ -106,7 +106,7 @@ Go to [AWS Console Sign In](https://aws.amazon.com/) page and click on the "Sign
 
 ### Configure AWS Command Line Interface (CLI)
 
-In this section, we will configure the AWS CLI on the Ultra96 board.  The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target - in this case Ultra96. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page and follow steps 1-5 to acquire your AWS Access Key ID and your AWS Secret Access Key.  Capture these as you will need them in the steps below.
+In this section, we will configure the AWS CLI on the Ultra96 board.  The AWS CLI provides the mechanisms for driving AWS IoT Console cloud actions from the CLI on the edge target - in this case Ultra96. For more information or details on configuration, visit the [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) page and follow steps 1-5 to add the *```AdministratorAccess```* policy to your username and capture the Key ID and Secret Access Key as you will need them in the steps below.
 
 The AWS CLI has already been installed on the Ultra96 for you.
 
@@ -141,19 +141,15 @@ In this section, you will deploy AWS Cloud artifacts to your AWS account by usin
    
    If you receive an error from the script stating the prefix has already been chosen, then please choose another.
 
-   The script has performed the following functions:
-   
-   * Created an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```
-   * Created a local folder ```/home/xilinx/<prefix>-aws-cloud-and-xilinx-workshop``` that will be used throughout the lab.
+   The script will create an Amazon S3 bucket named ```<prefix>-aws-cloud-and-xilinx-workshop```.
 
 
 
 ## Outcomes
 In this lab, you installed prerequisites to your workstation and installed lab prerequisites to the AWS Cloud in your account.
 
-# Learning More About These Concepts
-
-
 [Next Lab](./Lab2.md)
 
 [Index](./README.md)
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.

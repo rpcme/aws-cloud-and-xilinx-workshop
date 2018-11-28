@@ -6,19 +6,7 @@ The AWS IoT console will serves as the system deployment dashboard; we will incr
 
 ## Preparation
 
-In lab 2, we deployed the lambda functions configured as part of your Greengrass group.  In this lab we will reuse the same group.
-As a summary,
-
-1. Your group name was defined to be ```<prefix>-gateway-ultra96-group```.
-2. Your S3 bucket name was defined to be ```<prefix>-aws-cloud-and-xilinx-workshop```.
-
-Make sure your greengrass core service are still running. To check that:
-
-```shell
-ps aux | grep /greengrass/gg/packages/1.7.0/bin/daemon
-```
-
-You should be able to see a running process in the background.
+Before doing this lab, make sure lab 4 completes without any problem.
 
 ## Lab Steps
 
@@ -40,7 +28,10 @@ You should be able to see a running process in the background.
 7. Click **Save**.
 
 	For a moment, you will see a ```delta``` section.  And then it will disappear.  Also the ```reported``` section for the value displays ```2```.
+    The result looks like the following:
 	
+    ![alt text](images/Ultra96_Device_Shadow.PNG?raw=true "Ultra96 Device Shadow")
+
     > **What just happened?**  When changing the desired state, the event triggered the AWS Lambda function in AWS Greengrass to download version 2.  When it completed, the AWS Lambda function reported back that it completed downloading version 2.
 
 8. After this call, your `/home/xilinx/download` is no longer empty.
@@ -67,7 +58,7 @@ These files will be uploaded onto the S3 bucket.
 As shown in the last lab, you can see some messages 
 if you subscribe to the topic `compressor/+`.
 
-    ![alt text](images/Publish_Image_Upload.PNG)
+    ![alt text](images/Publish_Bitstream_Deploy.PNG)
 
 12. On the Ultra96 debug interface navigate to the directory that is 
 synchronized with your S3 bucket.
@@ -78,7 +69,7 @@ synchronized with your S3 bucket.
 
     You will see several new files generated. The ```<epoch-time>.png``` files are the captured frames; the ```<epoch-time>.txt``` files store the number of people captured in that frame.
 
-13. Go to your S3 bucket on AWS cloud; you will see there is a new folder `images` created. Check the images stored in that folder.
+13. Go to your S3 bucket on AWS cloud; you will see there is a new folder `portal/images` created. Check the images stored in that folder.
 
 
 ## Outcomes
@@ -86,8 +77,7 @@ In this lab we used AWS Greengrass to deploy an ML video
 surveillance application to a running control system in the Ultra96 platform. 
 
 
-# Learning More About These Concepts
-
-
 [Index](./README.md)
 
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.

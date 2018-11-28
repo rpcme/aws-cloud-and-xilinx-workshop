@@ -24,14 +24,14 @@ The reference Amazon FreeRTOS image is pre-programmed to poll these interfaces a
 
 The Greengrass Core will then route these messages to the AWS Cloud.  The Amazon FreeRTOS on MicroZed will use the Greengrass Discovery capability to identify and configure the Greengrass Core endpoint.  We will then subscribe to the sensor MQTT topics from the AWS IoT Console to verify the data flow to the cloud.
 
-2. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
-9. Click on **Subscribe to a topic** under the **Subscriptions** header.
-10. In the **Subscription topic** input box, enter ```compressor/+/cooling_system/+```. 
-11. Click the **Subscribe to topic** button.
+1. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
+2. Click on **Subscribe to a topic** under the **Subscriptions** header.
+3. In the **Subscription topic** input box, enter ```compressor/+/cooling_system/+```. 
+4. Click the **Subscribe to topic** button.
 
-   In the IoT Console now you should see data values coming in from the different sensors.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and AWS Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
-   
-3. **TODO** Click on XYZ to get a live dashboard of the sensor values available in AWS Cloud.  This view is useful for remote asset owners that want to observe the current operation of their system as well as capturing historical operational trends and insights.
+In the IoT Console now you should see data values coming in from the different sensors as shown below.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and AWS Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
+
+![alt text](images/Sensor_Data_Topic.PNG?raw=true "MicroZed Sensor Data in Cloud")
 
 ## MicroZed Sensor Failure
 
@@ -45,18 +45,22 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 2. Click **Things**, which is the first item under **Manage**.
 3. Locate the Thing that represents your core. The name is ```<prefix>-gateway-ultra96```.
 4. Click on **Shadow**.
-5. In the IoT Console now you should see a non-error state message for the thermocouple.
-3. Observe the Ultra96 board (unit controller in our control application) now and you will see that the Intelligent I/O module error LED is **NOT** lit (User LED #1).  See the LED defintions in the picture below.
+5. In the IoT Console now you should see a non-error state message for the thermocouple, reflected by the "led" value being set to 0.
+  
+   ![alt text](images/Lab3_NonError_Shadow.PNG "Device Shadow - Non-Error State")
+
+6. Observe the Ultra96 board (unit controller in our control application) now and you will see that the Intelligent I/O module error LED is **NOT** lit (User LED #1).  See the LED defintions in the picture below.
 
    ![alt text](images/Ultra96_LED_Configuration.PNG "Ultra96 LED Defintions")
 
-4. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
+7. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
 
    ![alt text](images/MicroZed_MAX31855_Thermocouple_Removed.jpg "MAX31855 Thermocouple Removed")
-
-   **TODO** Need to have picture of the thermocouple removed.
    
-5. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1).
+8. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1) and the Device Shadow in an error state, reflected by the "led" value being set to 1.
+
+   ![alt text](images/Lab3_Error_Shadow.PNG "Device Shadow - Error State")
+
 
    > **What happened?** The application detected the **open circuit condition** and updated the AWS Greengrass Core's Device Shadow directly - setting the **Desired State** of the LED.  After the AWS Greengrass Core turns on the LED successfully, it updates its own Device Shadow with the **Reported State**.  But how are we seeing this in the AWS IoT Core Console?  AWS Greengrass is automatically synchronizing the Device Shadow between the edge and the cloud.
 
@@ -66,11 +70,10 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 
 ## Outcomes
 
-In this lab, you brought in live control sensor readings into the AWS cloud and saw them plotted on a dashboard using the MQTT communication mechamisms of a:FreeRTOS.  We then invoked a sensor health failure which caused the MicroZed device shadow to change to a failed state; which was automatically detected by the unit controller and AWS cloud to generate alerts.
-
-## Learning More About These Concepts
+In this lab, you brought in live control sensor readings into the AWS cloud and saw them plotted on a dashboard using the MQTT communication mechamisms of Amazon FreeRTOS.  We then invoked a sensor health failure which caused the MicroZed device shadow to change to a failed state; which was automatically detected by the unit controller and AWS cloud to generate alerts.
 
 [Next Lab](./Lab4.md)
 
 [Index](./README.md)
 
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
