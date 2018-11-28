@@ -24,14 +24,14 @@ The reference Amazon FreeRTOS image is pre-programmed to poll these interfaces a
 
 The Greengrass Core will then route these messages to the AWS Cloud.  The Amazon FreeRTOS on MicroZed will use the Greengrass Discovery capability to identify and configure the Greengrass Core endpoint.  We will then subscribe to the sensor MQTT topics from the AWS IoT Console to verify the data flow to the cloud.
 
-2. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
-9. Click on **Subscribe to a topic** under the **Subscriptions** header.
-10. In the **Subscription topic** input box, enter ```compressor/+/cooling_system/+```. 
-11. Click the **Subscribe to topic** button.
+1. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand side menu.
+2. Click on **Subscribe to a topic** under the **Subscriptions** header.
+3. In the **Subscription topic** input box, enter ```compressor/+/cooling_system/+```. 
+4. Click the **Subscribe to topic** button.
 
-   In the IoT Console now you should see data values coming in from the different sensors.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and AWS Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
-   
-3. **TODO** Click on XYZ to get a live dashboard of the sensor values available in AWS Cloud.  This view is useful for remote asset owners that want to observe the current operation of their system as well as capturing historical operational trends and insights.
+In the IoT Console now you should see data values coming in from the different sensors as shown below.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and AWS Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
+
+![alt text](images/Sensor_Data_Topic.PNG?raw=true "MicroZed Sensor Data in Cloud")
 
 ## MicroZed Sensor Failure
 
@@ -53,8 +53,6 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 4. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
 
    ![alt text](images/MicroZed_MAX31855_Thermocouple_Removed.jpg "MAX31855 Thermocouple Removed")
-
-   **TODO** Need to have picture of the thermocouple removed.
    
 5. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1).
 
