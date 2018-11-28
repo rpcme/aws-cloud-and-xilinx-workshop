@@ -29,12 +29,13 @@ Leave the MicroZed assembled as is and we will power it up at the end of Lab 2 a
 1. Ensure that the microSD is plugged in.
 2. Plug in the 12V power supply to J5.
 3. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
-4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This USB interface provides three services to your PC:
+4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This USB interface provides the following three services to your PC but we will only be using the UART interface in this workshop.  
     1. A debug UART interface
     2. A portable drive named 'PYNQ-USB' to navigate the Ultra96 file system
     3. An RNDIS (Ethernet over USB) interface
+5. Plug in the USB to microSD card reader with an 8GB microSD card installed. We will use this in Lab 2 to have Ultra96 write the MicroZed boot image.
 
-We will only be using the UART interface in this workshop.  After the set-up the Ultra96 should look like the picture below.
+After the set-up the Ultra96 should look like the picture below.
 
 ![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
