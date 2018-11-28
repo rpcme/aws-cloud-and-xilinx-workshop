@@ -99,7 +99,7 @@ for i in 1 2; do
     ${bitstream}  s3://${bucket_name}/bitstream_deploy/${i}/${f_bitstream}
   echo Staging ${f_parameters} to version ${i}
   aws s3 cp --quiet  --acl public-read \
-  ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
+  ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_parameters}
 done
 
 # When the bitstream download operation takes place during Greengrass lambda
