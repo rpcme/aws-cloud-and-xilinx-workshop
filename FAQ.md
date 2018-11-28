@@ -163,3 +163,6 @@ original line into "aws:SourceIp": "<your.new.public.ip>/32".
 
 
 [Index](./README.md)
+
+
+Copyright (C) 2018 Amazon.com, Inc. and Xilinx Inc.  All Rights Reserved.
