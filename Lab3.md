@@ -45,16 +45,22 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 2. Click **Things**, which is the first item under **Manage**.
 3. Locate the Thing that represents your core. The name is ```<prefix>-gateway-ultra96```.
 4. Click on **Shadow**.
-5. In the IoT Console now you should see a non-error state message for the thermocouple.
-3. Observe the Ultra96 board (unit controller in our control application) now and you will see that the Intelligent I/O module error LED is **NOT** lit (User LED #1).  See the LED defintions in the picture below.
+5. In the IoT Console now you should see a non-error state message for the thermocouple, reflected by the "led" value being set to 0.
+  
+   ![alt text](images/Lab3_NonError_Shadow.PNG "Device Shadow - Non-Error State")
+
+6. Observe the Ultra96 board (unit controller in our control application) now and you will see that the Intelligent I/O module error LED is **NOT** lit (User LED #1).  See the LED defintions in the picture below.
 
    ![alt text](images/Ultra96_LED_Configuration.PNG "Ultra96 LED Defintions")
 
-4. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
+7. Now unplug the thermocouple (NOT the entire board) from the MAX31855.  See picture below for reference.
 
    ![alt text](images/MicroZed_MAX31855_Thermocouple_Removed.jpg "MAX31855 Thermocouple Removed")
    
-5. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1).
+8. Now observe the Ultra96 board and you will see that the Intelligent I/O module error LED is lit (User LED #1) and the Device Shadow in an error state, reflected by the "led" value being set to 1.
+
+   ![alt text](images/Lab3_Error_Shadow.PNG "Device Shadow - Error State")
+
 
    > **What happened?** The application detected the **open circuit condition** and updated the AWS Greengrass Core's Device Shadow directly - setting the **Desired State** of the LED.  After the AWS Greengrass Core turns on the LED successfully, it updates its own Device Shadow with the **Reported State**.  But how are we seeing this in the AWS IoT Core Console?  AWS Greengrass is automatically synchronizing the Device Shadow between the edge and the cloud.
 
