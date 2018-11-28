@@ -7,15 +7,18 @@ In this lab we will establish basic connectivity to the AWS cloud for both the M
 In this section, you will configure and deploy AWS IoT Core credentials and copy them to the MicroZed microSD card. The physical credential files, the private key and the certificate for each device will be placed in ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-PREFIX-node-zynq7k``` and ```$HOME/aws-cloud-and-xilinx-workshop/edge/auth-PREFIX-gateway-ultra96```, where PREFIX is your greengrass group and s3 bucket prefix.
 
 1. Ensure the the MiroZed board is powered off by having both USB cables to J2 and J7 NOT connected to a USB power source.
-2. If not already completed:
-	a) Eeject the MicroZed microSD card.  The microSD card is ejected by gently pressing the card forward toward the slot entry, releasing, and then pulling the card out by hand.
-	b) Insert the microSD into a USB-to-SD Card adapter.
-	c) Insert the USB-to-SD Card adapter into the USB port of the Ultra96 board. Wait for 5 to 10 seconds.
+
+2. If not already completed remove the microSD card from MicroZed and plug it into the USB microSD card reader on Ultra96:
+	1. Eject the MicroZed microSD card.  The microSD card is ejected by gently pressing the card forward toward the slot entry, releasing, and then pulling the card out by hand.
+	2. Insert the microSD into a USB-to-SD Card adapter.
+	3. Insert the USB-to-SD Card adapter into the USB port of the Ultra96 board. Wait for 5 to 10 seconds.
+	
 3. On the Ultra96 debug interface navigate to the directory containing the scripts for deploying cloud objects.
 
    ```bash
    cd $HOME/aws-cloud-and-xilinx-workshop/cloud/script
    ```
+   
 4. Run the script that configures the credentials for the devices to connect to your AWS account through AWS IoT. The edge hardware that you are using in this workshop is uniquely identified with a group prefix within your AWS account. This allows people at multiple tables who may be sharing a corporate AWS account to operate with their own hardware. Make the prefix match the same value used in the previous lab.
 
    ```bash
