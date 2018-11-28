@@ -68,6 +68,35 @@ In this section, we will simulate a sensor failure by pulling the thermocouple f
 
 7. Plug the thermocouple module back in and you should see the Intelligent I/O module error LED shutoff and the health bit in the Device Shadow clear.
 
+## Indicating AWS IoT Core Connectivity
+
+The AWS Greengrass core requires connectivity to AWS IoT Core to propagate telemetry to the AWS cloud. Many times you will want to have indication on the I/O Controller that the required communications are online.
+
+In this section, we leverage an AWS IoT Core feature named Lifecycle Management which uses two special topics to channel connectivity information to interested consumers.  We will setup a series of configurations that enables us to identify when the AWS Greengrass core connects to AWS IoT Core. We will then set the core's Device Shadow to notify the core at the edge to light up the LED on the device indicating that the connection is active.
+
+The series of events are as follows:
+
+1. AWS Greengrass connects to AWS IoT Core.
+2. AWS IoT Core generates data to two Lifecycle Management topics:
+   - ```$aws/events/presence/connected/+```
+   - ```$aws/events/presence/disconnected/+```
+3. Two AWS IoT Rules (visible under actions) are created to listen to these topics and invokes an AWS Lambda function.
+4. The AWS Lambda function uses the certificate ID (the principal) to "reverse lookup" the related Thing.
+5. The AWS Lambda function sets the Device Shadow for the connected or disconnected event accordingly.
+
+To implement this functionality:
+
+1. On the Ultra96, navigate to the cloud/scripts directory.
+
+   ```cd $HOME/cloud/scripts```
+2. Next, invoke the script that performs thes lifecycle configuration deployment.
+
+   ```./deploy-lifecycle-handler.sh <prefix>```
+3. Test the LED functionality.  Issue the following command to turn off AWS Greengrass:
+
+   ```sudo /greengrass/ggc/core/greengrassd stop```
+4. Now, turn on AWS Greengrass.  The LED for AWS IoT connectivity should now be lit.  You can try turning it off and on -- again and again -- to test the indicator.
+
 ## Outcomes
 
 In this lab, you brought in live control sensor readings into the AWS cloud and saw them plotted on a dashboard using the MQTT communication mechamisms of Amazon FreeRTOS.  We then invoked a sensor health failure which caused the MicroZed device shadow to change to a failed state; which was automatically detected by the unit controller and AWS cloud to generate alerts.
