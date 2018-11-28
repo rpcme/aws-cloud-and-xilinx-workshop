@@ -1,6 +1,6 @@
 # Lab 1: Setup the Environment
 
-In this lab you will prepare the hardware, download the workshop content locally, and initilize the cloud components.  To do this you will also login to your Amazon Web Services account to configure credentials for the Xilinx hardware used in this workshop.
+In this lab you will prepare the hardware, download the workshop content locally, and initilize the cloud components.  We will also login to your Amazon Web Services account to configure credentials for the Xilinx hardware used in this workshop and to have interface for tracking the data and device shadows of the Xilinx devices.
 
 ## Applying your Credits
 
@@ -96,6 +96,12 @@ In this section, you will clone the workshop Git repository.  The Git repository
    The total repository size is more than 30MB so it may take some time to download. Please be patient.
    
 You're done! Let's move to the next section.
+
+### AWS IoT Console Sign In
+
+In this section you will log-in to the AWS IoT Console if you have not already done so.  Leave this interface open for the remainder of the lab as it is used for monitoring and testing the Xilinx edge devices.
+
+Go to [AWS Console Sign In](https://aws.amazon.com/) page and click on the "Sign In" box in the upper right.  Log in with your AWS credentials and then browse to the IoT Core page.  We will use the services provided under IoT Core in the next few labs.
 
 ### Configure AWS Command Line Interface (CLI)
 
