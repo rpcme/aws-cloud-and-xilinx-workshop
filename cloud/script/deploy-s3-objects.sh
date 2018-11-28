@@ -54,7 +54,7 @@ if test $? != 0; then
   echo Please try again.
 fi
 
-my_ip=$(curl ifconfig.co  --stderr /dev/null)
+my_ip=$(curl https://ipinfo.io/ip --stderr /dev/null)
 
 cat <<EOF > ${bucket_policy_location}
 {
