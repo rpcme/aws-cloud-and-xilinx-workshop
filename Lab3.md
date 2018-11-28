@@ -30,6 +30,7 @@ The Greengrass Core will then route these messages to the AWS Cloud.  The Amazon
 4. Click the **Subscribe to topic** button.
 
 In the IoT Console now you should see data values coming in from the different sensors as shown below.  These are the same values that would be shared with the unit controller in a distributed control application.  The communication route between MicroZed and AWS Greengrass Core on Ultra96 were configured as part of the edge configuration script in Lab 1.
+
 ![alt text](images/Sensor_Data_Topic.PNG?raw=true "MicroZed Sensor Data in Cloud")
 
 ## MicroZed Sensor Failure
