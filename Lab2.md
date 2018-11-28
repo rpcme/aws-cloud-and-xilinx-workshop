@@ -133,7 +133,10 @@ so that your Ultra96 can be used as a greengrass core.
 
 The MicroZed device boots Amazon FreeRTOS from the prepared microSD card and then connects to the AWS Cloud.
 
-1. If you have not already done so, remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board.
+1. If you have not already done so, remove the microSD card from the USB adapter and plug the microSD card into the MicroZed board.  The microSD card location is shown in the image below.
+
+   ![alt text](images/MicroZed_IIoT_HW_Overview.png "MicroZed IIoT Kit Overview")
+
 2. Power the MicroZed by plugging two USB-to-microUSB cables into J2 and J7.
 3. After both power cables are plugged in reset the MicroZed by press the RST/SW2 button on the SoM.
 4. If you are not on the page we navigated to in the last section, go to the AWS IoT Console page and click on **Test** on the left-hand navigation menu.
