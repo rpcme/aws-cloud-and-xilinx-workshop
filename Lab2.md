@@ -120,11 +120,10 @@ so that your Ultra96 can be used as a greengrass core.
 9. Click on **Subscribe to a topic** under the **Subscriptions** header.
 10. In the **Subscription topic** input box, enter ```hello/world```. 
 11. Click the **Subscribe to topic** button.
+    You should now see a MQTT response from the Ultra96 platform in the test window response.
+    See picture below for expected response.
 
-You should now see a MQTT response from the Ultra96 platform in the test window response.
-See picture below for expected response.
-
-![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
+    ![alt text](images/Greengrass_HelloWorld_Test.PNG "Greengrass Successful Response")
 
 
 ## Configure and Deploy Amazon FreeRTOS on Xilinx Zynq-7010
