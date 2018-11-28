@@ -41,7 +41,7 @@ Now lets get started with the existing AWS Greengrass group.
    ```bash
    cd $HOME/download
    ```
-   Verify that this folder is empty before we do anything.  This folder will be serve as a local synchronization point with the cloud in the later labs.
+   Verify that this folder is empty before we do anything.  This folder will be serve as a local synchronization point with the cloud in Lab 5.
 
 3. Now let's redeploy the AWS Greengass group.
 
