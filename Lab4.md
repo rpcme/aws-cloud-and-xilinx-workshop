@@ -61,7 +61,7 @@ Now lets get started with the existing AWS Greengrass group.
 
    See picture below for expected result.
 
-   ![alt text](images/Subscribe_Video_Inference.PNG)
+   ![alt text](images/Publish_Image_Upload.PNG)
 
    > Notice that your have a long-running lambda function calling the video inference. 
    You will see some messages published on the topic ```compressor/+``` 
