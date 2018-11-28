@@ -17,6 +17,10 @@ echo ${prefix} >> ${dc_afr}/ggconfig.txt
 
 lsblk -lnp --output NAME,RM,FSTYPE,SIZE > /tmp/out
 
+# Amazon FreeRTOS needs certificates to be provisioned in DER format.
+openssl x509 -outform der -in ${dc_afr}/${thing_afr}.crt.pem -out ${dc_afr}/${thing_afr}.crt.der
+openssl rsa -outform der -in ${dc_afr}/${thing_afr}.key.prv.pem -out ${dc_afr}/${thing_afr}.key.prv.der
+
 found=0
 while read -r line; do
   dev=$(echo $line   | tr -s ' ' ' ' | cut -f1 -d' ')
@@ -40,8 +44,9 @@ echo Need to mount filesystem, enter password \'xilinx\' if requested.
 #sudo mkfs -t vfat ${dev}
 sudo mount $dev /media
 sudo cp $(dirname $0)/../sd_card/BOOT.bin /media
-sudo cp ${dc_afr}/${thing_afr}.crt.pem /media
-sudo cp ${dc_afr}/${thing_afr}.key.prv.pem /media
+sudo cp ${dc_afr}/${thing_afr}.crt.der /media
+sudo cp ${dc_afr}/${thing_afr}.key.prv.der /media
 sudo cp ${dc_afr}/ggconfig.txt /media
+sudo ls -l /media
 sudo umount /media
 echo microSD now unmounted. Remove and insert microSD to the MicroZED board.

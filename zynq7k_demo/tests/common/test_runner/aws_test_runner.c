@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS
+ * Amazon FreeRTOS Test Runner V1.1.2  
  * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -40,38 +40,14 @@
 #include "unity_fixture.h"
 #include "unity_internals.h"
 
-#pragma pack(push,1)
-typedef struct
-{
-    union
-    {
-        #if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || __LITTLE_ENDIAN__ || WIN32
-            struct
-            {
-                uint16_t usBuild;
-                uint8_t ucMinor;
-                uint8_t ucMajor;
-            } x;
-        #elif ( defined( __BYTE_ORDER__ ) && defined( __ORDER_BIG_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ ) || ( __big_endian__ == 1 ) || __BIG_ENDIAN__
-            struct version
-            {
-                uint8_t ucMajor;
-                uint8_t ucMinor;
-                uint16_t usBuild;
-            } x;
-        #else /* if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || __LITTLE_ENDIAN__ || WIN32 */
-        #error "Unable to determine byte order!"
-        #endif /* if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || __LITTLE_ENDIAN__ || WIN32 */
-        uint32_t ulVersion32;
-    } u;
-} AppVersion32_t;
-#pragma pack(pop)
+/* Application version info. */
+#include "aws_application_version.h"
 
 const AppVersion32_t xAppFirmwareVersion =
 {
-    .u.x.ucMajor = 0,
-    .u.x.ucMinor = 9,
-    .u.x.usBuild = 1,
+    .u.x.ucMajor = APP_VERSION_MAJOR,
+    .u.x.ucMinor = APP_VERSION_MINOR,
+    .u.x.usBuild = APP_VERSION_BUILD,
 };
 
 char cBuffer[ testrunnerBUFFER_SIZE ];
@@ -88,6 +64,9 @@ unsigned int xHeapAfter;
 static void RunTests( void )
 {
     /* Tests can be disabled in aws_test_runner_config.h */
+
+    /* The Amazon FreeRTOS qualification program requires that Wi-Fi and TCP be the
+     * first tests in this function. */
     #if ( testrunnerFULL_WIFI_ENABLED == 1 )
         RUN_TEST_GROUP( Full_WiFi );
     #endif
@@ -124,8 +103,8 @@ static void RunTests( void )
         RUN_TEST_GROUP( Full_MQTT_Agent_ALPN );
     #endif
 
-    #if ( testrunnerFULL_CBOR_ENABLED == 1 )
-        RUN_TEST_GROUP( Full_CBOR );
+    #if ( testrunnerFULL_OTA_CBOR_ENABLED == 1 )
+        RUN_TEST_GROUP( Full_OTA_CBOR );
     #endif
 
     #if ( testrunnerFULL_OTA_AGENT_ENABLED == 1 )
@@ -137,7 +116,9 @@ static void RunTests( void )
     #endif
 
     #if ( testrunnerFULL_PKCS11_ENABLED == 1 )
-        RUN_TEST_GROUP( Full_PKCS11 );
+        RUN_TEST_GROUP( Full_PKCS11_CryptoOperation );
+        RUN_TEST_GROUP( Full_PKCS11_GeneralPurpose );
+
     #endif
 
     #if ( testrunnerFULL_CRYPTO_ENABLED == 1 )
@@ -147,6 +128,33 @@ static void RunTests( void )
     #if ( testrunnerFULL_TLS_ENABLED == 1 )
         RUN_TEST_GROUP( Full_TLS );
     #endif
+
+    #if ( testrunnerFULL_CBOR_ENABLED == 1 )
+        RUN_TEST_GROUP( Full_CBOR );
+    #endif
+
+    #if ( testrunnerFULL_DEFENDER_ENABLED == 1 )
+        RUN_TEST_GROUP( Full_DEFENDER );
+    #endif
+
+    #if ( testrunnerFULL_POSIX_ENABLED == 1 )
+        RUN_TEST_GROUP( Full_POSIX_CLOCK );
+        RUN_TEST_GROUP( Full_POSIX_MQUEUE );
+        RUN_TEST_GROUP( Full_POSIX_PTHREAD );
+        RUN_TEST_GROUP( Full_POSIX_SEMAPHORE );
+        RUN_TEST_GROUP( Full_POSIX_TIMER );
+        RUN_TEST_GROUP( Full_POSIX_UTILS );
+        RUN_TEST_GROUP( Full_POSIX_STRESS );
+    #endif
+
+    #if ( testrunnerFULL_FREERTOS_TCP_ENABLED == 1 )
+        RUN_TEST_GROUP( Full_FREERTOS_TCP );
+    #endif
+
+    #if ( testrunnerOTA_END_TO_END_ENABLED == 1 )
+        extern void vStartOTAUpdateDemoTask( void );
+        vStartOTAUpdateDemoTask();
+    #endif
 }
 /*-----------------------------------------------------------*/
 
@@ -155,7 +163,7 @@ void TEST_RUNNER_RunTests_task( void * pvParameters )
     /* Initialize unity. */
     UnityFixture.Verbose = 1;
     UnityFixture.GroupFilter = 0;
-    UnityFixture.NameFilter = testrunerTEST_FILTER;
+    UnityFixture.NameFilter = testrunnerTEST_FILTER;
     UnityFixture.RepeatCount = 1;
 
     UNITY_BEGIN();
@@ -163,11 +171,10 @@ void TEST_RUNNER_RunTests_task( void * pvParameters )
     /* Give the print buffer time to empty */
     vTaskDelay( 500 );
     /* Measure the heap size before any tests are run. */
-    xHeapBefore = xPortGetFreeHeapSize();
+    #if ( testrunnerFULL_MEMORYLEAK_ENABLED == 1 )
+        xHeapBefore = xPortGetFreeHeapSize();
+    #endif
 
-
-    /* Do not delete this line, it is required by the test automation framework. */
-    TEST_SubmitResult( "Starting Tests...\n" );
     RunTests();
 
     #if ( testrunnerFULL_MEMORYLEAK_ENABLED == 1 )
@@ -175,11 +182,16 @@ void TEST_RUNNER_RunTests_task( void * pvParameters )
         /* Measure the heap size after tests are done running.
          * This test must run last. */
 
+        /* Perform any global resource cleanup necessary to avoid memory leaks. */
+        #ifdef testrunnerMEMORYLEAK_CLEANUP
+            testrunnerMEMORYLEAK_CLEANUP();
+        #endif
+
         /* Give the print buffer time to empty */
         vTaskDelay( 500 );
         xHeapAfter = xPortGetFreeHeapSize();
         RUN_TEST_GROUP( Full_MemoryLeak );
-    #endif
+    #endif /* if ( testrunnerFULL_MEMORYLEAK_ENABLED == 1 ) */
 
     /* Currently disabled. Will be enabled after cleanup. */
     UNITY_END();

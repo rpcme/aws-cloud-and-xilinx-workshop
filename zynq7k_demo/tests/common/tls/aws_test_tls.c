@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS
+ * Amazon FreeRTOS TLS AFQP V1.1.2  
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -34,6 +34,7 @@
 
 /* Credential includes. */
 #include "aws_clientcredential.h"
+#include "aws_test_tls.h"
 
 /* Provisioning include. */
 #include "aws_dev_mode_key_provisioning.h"

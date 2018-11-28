@@ -78,8 +78,7 @@ echo Constraining bucket access to this specific device
 aws s3api put-bucket-policy --bucket ${bucket_name} --policy file://${bucket_policy_location}
 
 echo Stage deployable bitstream files to S3 for Lab 4
-mkdir -p ${local_path}
-#cp -f ${bitstream} ${local_path}
+
 cat <<EOF > ${parameters}1
 5
 2
@@ -100,10 +99,10 @@ for i in 1 2; do
     ${bitstream}  s3://${bucket_name}/bitstream_deploy/${i}/${f_bitstream}
   echo Staging ${f_parameters} to version ${i}
   aws s3 cp --quiet  --acl public-read \
-  ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_paramters}
+  ${parameters}${i} s3://${bucket_name}/bitstream_deploy/${i}/${f_parameters}
 done
 
 # When the bitstream download operation takes place during Greengrass lambda
-# invocation, the birstream will be placed here.
+# invocation, the bitstream will be placed here.
 
 mkdir -p /home/xilinx/download

@@ -236,12 +236,7 @@
 /* #define UNITY_PTR_ATTRIBUTE __attribute__((far)) */
 /* #define UNITY_PTR_ATTRIBUTE near */
 
-/* Redirect output to UART. */
-
-#include "aws_test_framework.h"
-
-#define UNITY_OUTPUT_CHAR( a )     TEST_CacheResult( a )
-#define UNITY_OUTPUT_FLUSH()       TEST_SubmitResultBuffer()
-#define UNITY_OUTPUT_COMPLETE()    TEST_NotifyTestFinished()
+/* Default unity config. Define your own macros above this include to overwrite. */
+#include "aws_unity_config.h"
 
 #endif /* UNITY_CONFIG_H */

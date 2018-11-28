@@ -240,6 +240,7 @@ fi
 
 # this needs to be created before deployment or else the deployment will fail
 if test ! -d /home/xilinx/download; then mkdir -p /home/xilinx/download; fi
+if test ! -d /home/xilinx/${s3_bucket}; then mkdir -p /home/xilinx/${s3_bucket}; fi
 
 cat <<EOF > ${d_agg_config}/resource-definition-init.json
 {
@@ -321,7 +322,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
                 "BOARD":"Ultra96",
-                "COREGROUP":"${thing_agg}"
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",
@@ -358,7 +360,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
             "BOARD":"Ultra96",
-            "COREGROUP":"${thing_agg}"
+            "COREGROUP":"${thing_agg}",
+            "BUCKET":"${s3_bucket}"
           }
         }
       }
@@ -382,7 +385,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
             "BOARD":"Ultra96",
-            "COREGROUP":"${thing_agg}"
+            "COREGROUP":"${thing_agg}",
+            "BUCKET":"${s3_bucket}"
           }
         }
       }
@@ -412,7 +416,9 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
             }
           },
           "Variables": {
-                "BOARD":"Ultra96"
+                "BOARD":"Ultra96",
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",
@@ -436,7 +442,8 @@ cat <<EOF > ${d_agg_config}/function-definition-init.json
           },
           "Variables": {
                 "BOARD":"Ultra96",
-                "COREGROUP":"${thing_agg}"
+                "COREGROUP":"${thing_agg}",
+                "BUCKET":"${s3_bucket}"
            }
         },
         "Executable": "python",

@@ -133,7 +133,7 @@ aws iot attach-principal-policy \
 
 echo Constructing the AWS Greengrass config.json for this deployment.
 my_region=$(echo ${thing_arn_agg} | cut -f4 -d:)
-my_iothost=$(aws iot describe-endpoint --output text)
+my_iothost=$(aws iot describe-endpoint  --endpoint-type iot:Data --output text)
 wget -O ${dc_agg}/rootca.pem \
 https://www.symantec.com/content/en/us/enterprise/verisign/roots/VeriSign-Class%203-Public-Primary-Certification-Authority-G5.pem
 

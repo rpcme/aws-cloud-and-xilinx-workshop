@@ -33,10 +33,12 @@
 
 void TEST_CacheResult( char cResult );
 
-void TEST_SubmitResult( const char * pcResult );
-
 void TEST_SubmitResultBuffer();
 
+void TEST_NotifyTestStart();
+
 void TEST_NotifyTestFinished();
+
+void TEST_SubmitResult( const char * pcResult );
 
 #endif /* _AWS_TEST_FRAMEWORK_H_ */

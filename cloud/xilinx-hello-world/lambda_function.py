@@ -6,15 +6,18 @@ import signal
 import logging
 import os
 
+
 client = greengrasssdk.client('iot-data')
 my_platform = platform.platform()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 streamHandler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 streamHandler.setFormatter(formatter)
 logger.addHandler(streamHandler)
+
 
 def greengrass_hello_world_run():
     if not my_platform:
@@ -26,8 +29,6 @@ def greengrass_hello_world_run():
         client.publish(topic='hello/world', payload=json.dumps(payload))
 
     Timer(5, greengrass_hello_world_run).start()
-
-
 
 
 SYSFS_LEDS = [

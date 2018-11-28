@@ -1,5 +1,5 @@
 /*
- * Amazon FreeRTOS V1.2.7
+ * Amazon FreeRTOS V1.4.4
  * Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,8 +29,8 @@
 #include "aws_demo.h"
 
 /* MQTT echo task example parameters. */
-#define democonfigMQTT_UZED_IOT_TASK_STACK_SIZE                ( 2048 )
-#define democonfigMQTT_UZED_IOT_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 2)
+#define democonfigMQTT_UZED_IOT_TASK_STACK_SIZE                ( configMINIMAL_STACK_SIZE * 16 )
+#define democonfigMQTT_UZED_IOT_TASK_PRIORITY                  ( tskIDLE_PRIORITY )
 
 demoDECLARE_DEMO( vStartMQTTUZedIotDemo );
 

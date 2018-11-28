@@ -1,5 +1,5 @@
 /*
-FreeRTOS+TCP V2.0.7
+FreeRTOS+TCP V2.0.8
 Copyright (C) 2017 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -203,7 +203,6 @@ BaseType_t xReturn;
 XStatus emacps_send_message(xemacpsif_s *xemacpsif, NetworkBufferDescriptor_t *pxBuffer, int iReleaseAfterSend )
 {
 int head = xemacpsif->txHead;
-int tail = xemacpsif->txTail;
 int iHasSent = 0;
 uint32_t ulBaseAddress = xemacpsif->emacps.Config.BaseAddress;
 TickType_t xBlockTimeTicks = pdMS_TO_TICKS( 5000u );

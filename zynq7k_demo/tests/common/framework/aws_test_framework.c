@@ -50,22 +50,17 @@ static int16_t xBufferSize = 0;
 
 void TEST_CacheResult( char cResult )
 {
+    if( TEST_RESULT_BUFFER_CAPACITY - xBufferSize == 2 )
+    {
+        cResult = '\n';
+    }
+
     pcTestResultBuffer[ xBufferSize++ ] = cResult;
 
-    if( ( '\n' == cResult ) || ( TEST_RESULT_BUFFER_CAPACITY == xBufferSize ) )
+    if( ( '\n' == cResult ) )
     {
         TEST_SubmitResultBuffer();
     }
-}
-/*-----------------------------------------------------------*/
-
-void TEST_SubmitResult( const char * pcResult )
-{
-    /* We want to print test result no matter configPRINTF is defined or not */
-    vLoggingPrint( pcResult );
-
-    /* Wait for 0.1 seconds to let print task empty its buffer. */
-    vTaskDelay( pdMS_TO_TICKS( 100UL ) );
 }
 /*-----------------------------------------------------------*/
 
@@ -80,7 +75,26 @@ void TEST_SubmitResultBuffer()
 }
 /*-----------------------------------------------------------*/
 
+void TEST_NotifyTestStart()
+{
+    /* Wait for test script to open serial port before starting tests on the
+     * board.*/
+    vTaskDelay( pdMS_TO_TICKS( 5000UL ) );
+    TEST_SubmitResult( "---------STARTING TESTS---------\n" );
+}
+/*-----------------------------------------------------------*/
+
 void TEST_NotifyTestFinished()
 {
-    TEST_SubmitResult( "----All tests finished----\n" );
+    TEST_SubmitResult( "-------ALL TESTS FINISHED-------\n" );
+}
+/*-----------------------------------------------------------*/
+
+void TEST_SubmitResult( const char * pcResult )
+{
+    /* We want to print test result no matter configPRINTF is defined or not */
+    vLoggingPrint( pcResult );
+
+    /* Wait for 0.1 seconds to let print task empty its buffer. */
+    vTaskDelay( pdMS_TO_TICKS( 100UL ) );
 }

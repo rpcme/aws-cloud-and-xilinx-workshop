@@ -1,7 +1,6 @@
 import logging
 import sys
 import time
-import glob
 import subprocess
 import os
 import json
@@ -18,12 +17,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 client = greengrasssdk.client('iot-data')
 
 
-# This is where the video inference results are stored
-# Assume there is only 1 folder with suffix `-aws-cloud-and-xilinx-workshop`
-bucket = glob.glob1('/home/xilinx', '*-aws-cloud-and-xilinx-workshop')[0]
+bucket = os.environ['BUCKET']
 sync_folder_path = os.path.join("/home/xilinx", bucket)
 download_path = "/home/xilinx/download"
-topic = "unit_controller/video_inference"
+topic = "compressor/video_inference"
 parameters = 'parameters.txt'
 
 def run_pydeephi_yolo():
