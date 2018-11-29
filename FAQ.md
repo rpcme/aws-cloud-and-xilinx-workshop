@@ -165,6 +165,18 @@ Go to your S3 bucket web console. Click on the name of the S3 bucket created.
 Go to "Permissions" tab, then "Bucket Policy". In the editor, change the 
 original line into "aws:SourceIp": "<your.new.public.ip>/32".
 
+### <a name="hardware"></a>Where can I get a set of hardware of my own?
+
+The hardware is comprised of two main kits:
+1. Ultra96
+  * Ultra96 Board - AES-ULTRA96-G - [Manufacturer Link](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-ultra96-g-3074457345634920668/)
+  * Ultra96 Power Supply - AES-ACC-U96-PWR - [Manufacturer Link](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-acc-u96-pwr-3074457345634920670/)
+
+2. MicroZed IIoT Starter Kit.  The MicroZed IIoT Kit is made up of four hardware compoonents which are outlined below.
+  * MicroZed 7010 SoM - AES-Z7MB-7Z010-G - [Manufacturer Link](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-z7mb-7z010-som-g-rev-f-3074457345635221615/)
+  * MicroZed Arduino Carrier Card - AES-ARDUINO-CC-G - [Manufacturer Link](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-arduino-cc-g-3074457345635221613/)
+  * ST Micro Sensor Shield - X-NUCLEO-IKS01A1 - [Manufacturer Link](https://www.st.com/en/ecosystems/x-nucleo-iks01a1.html)
+  * Maxim Thermocouple Module - MAX31855PMB1# - [Manufacturer Link](https://www.maximintegrated.com/en/products/sensors/MAX31855.html)
 
 
 [Index](./README.md)
