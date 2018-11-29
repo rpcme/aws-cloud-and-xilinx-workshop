@@ -95,7 +95,10 @@ To implement this functionality:
 3. Test the LED functionality.  Issue the following command to turn off AWS Greengrass:
 
    ```sudo /greengrass/ggc/core/greengrassd stop```
-4. Now, turn on AWS Greengrass.  The LED for AWS IoT connectivity should now be lit.  You can try turning it off and on -- again and again -- to test the indicator.
+4. Now, turn on AWS Greengrass.  
+
+   ```sudo /greengrass/ggc/core/greengrassd start```
+The LED for AWS IoT connectivity should now be lit.  You can try turning it off and on -- again and again -- to test the indicator.
 
 ## Outcomes
 
