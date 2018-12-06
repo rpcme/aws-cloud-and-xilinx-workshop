@@ -68,15 +68,18 @@ Virtually all Linux distributions have ```screen``` installed and MacOS has ```s
 Alternatively, if you use MacOS, the application [Serial](https://www.decisivetactics.com/products/serial/) is a great choice.  It is not free, but has many usability features that are common to applications running on MacOS.
 
 ### Avnet Ultra96
+A pre-built Ultra96 image has been created to support this workshop.  As a user you need to first download this image and burn it to the 16GB microSD card included in the Ultra96 kit and boot the board.  The steps below outline this process:
 
-1. Ensure that the microSD is plugged in.
-2. Plug in the 12V power supply to J5.
-3. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
-4. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This USB interface provides the following three services to your PC but we will only be using the UART interface in this workshop.  
+1. Download the Ultra96 AWS re:Invent 2018 SD-card image from this [link](http://avnet.me/ultra96-pynq-aws-image).  For reference the MD5 checksum should be E385BE22AD5506A33F4B5D5CCA0FD3DF.
+2. Unzip and image the microSD card with Win32DiskImager or similiar program.
+3. Plug the microSD is plugged in.
+4. Plug in the 12V power supply to J5.
+5. Plug in the USB-to-Ethernet adapter to J9, then plug an Ethernet cable between the adapter and the Ethernet switch on your table.
+6. Connect a microUSB cable to J1 of the Ultra96 and the USB hub. This USB interface provides the following three services to your PC but we will only be using the UART interface in this workshop.  
     1. A debug UART interface
     2. A portable drive named 'PYNQ-USB' to navigate the Ultra96 file system
     3. An RNDIS (Ethernet over USB) interface
-5. Plug in the USB to microSD card reader with an 8GB microSD card installed. We will use this in Lab 2 to have Ultra96 write the MicroZed boot image.
+7. Plug in the USB to microSD card reader with an 8GB microSD card installed. We will use this in Lab 2 to have Ultra96 write the MicroZed boot image.
 
 After the set-up the Ultra96 should look like the picture below.
 
