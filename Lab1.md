@@ -11,6 +11,8 @@ If as part of this workshop you received credits to offset any potential cost oc
 
 Most of the physical hardware will be pre-configured for you prior to the start of the workshop.  This section outlines the steps to configuring the physical aspects such that you can quickly check your hardware.
 
+The Ultra96 and MicroZed each have one serial connection to your workstation.  We will primarily be using the Ultra96 serial port in this workshop but provide reference on installation for both platforms in this section in case debug is required.
+
 ### Avnet MicroZed IIoT Kit
 1. Attach the ST Micro X-NUCLEO Shield to the Arduno Carrier Card.  This connects the sensor set to the FPGA programmable logic.
 2. Plug in the Maxim 31855 PMOD thermocouple to Arduinio Carrier Card J3 connector labeld "PL_PMOD".  Match pin numbers (pin 1 to pin 1) between the boards - plug into the top row of J3.  This connects the sensor to the FPGA programmable logic.
@@ -23,6 +25,47 @@ Most of the physical hardware will be pre-configured for you prior to the start 
 5. Plug an Ethernet cable from the RJ45 connector of the MicroZed SoM to the Ethernet switch on your table.
 
 Leave the MicroZed assembled as is and we will power it up at the end of Lab 2 after writing the microSD card contents via the Ultra96 platform.  The MicroZed board is powered by the J2 and J7 microUSB connections on the boards.
+
+MicroZed uses a Silicon Labs CP2104 USB-to-UART Bridge. If the driver is not automatically detected by your OS, it can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers.
+
+#### Serial Port Installation and Connection: Windows
+
+Ensure you have a serial port terminal emulator such as [Putty](//www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) or [Tera Term](https://osdn.net/projects/ttssh2/releases/) installed.
+
+1. Open Device Manager.  View the current COM ports available.
+2. Plug in the MicroZed device.
+3. Identify the change in COM ports.
+4. Use Putty, Tera Term, or your other favorite serial program to connect to the COM port at 115200-N-1.
+
+#### Serial Port Installation and Connection: MacOS/Linux
+
+Virtually all Linux distributions have ```screen``` installed and MacOS has ```screen``` installed by default.
+
+1. Open a [Terminal](https://en.wikipedia.org/wiki/Terminal_(macOS)) window on MacOS or an XTerm (or your favorite terminal program) on Linux.
+2. Issue the following command to view current serial devices.
+
+   ```bash
+   ls /dev/cu.usb*
+   ```
+3. Plug in the MicroZed.
+4. Issue the following command again to identify the device.
+
+   ```bash
+   ls /dev/cu.usb*
+   ```
+5. Identify the change of items in the list, and issue the following command:
+
+   ```bash
+   screen /dev/<device> 115200 -L
+   ```
+
+   For example, if the difference was ```cu.usbmodem0003```, the command would be:
+
+   ```bash
+   screen /dev/cu.usbmodem0003 115200 -L
+   ```
+
+Alternatively, if you use MacOS, the application [Serial](https://www.decisivetactics.com/products/serial/) is a great choice.  It is not free, but has many usability features that are common to applications running on MacOS.
 
 ### Avnet Ultra96
 
@@ -40,21 +83,50 @@ After the set-up the Ultra96 should look like the picture below.
 ![alt text](images/Ultra96_NoCamera.jpg?raw=true "Ultra96 Kit Overview")
 
 
-#### Serial Port Installation
-The Ultra96 and MicroZed each have one COM port.  We will primarily be using the Ultra96 serial port in this workshop but provide refernce on installation for both platforms in this section in case debug is required.
+#### Serial Port Installation and Connection
 
-MicroZed uses a Silicon Labs CP2104 USB-to-UART Bridge. If the driver is not automatically detected by your OS, it can be downloaded from: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers.  A
 
-Ultra96 uses a Gadget Serial Driver. If the driver is not automatically detected by your OS, load the driver from the 'serial_driver' folder on the Ultra96 portable drive named 'PYNQ-USB'.
+The Ultra96 uses a Gadget Serial Driver. If the driver is not automatically detected by your OS, load the driver from the 'serial_driver' folder on the Ultra96 portable drive named 'PYNQ-USB'.
 
-Ensure you have a serial port terminal emulator such as Putty installed. It can be downloaded from https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html.
+Open the terminal emulator for Ultra96 by following instructions for either the Windows operating system or MacOS/Linux operating system.
 
-Configure your terminal emulator to access the COM ports with the following serial port settings 115200,8,N,1.  These parameters are the same for both the Ultra96 and the MicroZed platforms.
+
+#### Serial Port Installation and Connection: Windows
+
+1. Open Device Manager.  View the current COM ports available.
+2. Plug in the MicroZed device.
+3. Identify the change in COM ports.
+4. Use Putty, Tera Term, or your other favorite serial program to connect to the COM port at 115200-8-N-1.
+
+#### Serial Port Installation and Connection: MacOS/Linux
+
+1. Open a [Terminal](https://en.wikipedia.org/wiki/Terminal_(macOS)) window on MacOS or an XTerm (or your favorite terminal program) on Linux.
+2. Issue the following command to view current serial devices.
+
+   ```bash
+   ls /dev/cu.usb*
+   ```
+3. Plug in the MicroZed.
+4. Issue the following command again to identify the device.
+
+   ```bash
+   ls /dev/cu.usb*
+   ```
+5. Identify the change of items in the list, and issue the following command:
+
+   ```bash
+   screen /dev/<device> 115200 -L
+   ```
+
+   For example, if the difference was ```cu.usbmodem0004```, the command would be:
+
+   ```bash
+   screen /dev/cu.usbmodem0004 115200 -L
+   ```
 
 ### Configuring and Deploying your Hardware
-Ensure you do not have VPN software running for this workshop.
 
-Open the terminal emulator for Ultra96 and do the following:
+**IMPORTANT** Ensure you do not have VPN software running for this workshop.
 
 1. Login if requested.  For refernce at log-in and in future commands requiring sudo access:
 	The username is ```xilinx``` and the password is ```xilinx```. 
