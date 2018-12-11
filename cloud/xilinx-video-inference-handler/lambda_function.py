@@ -56,15 +56,17 @@ def run_pydeephi_yolo():
     logger.info("Parameter number of seconds: {}".format(num_seconds))
     logger.info("Parameter threshold: {}".format(threshold))
 
-    ret = subprocess.check_call(
-            'cd {0} && PYTHONPATH=/usr/lib/python3.6 '
-            '/usr/local/bin/pydeephi_yolo.py {1} {2}'.format(
-            sync_folder_path, num_seconds, threshold), shell=True)
-    logger.info("{}".format(ret))
+    cmd = 'cd {} && '.format(sync_folder_path) + \
+            'PYTHONPATH=/usr/lib/python3.6 ' + \
+            '/usr/local/bin/pydeephi_yolo.py {} {}'.format(
+            num_seconds, threshold)
+    proc = subprocess.Popen(cmd, shell=True, 
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = proc.communicate()
+    logger.info("{}".format(out))
+    if err:
+        logger.info("{}".format(err))
 
-    # wait long enough time for application to finish
-    time.sleep(num_seconds)
-    time.sleep(3)
     return
 
 while (1):
