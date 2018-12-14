@@ -4,6 +4,8 @@ This repository outlines a workshop first implemented and shared at the AWS re:I
  
 The repository remains available as a snapshot of the workshop implementation at re:Invent 2018 such that developers that want a hands-on experience of the AWS and Xilinx technology integration can do so by purchasing their own HW set (outlined in FAQs) and following the instructions below.
 
+**[Slides from re:Invent 2018](https://www.slideshare.net/AmazonWebServices/integrate-the-aws-cloud-with-responsive-xilinx-machine-learning-at-the-edge-gpsws409-aws-reinvent-2018)** : Read about the use case and back story for this workshop here!
+
 # Lab 1: Setup the Environment
 
 In this lab you will download the Xilinx tools required for customizing the runtime images of the embedded platforms and set-up your corresponding cloud environment.
