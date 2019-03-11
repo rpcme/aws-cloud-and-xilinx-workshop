@@ -60,9 +60,7 @@ so that your Ultra96 can be used as a greengrass core.
    sudo cp $HOME/aws-cloud-and-xilinx-workshop/edge/auth-*gateway-ultra96/config.json /greengrass/config/
    ```
 
-3. With the certificates and configuration file in place,  we can start 
-   the AWS Greengrass core service. Run the following commands in the 
-   Ultra96 terminal window.
+3. With the certificates and configuration file in place,  we can start the AWS Greengrass core service, prior to doing this ensure that the USB camera is plugged in. Run the following commands in the Ultra96 terminal window.
 
 	```bash
 	sudo /greengrass/ggc/core/greengrassd start
