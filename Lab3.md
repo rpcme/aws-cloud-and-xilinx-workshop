@@ -88,7 +88,7 @@ To implement this functionality:
 
 1. On the Ultra96, navigate to the cloud/scripts directory.
 
-   ```cd $HOME/cloud/scripts```
+   ```cd $HOME/aws-cloud-and-xilinx-workshop/cloud/scripts```
 2. Next, invoke the script that performs thes lifecycle configuration deployment.
 
    ```./deploy-lifecycle-handler.sh <prefix>```
