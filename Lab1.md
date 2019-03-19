@@ -152,6 +152,21 @@ The labs require that you have Git and the AWS Command Line Interface (CLI) inst
 The following scripts will succeed if your IAM user has the *```AdministratorAccess```* policy attached with no permission boundaries.
 This is very broad, and narrower options might succeed.
 
+#### IAM User Creating for first time users 
+
+Visit the below webpage
+
+https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started_create-admin-group.html
+
+Navigate to "Creating an Administrator IAM User and Group"
+
+Follow steps 1 to 14 with the below changes to steps 4 and 13
+
+Step 4: Select Pragmatic User (selecting this will give you the ability to generate access key and secret key)
+
+Step 13: Skip this step  
+
+
 ### Clone Workshop Repository
 
 In this section, you will clone the workshop Git repository.  The Git repository contains all the workshop code and scripts you will use.
